@@ -25,7 +25,9 @@ SECRET_KEY = 'f81(k3s572%o-_%x(t%nfjqt&=4m81*fz%y7#rib8=lqkfz34$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['175.113.156.193','192.168.25.50',
+ALLOWED_HOSTS = ['175.113.156.193',
+                 '192.168.25.50',
+                 '13.209.162.217',
                  'youtube-thumbnail-maker.ml',
                  'youtube-thumbnail-maker.tk',
                  'youtube-thumbnail-maker.ga',]
