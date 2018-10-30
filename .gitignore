@@ -2,3 +2,5 @@ myenv
 *.pyc
 db.sqlite3
 __pycache__
+static/*
+uwsgi_params

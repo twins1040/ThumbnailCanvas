@@ -125,5 +125,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
 # my custom memory size 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
