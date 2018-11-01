@@ -191,7 +191,6 @@
 			}
 			return group;
 		}
-		
 
 		function arrangeObject(marginLeft, marginTop, arr) {
 			var top = marginTop;
@@ -219,9 +218,6 @@
 		canvas.selection = true;
 		canvas.on('mouse:down', function(opt) {console.log(opt)});
 
-		// Set first templete in canvas
-		$(".col-xs-4").get(-1).onclick()
-
 		// Pallete initial setting
 		var defaultAttr = {fontSize: 16, selectable: false, backgroundColor: 'Gainsboro' };
 		var textFillText = new fabric.Text("글자색:", defaultAttr);
@@ -247,7 +243,6 @@
 							   [strokeColorText, gstroke]]);
 
 
-		
 		fontNanumText.fontFamily = "Nanum Gothic";
 		fontNotoText.fontFamily = "Noto Sans KR";
 
@@ -270,7 +265,7 @@
 			if (actobj) {
 				var fc = $.extend({}, sub.fill);
 				fc.coords.x2 = (sub.fill.coords.x2 ? 1:0) * actobj.width;
-				fc.coords.y2 = (sub.fill.coords.y2 ? 1:0) * actobj.height; 
+				fc.coords.y2 = (sub.fill.coords.y2 ? 1:0) * actobj.height;
 				actobj.set("fill", fc);
 				canvas.renderAll();
 			}
@@ -342,7 +337,7 @@
 			$.post("templates/", {thumbnail: canvas.toDataURL(), data: JSON.stringify(canvas)});
 		});
 
-	/*
+
 		var ubuntuText = new fabric.IText("배그타임!", {
 			fontFamily: 'Noto Sans KR',
 			fontSize: 100,
@@ -372,7 +367,10 @@
 		canvas.add(ubuntuText);
 		canvas.add(copyText);
 		canvas.add(copyText2);
-	*/
+
+		// Set first templete in canvas
+		$(".col-xs-4").get(-1).onclick()
+
 	</script>
 
 

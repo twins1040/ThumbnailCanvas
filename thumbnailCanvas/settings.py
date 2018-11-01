@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['175.113.156.193',
                  '192.168.25.50',
                  '13.209.162.217',
+                 '127.0.0.1',
                  'youtube-thumbnail-maker.ml',
                  'youtube-thumbnail-maker.tk',
                  'youtube-thumbnail-maker.ga',]
