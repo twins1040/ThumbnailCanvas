@@ -11,7 +11,8 @@ install
 4. pipi3 install virtualenv
 5. virtualenv myenv
 6. source myenv/bin/activate
-6. pip install -r requirement.txt
+7. pip install -r requirement.txt
+8. python manage.py migrate
 
 test
 1. source myenv/bin/activate (if not)
