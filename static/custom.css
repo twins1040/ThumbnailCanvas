@@ -1,25 +1,75 @@
-.container {
-	width: 960px;
-	max-width: none !important;
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
 
-}
-.jumbotron {
-	text-align: center;
-}
-.jumbotron h1, .jumbotron p{
-	font-family: "Nanum Gothic", "serif" ;
-}
-.container-canvas {
-	margin: 0 auto;
-	width: 800px;
-}
 #myCanvas {
 	border:1px solid #d3d3d3;
 }
-.row {
-	margin-top: 10px;
+.canvas-container,
+.lower-canvas,
+.upper-canvas {
+	width: 100% !important;
+	height: 56% !important;
 }
-.img-thumbnail {
-	width: 320px;
-	height: 180px;
+.canvas-paper {
+	width: 100% !important;
+	height: 100%;
+}
+.canvas-tool {
+	width: 100%;
+}
+.block-thumbnail img {
+	width: 100%;
+	margin-bottom: 0.5rem;
+	height: auto;
+}
+.bd-sidebar {
+	padding: 1.5rem;
+	border-right: 1px solid rgba(0,0,0,.1);
+}
+.bd-navbar {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.bd-content {
+	padding: 1.5rem;
+}
+/* #imgLoader {
+	width: 200px;
+} */
+.img-loader label {
+	display: inline-block; padding: .75em 1rem; color: white; font-size: inherit; line-height: normal; vertical-align: middle;
+	background-color: #ff0000;
+	cursor: pointer; border: 1px solid #ebebeb;
+	border-bottom-color: #e2e2e2; border-radius: .25em;
+	margin-bottom: 0;
+}
+
+.img-loader input[type="file"] {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip:rect(0,0,0,0);
+	border: 0;
+}
+.ic-add-photo {
+	color: white;
+	width: 24px;
+	position: relative;
+	top: 2px;
+	margin-top: -0.5rem;
+}
+.bd-title {
+	margin: 0 !important;
 }
