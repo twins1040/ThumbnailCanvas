@@ -1,0 +1,25 @@
+.container {
+	width: 960px;
+	max-width: none !important;
+
+}
+.jumbotron {
+	text-align: center;
+}
+.jumbotron h1, .jumbotron p{
+	font-family: "Nanum Gothic", "serif" ;
+}
+.container-canvas {
+	margin: 0 auto;
+	width: 800px;
+}
+#myCanvas {
+	border:1px solid #d3d3d3;
+}
+.row {
+	margin-top: 10px;
+}
+.img-thumbnail {
+	width: 320px;
+	height: 180px;
+}
