@@ -82,7 +82,12 @@
 				<div id="palette" class="canvas-tool">
 				</div>
 				<h1>
-					<input type="button" class="btn btn-default" id="upload" value="Upload this for Template"/>
+					<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" id="input-data" name="data">
+						<input type="hidden" id="input-thumbnail" name="thumbnail">
+						<input type="submit" class="btn btn-default" id="upload" value="Upload this for Template"/>
+					</form>
 					<a id="download-btn-a">
 						<input type="button" class="btn btn-primary" value="Download Thumbnail"/>
 					</a>

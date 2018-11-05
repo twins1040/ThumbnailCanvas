@@ -1,8 +1,3 @@
-function csrfSafeMethod(method) {
-	// these HTTP methods do not require CSRF protection
-	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
 function Copy() {
 	// clone what are you copying since you
 	// may want copy and paste on different moment.
@@ -181,17 +176,10 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 
 // Set click event for template upload button
 $('#upload').click(function(){
-	//to fix csrf error
-	var csrftoken = Cookies.get('csrftoken');
-	$.ajaxSetup({
-		beforeSend: function(xhr, settings) {
-			if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-				xhr.setRequestHeader("X-CSRFToken", csrftoken);
-			}
-		}
-	});
-
-	$.post("templates/", {thumbnail: canvas.toDataURL(), data: JSON.stringify(canvas)});
+	$('#input-data').attr('value', JSON.stringify(canvas));
+	$('#input-thumbnail').attr('value', canvas.toDataURL());
+	$('#upload-tmpl-form').submit();
+	alert("업로드되었습니다");
 });
 
 // Set first templete in canvas
