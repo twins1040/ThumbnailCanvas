@@ -183,6 +183,6 @@ $('#upload').click(function(){
 });
 
 // Set first templete in canvas
-if ($(".col-xs-4").size()) {
-	$(".col-xs-4").get(-1).onclick();
+if ($(".block-thumbnail").size()) {
+	$(".block-thumbnail").get(-1).onclick();
 }
