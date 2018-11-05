@@ -17,7 +17,10 @@
 .lower-canvas,
 .upper-canvas {
 	width: 100% !important;
-	height: 56% !important;
+	height: auto !important;
+}
+.lower-canvas {
+	position: relative !important;
 }
 .canvas-paper {
 	width: 100% !important;
