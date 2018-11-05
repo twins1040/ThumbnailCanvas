@@ -43,6 +43,9 @@ function activeObjectSet(options, key, val) {
 	}
 }
 
+
+
+// Canvas start!!
 var canvas = new fabric.Canvas('myCanvas');
 
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
@@ -97,6 +100,10 @@ $(pcell).clone().html("테두리굵게").on('mouseup', function(options){
 $(pcell).clone().html("테두리얇게").on('mouseup', function(options){
 	var actobj = canvas.getActiveObject();
 	activeObjectSet(options, "strokeWidth", actobj.strokeWidth-4);
+}).appendTo("#palette");
+$(pcell).clone().html("테두리없음").on('mouseup', function(options){
+	var actobj = canvas.getActiveObject();
+	activeObjectSet(options, "strokeWidth", 0);
 }).appendTo("#palette");
 $(pcell).clone().html("나눔고딕").on('mouseup', function(options) {
 	activeObjectSet(options, "fontFamily", "Nanum Gothic");
