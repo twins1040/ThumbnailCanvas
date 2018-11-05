@@ -21,9 +21,8 @@
 	<title>무료 유튜브 썸네일 만들기 사이트</title>
 	<!-- 합쳐지고 최소화된 최신 CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<!-- 부가적인 테마 -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-	<!-- Material icon -->
+	<!-- 컬러 피커 -->
+	<link rel="stylesheet" href="https://unpkg.com/huebee@1/dist/huebee.min.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800&amp;subset=korean" rel="stylesheet">
@@ -40,30 +39,29 @@
 <body>
 
 
-	<nav class="navbar navbar-light bd-navbar">
-		<div>
-			<a class="navbar-brand" href="#">
-				<img src="{% static "img/youthumb.svg" %}" width="48" height="48" class="d-inline-block align-center" alt="">
-			</a>
-		</div>
-		<div class="nav-navbar">
-			<h3 class="bd-title">무료 온라인 유튜브 썸네일</h3>
-		</div>
-		<div class="img-loader ml-md-auto d-inline-block">
-			<label for="imgLoader">
-				<!-- <img class="ic-add-photo" src="{% static "img/add_photo.png" %}" alt=""> -->
-				<span>이미지 불러오기</span>
-			</label>
-			<input type="file" id="imgLoader"/>
+	<nav class="bd-navbar">
+		<img class="ic-big mr-3" src="{% static "img/youthumb.svg" %}">
+		<h4 class="bd-title d-inline">무료 온라인 유튜브 썸네일</h4>
+
+		<!-- 버튼 그룹 -->
+		<div class="btn-group ml-auto">
+			<!-- 이미지 불러오기 -->
+			<div class="mr-1">
+				<label for="imgLoader" class="btn btn-primary mb-0">
+					<span>이미지 불러오기</span>
+				</label>
+				<input type="file" id="imgLoader" class="hide-input"/>
+			</div>
 		</div>
 	</nav>
 
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-3 bd-sidebar">
-					<!-- <div class="page-header">
-					<h5>템플릿</h5>
-				</div> -->
+				<div class="page-header">
+					<h5>인기 템플릿</h5>
+					<hr>
+				</div>
 				{% for tmpl in templates %}
 				{% cycle '<div class="">' '' '' %}
 					<div>
@@ -76,7 +74,101 @@
 					{% endfor %}
 			</div>
 			<div class="col-sm-9 bd-content">
-				<div>
+
+				<canvas id="myCanvas" class="canvas-artboard">
+					Your browser does not support the canvas element
+				</canvas>
+				<div class="canvas-tool">
+					<!-- 콤포넌트 제어 -->
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<button type="button" class="btn btn-secondary">복사</button>
+						<button type="button" class="btn btn-secondary">붙여넣기</button>
+						<button type="button" class="btn btn-secondary">삭제</button>
+					</div>
+					<!-- 글꼴 -->
+					<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+						<button type="button" class="btn btn-dark" disabled>글자</button>
+						<button class="btn btn-secondary color-button" >
+							<span class="color-input" width="12px" height="12px" data-huebee >색상</span>
+						</button>
+						<div class="btn-group" role="group">
+							<button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								글꼴
+							</button>
+							<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+								<a class="dropdown-item" href="#">Dropdown link</a>
+								<a class="dropdown-item" href="#">Dropdown link</a>
+							</div>
+						</div>
+
+					</div>
+					<!-- 테두리 -->
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<button type="button" class="btn btn-dark" disabled >테두리</button>
+						<button type="button" class="btn btn-secondary">없음</button>
+						<button type="button" class="btn btn-secondary">얇게</button>
+						<button type="button" class="btn btn-secondary">굵게</button>
+						<button class="btn btn-secondary color-button" >
+							<span class="color-input" width="12px" height="12px" data-huebee >색상</span>
+						</button>
+					</div>
+
+					<!-- 색상 -->
+					<!-- <div class="color-group">
+						<div class="color-chip white border"></div>
+						<div class="color-chip gray"></div>
+						<div class="color-chip black"></div>
+
+						<div class="color-chip red"></div>
+						<div class="color-chip green"></div>
+						<div class="color-chip blue"></div>
+
+						<div class="color-chip yellow border"></div>
+						<div class="color-chip orange"></div>
+						<div class="color-chip brown"></div>
+						<div class="color-chip purple"></div>
+
+						<div class="color-chip cyan"></div>
+						<div class="color-chip pink"></div>
+					</div>
+					<div class="color-group">
+						<div class="color-chip b-white border"></div>
+						<div class="color-chip b-gray"></div>
+						<div class="color-chip b-black"></div>
+
+						<div class="color-chip b-red"></div>
+						<div class="color-chip b-green"></div>
+						<div class="color-chip b-blue"></div>
+
+						<div class="color-chip b-yellow border"></div>
+						<div class="color-chip b-orange"></div>
+						<div class="color-chip b-brown"></div>
+						<div class="color-chip b-purple"></div>
+
+						<div class="color-chip b-cyan"></div>
+						<div class="color-chip b-pink"></div>
+					</div> -->
+				</div>
+				<hr>
+				<!-- 이미지 저장 -->
+				<div class="btn-group d-flex justify-content-end">
+					<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" id="input-data" name="data">
+						<input type="hidden" id="input-thumbnail" name="thumbnail">
+						<input type="submit" class="btn btn-secondary mr-1" id="upload" value="임시 저장"/>
+					</form>
+					<!-- 다운로드 -->
+					<a id="download-btn-a">
+						<button class="btn btn-dark">다운로드</button>
+					</a>
+				</div>
+
+
+				<!-- <div id="palette" class="canvas-tool">
+				</div> -->
+
+				<!-- <div>
 					<input type="text" id="youtube-url" value="RBRSBtPQLF0">
 					<input type="button" id="youtube-url-button" value="가져오기">
 				</div>
@@ -85,22 +177,7 @@
 				<div>
 					<input type="button" id="capture" value="캡쳐하기">
 				</div>
-				<canvas id="myCanvas" class="canvas-paper">
-					Your browser does not support the canvas element
-				</canvas>
-				<div id="palette" class="canvas-tool">
-				</div>
-				<h1>
-					<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
-						{% csrf_token %}
-						<input type="hidden" id="input-data" name="data">
-						<input type="hidden" id="input-thumbnail" name="thumbnail">
-						<input type="submit" class="btn btn-default" id="upload" value="Upload this for Template"/>
-					</form>
-					<a id="download-btn-a">
-						<input type="button" class="btn btn-primary" value="Download Thumbnail"/>
-					</a>
-				</h1>
+				<canvas id="myCanvas" class="canvas-paper"> -->
 			</div>
 		</div>
 	</div>
@@ -108,15 +185,18 @@
 
 
 
-<!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.4/holder.min.js"></script>
-<!--<script src="node_modules/fabric/dist/fabric.js"></script>-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/2.4.1/fabric.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-<script src="static/features.js"></script>
+	<!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.4/holder.min.js"></script>
+	<!--<script src="node_modules/fabric/dist/fabric.js"></script>-->
+	<!-- 컬러 피커 -->
+	<script src="https://unpkg.com/huebee@1/dist/huebee.pkgd.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/2.4.1/fabric.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+	<script src="static/features.js"></script>
 
 
 </body>
