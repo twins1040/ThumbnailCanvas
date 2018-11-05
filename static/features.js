@@ -35,10 +35,17 @@ function Paste() {
 	});
 }
 
-function activeObjectSet(options, key, val) {
+function activeObjectSet(options, callback) {
 	actobj = canvas.getActiveObject();
-	if (options.target && actobj) {
-		canvas.getActiveObject().set(key, val);
+	// options.target ex: <div>...</div>
+	if (actobj) {
+		if (actobj.type == 'activeSelection') {
+			actobj.forEachObject(function(obj){
+				callback(obj);
+			});
+		} else {
+			callback(actobj);
+		}
 		canvas.renderAll();
 	}
 }
@@ -50,7 +57,7 @@ var canvas = new fabric.Canvas('myCanvas');
 
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
-canvas.on('mouse:down', function(opt) {console.log(opt)});
+canvas.on('mouse:up', function(opt) {console.log(opt)});
 
 var ubuntuText = new fabric.IText("배그타임!", {
 	fontFamily: 'Noto Sans KR',
@@ -90,26 +97,22 @@ pcell.setAttribute("class", "palette-cell");
 $(pcell).clone().html("복사").on('mouseup', Copy).appendTo("#palette");
 $(pcell).clone().html("붙여넣기").on('mouseup', Paste).appendTo("#palette");
 $(pcell).clone().html("삭제").on('mouseup', function(options){
-	var actobj = canvas.getActiveObject();
-	canvas.remove(actobj);
+	activeObjectSet(options, function(obj) {canvas.remove(obj)});
 }).appendTo("#palette");
-$(pcell).clone().html("테두리굵게").on('mouseup', function(options){
-	var actobj = canvas.getActiveObject();
-	activeObjectSet(options, "strokeWidth", actobj.strokeWidth+4);
+$(pcell).clone().html("테두리굵게").on('mouseup', function(options) {
+	activeObjectSet(options, function(obj){obj.set("strokeWidth", obj.strokeWidth+4)});
 }).appendTo("#palette");
-$(pcell).clone().html("테두리얇게").on('mouseup', function(options){
-	var actobj = canvas.getActiveObject();
-	activeObjectSet(options, "strokeWidth", actobj.strokeWidth-4);
+$(pcell).clone().html("테두리얇게").on('mouseup', function(options) {
+	activeObjectSet(options, function(obj){obj.set("strokeWidth", obj.strokeWidth-4)});
 }).appendTo("#palette");
-$(pcell).clone().html("테두리없음").on('mouseup', function(options){
-	var actobj = canvas.getActiveObject();
-	activeObjectSet(options, "strokeWidth", 0);
+$(pcell).clone().html("테두리없음").on('mouseup', function(options) {
+	activeObjectSet(options, function(obj){obj.set("strokeWidth", 0)});
 }).appendTo("#palette");
 $(pcell).clone().html("나눔고딕").on('mouseup', function(options) {
-	activeObjectSet(options, "fontFamily", "Nanum Gothic");
+	activeObjectSet(options, function(obj){obj.set("fontFamily", "Nanum Gothic")});
 }).appendTo("#palette");
 $(pcell).clone().html("Noto Sans KR").on('mouseup', function(options) {
-	activeObjectSet(options, "fontFamily", "Noto Sans KR");
+	activeObjectSet(options, function(obj){obj.set("fontFamily", "Noto Sans KR")});
 }).appendTo("#palette");
 
 var colors = ["red", "orange", "yellow", "green", "blue", "purple", "black", "white", "cyan", "pink", "gray", "brown"];
@@ -124,7 +127,7 @@ for (i = 0; i < colors.length; i++) {
 	c = document.createElement("div");
 	c.setAttribute("class", "color-cell");
 	$(c).html(colors[i]).on('mouseup', {color: colors[i]}, function(options) {
-		activeObjectSet(options, "fill", options.data.color);
+		activeObjectSet(options, function(obj) {obj.set("fill", options.data.color)});
 	}).appendTo(textColor);
 }
 for (i = 0; i < gradients.length; i++) {
@@ -148,7 +151,7 @@ for (i = 0; i < colors.length; i++) {
 	c = document.createElement("div");
 	c.setAttribute("class", "color-cell");
 	$(c).html(colors[i]).on('mouseup', {color: colors[i]}, function(options) {
-		activeObjectSet(options, "stroke", options.data.color);
+		activeObjectSet(options, function(obj) {obj.set("stroke", options.data.color)});
 	}).appendTo(textColor);
 }
 $(textColor).appendTo("#palette");
