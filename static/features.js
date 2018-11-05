@@ -196,3 +196,21 @@ $('#upload').click(function(){
 if ($(".block-thumbnail").size()) {
 	$(".block-thumbnail").get(-1).onclick();
 }
+
+// Load the IFrame Player API code asynchronously.
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+function onYouTubeIframeAPIReady() {
+	console.log("abc");
+	player = new YT.Player('youtube-player', {
+		videoId: 'qV09ywqrSfY',
+	});
+}
+
+$("#youtube-url-button").click(function() {
+	player.loadVideoById($("#youtube-url").val(), 0, "large");
+});
