@@ -200,7 +200,7 @@ $('#upload').click(function(){
 
 // Set first templete in canvas
 if ($(".block-thumbnail").size()) {
-	$(".block-thumbnail").get(-1).onclick();
+	$(".block-thumbnail").get(0).onclick();
 }
 
 
