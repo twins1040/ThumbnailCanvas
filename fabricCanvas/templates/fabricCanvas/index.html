@@ -62,7 +62,7 @@
 					<h5>인기 템플릿</h5>
 					<hr>
 				</div>
-				{% for tmpl in templates %}
+				{% for tmpl in templates reversed %}
 				{% cycle '<div class="">' '' '' %}
 					<div>
 						<div class="block-thumbnail" onclick="canvas.loadFromJSON('{{tmpl.data}}')">
