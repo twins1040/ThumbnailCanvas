@@ -59,6 +59,26 @@ canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
 canvas.on('mouse:up', function(opt) {console.log(opt)});
 
+
+// Controller design setting
+fabric.Object.prototype.set({
+	transparentCorners: false,
+	cornerColor: 'white',
+	cornerStrokeColor: "#69F",
+	borderColor: "#69F",
+	cornerSize: 20,
+	borderScaleFactor: 4,	// controller border width
+	padding: 2,
+	cornerStyle: 'circle',
+});
+
+// Remove middle point of controller
+fabric.Object.prototype.setControlsVisibility({
+	mb: false, ml: false, mr: false, mt: false
+});
+
+
+// Example for initial canvas
 var ubuntuText = new fabric.IText("배그타임!", {
 	fontFamily: 'Noto Sans KR',
 	fontSize: 100,
@@ -74,7 +94,6 @@ var ubuntuText = new fabric.IText("배그타임!", {
 });
 
 
-// Example for initial canvas
 var copyText = new fabric.IText("");
 fabric.util.object.extend(copyText, ubuntuText);
 copyText.set('top', 200);
