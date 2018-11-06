@@ -35,9 +35,9 @@ function Paste() {
 	});
 }
 
-function activeObjectSet(options, callback) {
+function activeObjectSet(callback) {
 	actobj = canvas.getActiveObject();
-	// options.target ex: <div>...</div>
+
 	if (actobj) {
 		if (actobj.type == 'activeSelection') {
 			actobj.forEachObject(function(obj){
@@ -73,6 +73,8 @@ var ubuntuText = new fabric.IText("배그타임!", {
 
 });
 
+
+// Example for initial canvas
 var copyText = new fabric.IText("");
 fabric.util.object.extend(copyText, ubuntuText);
 copyText.set('top', 200);
@@ -90,71 +92,49 @@ canvas.add(copyText);
 canvas.add(copyText2);
 
 
-//add html component
-var pcell = document.createElement("div");
-pcell.setAttribute("class", "palette-cell");
+// Button event except color picker
+$("#btn-copy").on('mouseup', Copy);
+$("#btn-paste").on('mouseup', Paste);
+$("#btn-delete").on('mouseup', function(){
+	activeObjectSet(function(obj) {canvas.remove(obj)});
+});
+$("#stroke-thicker").on('mouseup', function() {
+	activeObjectSet(function(obj){obj.set("strokeWidth", obj.strokeWidth+4)});
+});
+$("#stroke-thinner").on('mouseup', function() {
+	activeObjectSet(function(obj){
+		step = 4;
+		if (obj.strokeWidth >= 4) {
+			obj.set("strokeWidth", obj.strokeWidth-4);
+		}
+	});
+});
+$("#stroke-delete").on('mouseup', function() {
+	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
+});
 
-$(pcell).clone().html("복사").on('mouseup', Copy).appendTo("#palette");
-$(pcell).clone().html("붙여넣기").on('mouseup', Paste).appendTo("#palette");
-$(pcell).clone().html("삭제").on('mouseup', function(options){
-	activeObjectSet(options, function(obj) {canvas.remove(obj)});
-}).appendTo("#palette");
-$(pcell).clone().html("테두리굵게").on('mouseup', function(options) {
-	activeObjectSet(options, function(obj){obj.set("strokeWidth", obj.strokeWidth+4)});
-}).appendTo("#palette");
-$(pcell).clone().html("테두리얇게").on('mouseup', function(options) {
-	activeObjectSet(options, function(obj){obj.set("strokeWidth", obj.strokeWidth-4)});
-}).appendTo("#palette");
-$(pcell).clone().html("테두리없음").on('mouseup', function(options) {
-	activeObjectSet(options, function(obj){obj.set("strokeWidth", 0)});
-}).appendTo("#palette");
-$(pcell).clone().html("나눔고딕").on('mouseup', function(options) {
-	activeObjectSet(options, function(obj){obj.set("fontFamily", "Nanum Gothic")});
-}).appendTo("#palette");
-$(pcell).clone().html("Noto Sans KR").on('mouseup', function(options) {
-	activeObjectSet(options, function(obj){obj.set("fontFamily", "Noto Sans KR")});
-}).appendTo("#palette");
-
-var colors = ["red", "orange", "yellow", "green", "blue", "purple", "black", "white", "cyan", "pink", "gray", "brown"];
 var gradients = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 		 {name: "blue darkblue", h:0, v:1, stops:{0:"blue", 1:"darkblue"}},
 		 {name: "red darkred", h:0, v:1, stops:{0:"red", 1:"darkred"}}];
 
-// text color bar
-var textColor = $(pcell).clone();
-$(textColor).append('<div class="palette-cell-title">글자색:<div>');
-for (i = 0; i < colors.length; i++) {
-	c = document.createElement("div");
-	c.setAttribute("class", "color-cell");
-	$(c).html(colors[i]).on('mouseup', {color: colors[i]}, function(options) {
-		activeObjectSet(options, function(obj) {obj.set("fill", options.data.color)});
-	}).appendTo(textColor);
-}
-for (i = 0; i < gradients.length; i++) {
-	g = document.createElement("div");
-	g.setAttribute("class", "color-cell");
-	$(g).html(gradients[i].name).on('mouseup', {gr: gradients[i]}, function(options) {
-		actobj = canvas.getActiveObject();
-		gr = options.data.gr;
-		if (actobj) {
-			actobj.setGradient('fill', {x1:0, y1:0, x2:actobj.width*gr.h, y2:actobj.height*gr.v, colorStops: gr.stops});
-			canvas.renderAll();
-		}
-	}).appendTo(textColor);
-}
-$(textColor).appendTo("#palette");
 
-//stroke color bar
-var textColor = $(pcell).clone();
-$(textColor).append('<div class="palette-cell-title">테두리색:<div>');
-for (i = 0; i < colors.length; i++) {
-	c = document.createElement("div");
-	c.setAttribute("class", "color-cell");
-	$(c).html(colors[i]).on('mouseup', {color: colors[i]}, function(options) {
-		activeObjectSet(options, function(obj) {obj.set("stroke", options.data.color)});
-	}).appendTo(textColor);
-}
-$(textColor).appendTo("#palette");
+// Color picker event
+var fillElem = $("#fill-hueb")[0];
+var strokeElem = $("#stroke-hueb")[0];
+console.log(fillElem);
+var fillHue = new Huebee(fillElem, {});
+var strokeHue = new Huebee(strokeElem, {});
+
+fillHue.on('change', function(color) {
+	console.log('fill '+color);
+	activeObjectSet(function(obj) {obj.set("fill", color)});
+});
+
+strokeHue.on('change', function(color) {
+	console.log('stroke '+color);
+	activeObjectSet(function(obj) {obj.set("stroke", color)});
+});
+
 
 // Event for download btn
 var link = document.getElementById("download-btn-a");
@@ -184,6 +164,7 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 	reader.readAsDataURL(e.target.files[0]);
 }
 
+
 // Set click event for template upload button
 $('#upload').click(function(){
 	$('#input-data').attr('value', JSON.stringify(canvas));
@@ -192,10 +173,12 @@ $('#upload').click(function(){
 	alert("업로드되었습니다");
 });
 
+
 // Set first templete in canvas
 if ($(".block-thumbnail").size()) {
 	$(".block-thumbnail").get(-1).onclick();
 }
+
 
 // Load the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
@@ -205,12 +188,12 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var player;
 function onYouTubeIframeAPIReady() {
-	console.log("abc");
 	player = new YT.Player('youtube-player', {
 		videoId: 'qV09ywqrSfY',
 	});
 }
 
+// Load new video
 $("#youtube-url-button").click(function() {
 	player.loadVideoById($("#youtube-url").val(), 0, "large");
 });
