@@ -152,12 +152,17 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 		imgObj.src = event.target.result;
 		imgObj.onload = function () {
 			var image = new fabric.Image(imgObj);
+			var wRatio = canvas.width / image.width;
+			var hRatio = canvas.height / image.height;
+			var scale = (wRatio > hRatio) ? hRatio : wRatio;
+
 			canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
-				scaleX: canvas.width / image.width,
-				scaleY: canvas.height / image.height,
-				// Needed to position backgroundImage at 0/0
-				originX: 'left',
-				originY: 'top'
+				scaleX: scale,
+				scaleY: scale,
+				top: canvas.height / 2,
+				left: canvas.width / 2,
+				originX: 'center',
+				originY: 'center'
 			});
 		}
 	}
