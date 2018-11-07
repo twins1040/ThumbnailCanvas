@@ -93,7 +93,6 @@ var ubuntuText = new fabric.IText("배그타임!", {
 
 });
 
-
 var copyText = new fabric.IText("");
 fabric.util.object.extend(copyText, ubuntuText);
 copyText.set('top', 200);
@@ -154,6 +153,21 @@ strokeHue.on('change', function(color) {
 	activeObjectSet(function(obj) {obj.set("stroke", color)});
 });
 
+// Font selector
+var fonts = ["Noto Sans KR", "Nanum Gothic"];
+fonts.forEach(function(font) {
+	e = document.createElement('a');
+	$(e).addClass("dropdown-item");
+	$(e).addClass("dropdown-item-font");
+	$(e).html(font);
+	$(e).on('mouseup', function() {
+		activeObjectSet(function(obj) {
+			obj.set("fontFamily", font);
+		});
+	});
+	$("#font-dropdown-menu").append(e);
+});
+
 
 // Event for download btn
 var link = document.getElementById("download-btn-a");
@@ -199,7 +213,7 @@ $('#upload').click(function(){
 
 
 // Set first templete in canvas
-if ($(".block-thumbnail").size()) {
+if ($(".block-thumbnail").length) {
 	$(".block-thumbnail").get(0).onclick();
 }
 
