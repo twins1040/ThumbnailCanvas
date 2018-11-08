@@ -14,6 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import logout_then_login
+from django.conf import settings
 from django.urls import path, include
 from django.http import HttpResponse
 import subprocess
@@ -26,4 +28,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('payload/', webHook),
     path('', include('fabricCanvas.urls')),
+    path('', include('social_django.urls', namespace='social')),
+    path('logout/', logout_then_login, {'login_url': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]
