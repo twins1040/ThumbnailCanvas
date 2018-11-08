@@ -235,3 +235,13 @@ function onYouTubeIframeAPIReady() {
 $("#youtube-url-button").click(function() {
 	player.loadVideoById($("#youtube-url").val(), 0, "large");
 });
+
+
+// Capture video
+$("#capture").on("mouseup", function() {
+		console.log("capture1");
+	html2canvas(document.getElementById('youtube-player')).then(function(canvas) {
+		console.log("youtube-player");
+		document.body.appendChild(canvas);
+	});
+});
