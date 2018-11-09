@@ -4,3 +4,4 @@ db.sqlite3
 __pycache__
 uwsgi_params
 oauth.json
+staticfiles
