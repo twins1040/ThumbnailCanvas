@@ -60,12 +60,28 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-3 bd-sidebar">
+				{% if user.is_authenticated %}
+					<div class="page-header">
+						<h5>내 템플릿</h5>
+						<hr>
+					</div>
+					{% for tmpl in user_templates reversed %}
+						{% cycle '<div class="">' '' '' %}
+						<div>
+							<div class="block-thumbnail" onclick="canvas.loadFromJSON('{{tmpl.data}}')">
+								<img class="" src="{{tmpl.thumbnail}}" >
+							</div>
+						</div>
+						{% cycle '' '' '</div>' as ptext %}
+						{% if ptext == '' and forloop.last %}  </div> {% endif %}
+					{% endfor %}
+				{% endif %}
 				<div class="page-header">
 					<h5>인기 템플릿</h5>
 					<hr>
 				</div>
 				{% for tmpl in templates reversed %}
-				{% cycle '<div class="">' '' '' %}
+					{% cycle '<div class="">' '' '' %}
 					<div>
 						<div class="block-thumbnail" onclick="canvas.loadFromJSON('{{tmpl.data}}')">
 							<img class="" src="{{tmpl.thumbnail}}" >
@@ -73,7 +89,7 @@
 					</div>
 					{% cycle '' '' '</div>' as ptext %}
 					{% if ptext == '' and forloop.last %}  </div> {% endif %}
-					{% endfor %}
+				{% endfor %}
 			</div>
 			<div class="col-sm-9 bd-content">
 

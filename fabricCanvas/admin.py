@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 @admin.register(Template)
 class TemplateAdmin(admin.ModelAdmin):
     list_display = ("thumbnail_image",)
-    fields = ["thumbnail_image"]
+    fields = ["thumbnail_image", "owner"]
     readonly_fields = ["thumbnail_image",]
 
     def thumbnail_image(self, obj):
