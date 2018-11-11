@@ -154,7 +154,7 @@ strokeHue.on('change', function(color) {
 });
 
 // Font selector
-var fonts = ["Noto Sans KR", "Nanum Gothic"];
+var fonts = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor Story"];
 fonts.forEach(function(font) {
 	e = document.createElement('a');
 	$(e).addClass("dropdown-item");
@@ -208,7 +208,7 @@ $('#upload').click(function(){
 	$('#input-data').attr('value', JSON.stringify(canvas));
 	$('#input-thumbnail').attr('value', canvas.toDataURL());
 	$('#upload-tmpl-form').submit();
-	alert("업로드되었습니다");
+	alert("내 템플릿을 저장했습니다");
 });
 
 
@@ -234,4 +234,16 @@ function onYouTubeIframeAPIReady() {
 // Load new video
 $("#youtube-url-button").click(function() {
 	player.loadVideoById($("#youtube-url").val(), 0, "large");
+});
+
+
+//scroll evented
+$(window).scroll(function(){
+   var s = $(window).scrollTop();
+   var b = $(".block-canvas");
+   if ( s > 100 ) {
+	   b.addClass("sticky-header");
+   } else {
+	   b.removeClass("sticky-header");
+   }
 });
