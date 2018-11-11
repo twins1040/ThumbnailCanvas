@@ -5,8 +5,11 @@ from django.urls import reverse
 
 def index(request):
     tmpls = Template.objects.all()
-    user = User.objects.get(pk=request.user.id)
-    user_tmpls = user.template_set.all()
+    user_tmpls = {}
+    if request.user.is_authenticated:
+        user = User.objects.get(pk=request.user.id)
+        user_tmpls = user.template_set.all()
+
 
     return render(request, 'fabricCanvas/index.html',
             {'templates':tmpls,
