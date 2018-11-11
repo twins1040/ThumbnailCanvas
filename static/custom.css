@@ -1,15 +1,7 @@
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
-  src: local('Material Icons'),
-    local('MaterialIcons-Regular'),
-    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
-    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
-    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
-}
 
+.hide {
+	display: none;
+}
 #myCanvas {
 	border:1px solid #d3d3d3;
 }
@@ -78,6 +70,9 @@
 	top: 2px;
 	margin-top: -0.5rem;
 }
+.canvas-tool .btn {
+	height: 44px;
+}
 .bd-title {
 	margin: 0 !important;
 }
@@ -119,6 +114,8 @@
 .gray { background-color: gray; }
 .brown { background-color: brown; }
 
+.color-white { color: white !important;}
+
 .b-red { border: 2px solid red; }
 .b-orange { border: 2px solid orange; }
 .b-yellow { border: 2px solid yellow; }
@@ -134,4 +131,11 @@
 
 .canvas-tool > .btn-group {
 	margin-bottom: 0.5rem;
+}
+.btn-with-icon {
+	display: flex;
+	align-items: center;
+}
+.btn-with-icon i {
+	margin-right: 0.5rem;
 }
