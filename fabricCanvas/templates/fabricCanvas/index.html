@@ -116,10 +116,10 @@
 
 					<!-- 콤포넌트 제어 -->
 					<div class="btn-group" role="group" aria-label="Basic example">
-						<button class="btn btn-secondary">
+						<button class="btn btn-secondary" id="btn-undo">
 							<i >undo</i>
 						</button>
-						<button class="btn btn-secondary">
+						<button class="btn btn-secondary" id="btn-redo">
 							<i >redo</i>
 						</button>
 					</div>
@@ -167,7 +167,7 @@
 					</div>
 					{% for tmpl in user_templates reversed %}
 						<div>
-							<div class="block-thumbnail" onclick="canvas.loadFromJSON('{{tmpl.data}}')">
+							<div class="block-thumbnail" onclick="click_template('{{tmpl.data}}')">
 								<img class="" src="{{tmpl.thumbnail}}" >
 							</div>
 						</div>
@@ -178,7 +178,7 @@
 					<h5>인기 템플릿</h5>
 				</div>
 				{% for tmpl in templates reversed %}
-					<div class="block-thumbnail" onclick="canvas.loadFromJSON('{{tmpl.data}}')">
+					<div class="block-thumbnail" onclick="click_template('{{tmpl.data}}')">
 						<img class="" src="{{tmpl.thumbnail}}" >
 					</div>
 				{% endfor %}
