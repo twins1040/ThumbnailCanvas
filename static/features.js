@@ -35,6 +35,33 @@ function Paste() {
 	});
 }
 
+// Work history function
+var work_history = [];
+var history_len = 20;
+var history_head = 0;
+
+function add_history() {
+	snap = JSON.stringify(canvas);
+	// Make head 0
+	while (history_head !=0) {
+		console.log("while");
+		work_history.shift();
+		history_head -= 1;
+		console.log(history_head);
+	}
+	work_history.unshift(snap);
+	if (work_history.length > history_len) {
+		work_history.pop();
+	}
+	console.log("modified");
+}
+
+function click_template(json) {
+	console.log("click_template");
+	canvas.loadFromJSON(json, add_history);
+}
+
+
 function activeObjectSet(callback) {
 	actobj = canvas.getActiveObject();
 
@@ -47,6 +74,8 @@ function activeObjectSet(callback) {
 			callback(actobj);
 		}
 		canvas.renderAll();
+		// Save work history
+		add_history();
 	}
 }
 
@@ -57,6 +86,9 @@ var canvas = new fabric.Canvas('myCanvas');
 
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
+// Save work history
+canvas.on("object:modified", add_history);
+
 canvas.on('mouse:up', function(opt) {console.log(opt)});
 
 
@@ -139,7 +171,6 @@ var gradients = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 // Color picker event
 var fillElem = $("#fill-hueb")[0];
 var strokeElem = $("#stroke-hueb")[0];
-console.log(fillElem);
 var fillHue = new Huebee(fillElem, {});
 var strokeHue = new Huebee(strokeElem, {});
 
@@ -218,22 +249,26 @@ if ($(".block-thumbnail").length) {
 }
 
 
-// Load the IFrame Player API code asynchronously.
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+// Undo
 
-var player;
-function onYouTubeIframeAPIReady() {
-	player = new YT.Player('youtube-player', {
-		videoId: 'qV09ywqrSfY',
-	});
-}
 
-// Load new video
-$("#youtube-url-button").click(function() {
-	player.loadVideoById($("#youtube-url").val(), 0, "large");
+$("#btn-undo").click(function() {
+	console.log('undo');
+	if (history_head < work_history.length - 1) {
+		history_head += 1;
+	}
+	canvas.clear()
+	canvas.loadFromJSON(work_history[history_head]);
+});
+
+// Redo
+$("#btn-redo").click(function() {
+	console.log('redo');
+	if (history_head > 0) {
+		history_head -= 1;
+	}
+	canvas.clear()
+	canvas.loadFromJSON(work_history[history_head]);
 });
 
 
