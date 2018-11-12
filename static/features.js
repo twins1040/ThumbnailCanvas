@@ -114,7 +114,7 @@ var canvas = new fabric.Canvas('myCanvas');
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
 canvas.on("object:modified", add_history);
-canvas.on('mouse:up', function(opt) {console.log(opt)});
+canvas.on("mouse:up", function(opt) {console.log(opt)});
 
 
 // Controller design setting
@@ -290,7 +290,20 @@ $(window).scroll(function(){
 
 // Key Binding
 $(window).keydown(function(e){
+	var actobj = canvas.getActiveObject();
+
 	console.log('key: '+e.which);
+
+	// Prevent conflict with IText key shortcut
+	// If type:group, it is not being edited
+	if (actobj && actobj.type == 'i-text') {
+		if (actobj.isEditing) {
+			console.log("now editing");
+			return;
+		}
+	}
+
+	// Bind with key code
 	if(e.which === 90 && e.ctrlKey) {
 		(e.shiftKey) ? redo_work() : undo_work();
 	} else if (e.which === 46) {
