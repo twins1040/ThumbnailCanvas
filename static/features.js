@@ -293,7 +293,11 @@ $(window).keydown(function(e){
 	console.log('key: '+e.which);
 	if(e.which === 90 && e.ctrlKey) {
 		(e.shiftKey) ? redo_work() : undo_work();
-	} else if(e.which === 46) {
+	} else if (e.which === 46) {
 		activeObjectSet(function(obj) {canvas.remove(obj)});
+	} else if (e.which === 67 && e.ctrlKey) {
+		Copy();
+	} else if (e.which === 86 && e.ctrlKey) {
+		Paste();
 	}
 });
