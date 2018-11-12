@@ -35,35 +35,61 @@ function Paste() {
 	});
 }
 
-// Work history function
-var work_history = [];
-var history_len = 20;
-var history_head = 0;
+// Work history
+var add_history;
+var redo_work;
+var undo_work;
 
-function add_history() {
-	snap = JSON.stringify(canvas);
-	// Make head 0
-	while (history_head !=0) {
-		console.log("while");
-		work_history.shift();
-		history_head -= 1;
-		console.log(history_head);
-	}
-	work_history.unshift(snap);
-	if (work_history.length > history_len) {
-		work_history.pop();
-	}
-	console.log("modified");
-}
+(function() {
+	var work_history = [];
+	var history_max_len = 20;
+	var history_head = 0;
 
+	add_history = function() {
+		snap = JSON.stringify(canvas);
+		// Make head 0
+		while (history_head !=0) {
+			console.log("while");
+			work_history.shift();
+			history_head -= 1;
+			console.log(history_head);
+		}
+		work_history.unshift(snap);
+		if (work_history.length > history_max_len) {
+			work_history.pop();
+		}
+		console.log("modified");
+	}
+
+	// Undo
+	undo_work = function() {
+		console.log('undo');
+		if (history_head < work_history.length - 1) {
+			history_head += 1;
+		}
+		canvas.clear()
+		canvas.loadFromJSON(work_history[history_head]);
+	}
+
+	// Redo
+	redo_work = function() {
+		console.log('redo');
+		if (history_head > 0) {
+			history_head -= 1;
+		}
+		canvas.clear()
+		canvas.loadFromJSON(work_history[history_head]);
+	}
+})();
+
+// Dom event
 function click_template(json) {
 	console.log("click_template");
 	canvas.loadFromJSON(json, add_history);
 }
 
-
 function activeObjectSet(callback) {
-	actobj = canvas.getActiveObject();
+	var actobj = canvas.getActiveObject();
 
 	if (actobj) {
 		if (actobj.type == 'activeSelection') {
@@ -74,6 +100,7 @@ function activeObjectSet(callback) {
 			callback(actobj);
 		}
 		canvas.renderAll();
+
 		// Save work history
 		add_history();
 	}
@@ -86,9 +113,7 @@ var canvas = new fabric.Canvas('myCanvas');
 
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
-// Save work history
 canvas.on("object:modified", add_history);
-
 canvas.on('mouse:up', function(opt) {console.log(opt)});
 
 
@@ -143,15 +168,17 @@ canvas.add(copyText2);
 
 
 // Button event except color picker
-$("#btn-copy").on('mouseup', Copy);
-$("#btn-paste").on('mouseup', Paste);
-$("#btn-delete").on('mouseup', function(){
+$("#btn-undo").click(undo_work);
+$("#btn-redo").click(redo_work);
+$("#btn-copy").click(Copy);
+$("#btn-paste").click(Paste);
+$("#btn-delete").click(function(){
 	activeObjectSet(function(obj) {canvas.remove(obj)});
 });
-$("#stroke-thicker").on('mouseup', function() {
+$("#stroke-thicker").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", obj.strokeWidth+4)});
 });
-$("#stroke-thinner").on('mouseup', function() {
+$("#stroke-thinner").click(function() {
 	activeObjectSet(function(obj){
 		step = 4;
 		if (obj.strokeWidth >= 4) {
@@ -159,7 +186,7 @@ $("#stroke-thinner").on('mouseup', function() {
 		}
 	});
 });
-$("#stroke-delete").on('mouseup', function() {
+$("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
 });
 
@@ -191,7 +218,7 @@ fonts.forEach(function(font) {
 	$(e).addClass("dropdown-item");
 	$(e).addClass("dropdown-item-font");
 	$(e).html(font);
-	$(e).on('mouseup', function() {
+	$(e).click(function() {
 		activeObjectSet(function(obj) {
 			obj.set("fontFamily", font);
 		});
@@ -249,30 +276,7 @@ if ($(".block-thumbnail").length) {
 }
 
 
-// Undo
-
-
-$("#btn-undo").click(function() {
-	console.log('undo');
-	if (history_head < work_history.length - 1) {
-		history_head += 1;
-	}
-	canvas.clear()
-	canvas.loadFromJSON(work_history[history_head]);
-});
-
-// Redo
-$("#btn-redo").click(function() {
-	console.log('redo');
-	if (history_head > 0) {
-		history_head -= 1;
-	}
-	canvas.clear()
-	canvas.loadFromJSON(work_history[history_head]);
-});
-
-
-//scroll evented
+// Scroll evented
 $(window).scroll(function(){
    var s = $(window).scrollTop();
    var b = $(".block-canvas");
@@ -281,4 +285,15 @@ $(window).scroll(function(){
    } else {
 	   b.removeClass("sticky-header");
    }
+});
+
+
+// Key Binding
+$(window).keydown(function(e){
+	console.log('key: '+e.which);
+	if(e.which === 90 && e.ctrlKey) {
+		(e.shiftKey) ? redo_work() : undo_work();
+	} else if(e.which === 46) {
+		activeObjectSet(function(obj) {canvas.remove(obj)});
+	}
 });
