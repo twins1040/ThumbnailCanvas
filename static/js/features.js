@@ -277,6 +277,7 @@ if ($(".block-thumbnail").length) {
 
 
 // Scroll evented
+/*
 $(window).scroll(function(){
    var s = $(window).scrollTop();
    var b = $(".block-canvas");
@@ -286,6 +287,7 @@ $(window).scroll(function(){
 	   b.removeClass("sticky-header");
    }
 });
+*/
 
 
 // Key Binding
