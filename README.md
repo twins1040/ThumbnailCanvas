@@ -1,7 +1,7 @@
 # ThumbnailCanvas
 youtube thumbnail maker by canvas, fabric.js
 
-http://13.209.162.217:8000
+http://youtube-thumbnail-maker.ga
 
 # Test Guide (macOS)
 install
