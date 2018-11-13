@@ -49,9 +49,9 @@
 			<!-- 로그인 -->
 			<div class="mr-1">
 				{% if user.is_authenticated %}
-					<a class="btn btn-link mb-0" href="{% url 'logout' %}">로그아웃</a>
+				<a class="btn btn-link mb-0" id="switch-user" data-user="{{ user.id }}" href="{% url 'logout' %}">로그아웃</a>
 				{% else %}
-					<a class="btn btn-link mb-0" href="{% url 'social:begin' 'google-oauth2' %}">로그인</a>
+					<a class="btn btn-link mb-0" id="switch-user" data-user="" href="{% url 'social:begin' 'google-oauth2' %}">로그인</a>
 				{% endif %}
 				<input type="file" id="imgLoader" class="hide-input"/>
 			</div>
@@ -96,14 +96,13 @@
 
 				<div class="canvas-tool">
 
-					<div class="btn-group" role="group" aria-label="Basic example">
+					<div class="btn-group" id="upload" role="group" aria-label="Basic example">
 						<!-- save -->
 						<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
 							{% csrf_token %}
 							<input type="hidden" id="input-data" name="data">
 							<input type="hidden" id="input-thumbnail" name="thumbnail">
 							<label for="upload" class="btn btn-secondary btn-with-icon mb-0" >
-								<input type="submit" id="upload" class="hide" />
 								<i >save</i>
 								<span>저장</span>
 							</label>
@@ -163,7 +162,7 @@
 					</div>
 					{% for tmpl in user_templates reversed %}
 						<div>
-							<div class="block-thumbnail" onclick="click_template('{{tmpl.data}}')">
+							<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
 								<img class="" src="{{tmpl.thumbnail}}" >
 							</div>
 						</div>
@@ -174,7 +173,7 @@
 					<h5>인기 템플릿</h5>
 				</div>
 				{% for tmpl in templates reversed %}
-					<div class="block-thumbnail" onclick="click_template('{{tmpl.data}}')">
+					<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
 						<img class="" src="{{tmpl.thumbnail}}" >
 					</div>
 				{% endfor %}

@@ -6,4 +6,5 @@ app_name = 'fabric_canvas'
 urlpatterns = [
     path('', views.index, name='index'),
     path('templates/', views.insert_tmpl, name='insert_tmpl'),
+    path('templates/<int:template_id>/', views.template, name='template'),
 ]

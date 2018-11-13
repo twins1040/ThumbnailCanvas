@@ -83,10 +83,18 @@ var undo_work;
 })();
 
 // Dom event
-function click_template(json) {
-	console.log("click_template");
-	canvas.loadFromJSON(json, add_history);
-}
+$(".block-thumbnail").each(function(i, item) {
+	$(item).click(function() {
+		id = item.id.split('-')[1];
+		console.log(id);
+		$.ajax({
+			url:'templates/'+id+'/',
+			success:function(json) {
+				canvas.loadFromJSON(json, add_history);
+			}
+		});
+	});
+});
 
 function activeObjectSet(callback) {
 	var actobj = canvas.getActiveObject();
@@ -165,6 +173,12 @@ copyText2.set('fill', 'red');
 canvas.add(ubuntuText);
 canvas.add(copyText);
 canvas.add(copyText2);
+
+
+// Set first templete in canvas
+if ($(".block-thumbnail").length) {
+	$(".block-thumbnail").get(0).click();
+}
 
 
 // Button event except color picker
@@ -263,17 +277,21 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 
 // Set click event for template upload button
 $('#upload').click(function(){
-	$('#input-data').attr('value', JSON.stringify(canvas));
-	$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-	$('#upload-tmpl-form').submit();
-	alert("내 템플릿을 저장했습니다");
+	if ($("#switch-user").attr("data-user") === "") {
+		alert("저장은 로그인 후 가능합니다.\n우선 다운로드하세요.");
+	} else {
+		var jdata = canvas.toJSON();
+
+		// Delete bg for data reduce
+		jdata["backgroundImage"] = undefined;
+
+		$('#input-data').attr('value', JSON.stringify(jdata));
+		$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
+		$('#upload-tmpl-form').submit(function(){
+			alert("내 템플릿을 저장했습니다");
+		}).submit();
+	}
 });
-
-
-// Set first templete in canvas
-if ($(".block-thumbnail").length) {
-	$(".block-thumbnail").get(0).onclick();
-}
 
 
 // Scroll evented
