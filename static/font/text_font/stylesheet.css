@@ -1,0 +1,52 @@
+@font-face {
+    font-family: 'Poor Story';
+    src: url('PoorStory-Regular.eot');
+    src: local('Poor Story Regular'), local('PoorStory-Regular'),
+        url('PoorStory-Regular.eot?#iefix') format('embedded-opentype'),
+        url('PoorStory-Regular.woff2') format('woff2'),
+        url('PoorStory-Regular.woff') format('woff'),
+        url('PoorStory-Regular.ttf') format('truetype'),
+        url('PoorStory-Regular.svg#PoorStory-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nanum Gothic';
+    src: url('NanumGothic.eot');
+    src: local('NanumGothic'),
+        url('NanumGothic.eot?#iefix') format('embedded-opentype'),
+        url('NanumGothic.woff2') format('woff2'),
+        url('NanumGothic.woff') format('woff'),
+        url('NanumGothic.ttf') format('truetype'),
+        url('NanumGothic.svg#NanumGothic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('NanumMyeongjoBold.eot');
+    src: local('NanumMyeongjoBold'),
+        url('NanumMyeongjoBold.eot?#iefix') format('embedded-opentype'),
+        url('NanumMyeongjoBold.woff2') format('woff2'),
+        url('NanumMyeongjoBold.woff') format('woff'),
+        url('NanumMyeongjoBold.ttf') format('truetype'),
+        url('NanumMyeongjoBold.svg#NanumMyeongjoBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Noto Sans KR';
+    src: url('NotoSansKR-Bold-Alphabetic.eot');
+    src: local(''), local('NotoSansKR-Bold-Alphabetic'),
+        url('NotoSansKR-Bold-Alphabetic.eot?#iefix') format('embedded-opentype'),
+        url('NotoSansKR-Bold-Alphabetic.woff2') format('woff2'),
+        url('NotoSansKR-Bold-Alphabetic.woff') format('woff'),
+        url('NotoSansKR-Bold-Alphabetic.ttf') format('truetype'),
+        url('NotoSansKR-Bold-Alphabetic.svg#NotoSansKR-Bold-Alphabetic') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
