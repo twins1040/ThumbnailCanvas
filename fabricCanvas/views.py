@@ -4,6 +4,17 @@ from .models import Template
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+from django.core.files.base import ContentFile
+import base64
+
+def base64_to_image(data, name):
+    s = data.split(';base64,')
+    if len(s) < 2:
+        raise AttributeError("no base64")
+    format, imgstr = s
+    ext = format.split('/')[-1]
+    return ContentFile(base64.b64decode(imgstr), name=name+'.'+ext)
+
 def index(request):
     tmpls = Template.objects.all()
     user_tmpls = {}
@@ -20,15 +31,34 @@ def insert_tmpl(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('social:begin', args=['google-oauth2']))
     else:
-        tnail = request.POST['thumbnail']
+        _tnail = request.POST['thumbnail']
         data = request.POST['data']
+
+        try:
+            tnail = base64_to_image(_tnail, "thumbnail")
+        except AttributeError:
+            pass
+
         record = Template(thumbnail=tnail, data=data, owner=request.user)
         record.save()
 
         return HttpResponseRedirect(reverse('fabric_canvas:index'))
 
-def template(request, template_id):
+def template_data(request, template_id):
     tmpl = get_object_or_404(Template, pk=template_id)
 
     return HttpResponse(tmpl.data)
 
+def template_thumbnail(request, template_id):
+    tmpl = get_object_or_404(Template, pk=template_id)
+    name = tmpl.thumbnail.name
+
+    try:
+        bimage = base64_to_image(name, "thumbnail")
+        tmpl.thumbnail = bimage
+        tmpl.save()
+        print("base image is decoded!!")
+    except AttributeError:
+        pass
+
+    return HttpResponse(tmpl.thumbnail.url)

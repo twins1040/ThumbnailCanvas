@@ -80,36 +80,6 @@ var undo_work;
 	}
 })();
 
-// DOM event
-$(".block-thumbnail").each(function(i, item) {
-	$(item).click(function() {
-		id = item.id.split('-')[1];
-		console.log(id);
-		$.ajax({
-			url:'templates/'+id+'/',
-			success:function(json) {
-				var pjson = JSON.parse(json);
-				var items = pjson["objects"];
-
-				canvas.forEachObject(function(t) {
-					canvas.remove(t);
-				});
-
-				fabric.util.enlivenObjects(items, function(objects) {
-					canvas.renderOnAddRemove = false;
-					objects.forEach(function(o) {
-						canvas.add(o);
-					});
-					canvas.renderOnAddRemove = true;
-					canvas.renderAll();
-				});
-
-				add_history();
-			}
-		});
-	});
-});
-
 function activeObjectSet(callback) {
 	var actobj = canvas.getActiveObject();
 
@@ -187,12 +157,6 @@ copyText2.set('fill', 'red');
 canvas.add(ubuntuText);
 canvas.add(copyText);
 canvas.add(copyText2);
-
-
-// Set first templete in canvas
-if ($(".block-thumbnail").length) {
-	$(".block-thumbnail").get(0).click();
-}
 
 
 // Button event except color picker
@@ -348,5 +312,52 @@ $(window).keydown(function(e){
 		Copy();
 	} else if (e.which === 86 && e.ctrlKey) {
 		Paste();
+	}
+});
+
+// Thumbnail image loading and hook event
+$(".block-thumbnail").each(function(i, item) {
+	// Template id
+	let id = item.id.split('-')[1];
+	console.log(id);
+
+	// Load Image
+	let img = $(item).find('img')[0];
+	$.ajax({
+		url:'templates/'+id+'/thumbnail/',
+		success:function(src) {
+			$(img).attr("src", src);
+		}
+	});
+
+	// Hook event
+	$(item).click(function() {
+		$.ajax({
+			url:'templates/'+id+'/data/',
+			success:function(json) {
+				var pjson = JSON.parse(json);
+				var items = pjson["objects"];
+
+				canvas.forEachObject(function(t) {
+					canvas.remove(t);
+				});
+
+				fabric.util.enlivenObjects(items, function(objects) {
+					canvas.renderOnAddRemove = false;
+					objects.forEach(function(o) {
+						canvas.add(o);
+					});
+					canvas.renderOnAddRemove = true;
+					canvas.renderAll();
+				});
+
+				add_history();
+			}
+		});
+	});
+
+	// Set first templete in canvas
+	if (i === 0) {
+		$(item).click();
 	}
 });

@@ -19,6 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 from django.http import HttpResponse
 import subprocess
+from django.conf.urls.static import static
 
 def webHook(request):
     subprocess.run('/home/ubuntu/ThumbnailCanvas/webHook.sh', shell=True)
@@ -30,4 +31,4 @@ urlpatterns = [
     path('', include('fabricCanvas.urls')),
     path('', include('social_django.urls', namespace='social')),
     path('logout/', logout_then_login, {'login_url': settings.LOGOUT_REDIRECT_URL}, name='logout'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
