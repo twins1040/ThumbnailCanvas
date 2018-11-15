@@ -128,35 +128,23 @@ fabric.Object.prototype.setControlsVisibility({
 
 
 // Example for initial canvas
-var ubuntuText = new fabric.IText("배그타임!", {
+var ubuntuText = new fabric.IText("템플릿을 골라보세요!", {
 	fontFamily: 'Noto Sans KR',
 	fontSize: 100,
 	fontWeight: 900,
-	fill: '#f442df',
+	fill: '#F00',
 	stroke: 'black',
 	strokeWidth:20,
 	paintFirst: 'stroke',
 	charSpacing: -100,
-	angle:  -5,
-	top: 100
-
+	angle:  0,
+	top: canvas.height/2,
+	left: canvas.width/2,
+	originX: 'center',
+	originY: 'center',
 });
 
-var copyText = new fabric.IText("");
-fabric.util.object.extend(copyText, ubuntuText);
-copyText.set('top', 200);
-copyText.set('text', "쟁니랑");
-copyText.set('fill', 'white');
-
-var copyText2 = new fabric.IText("");
-fabric.util.object.extend(copyText2, ubuntuText);
-copyText2.set('top', 300);
-copyText2.set('text', "명욱이랑");
-copyText2.set('fill', 'red');
-
 canvas.add(ubuntuText);
-canvas.add(copyText);
-canvas.add(copyText2);
 
 
 // Button event except color picker
