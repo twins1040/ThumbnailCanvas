@@ -150,8 +150,7 @@ canvas.add(ubuntuText);
 // Button event except color picker
 $("#btn-undo").click(undo_work);
 $("#btn-redo").click(redo_work);
-$("#btn-copy").click(Copy);
-$("#btn-paste").click(Paste);
+$("#btn-copy").click(function() {Copy(); Paste()});
 $("#btn-delete").click(function(){
 	activeObjectSet(function(obj) {canvas.remove(obj)});
 });
