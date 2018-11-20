@@ -15,13 +15,31 @@ def base64_to_image(data, name):
     ext = format.split('/')[-1]
     return ContentFile(base64.b64decode(imgstr), name=name+'.'+ext)
 
+def save_tmpl(_tnail, data, user):
+    try:
+        tnail = base64_to_image(_tnail, "thumbnail")
+    except AttributeError:
+        pass
+
+    record = Template(thumbnail=tnail, data=data, owner=user)
+    record.save()
+
+
 def index(request):
     tmpls = Template.objects.all()
     user_tmpls = {}
     if request.user.is_authenticated:
+        try:
+            _tnail = request.session['thumbnail']
+            data = request.session['canvas_data']
+            save_tmpl(_tnail, data, request.user)
+            del request.session['thumbnail']
+            del request.session['canvas_data']
+        except KeyError:
+            pass
+
         user = User.objects.get(pk=request.user.id)
         user_tmpls = user.template_set.all()
-
 
     return render(request, 'fabricCanvas/index.html',
             {'templates':tmpls,
@@ -29,18 +47,14 @@ def index(request):
 
 def insert_tmpl(request):
     if not request.user.is_authenticated:
+        request.session['thumbnail'] = request.POST['thumbnail']
+        request.session['canvas_data'] = request.POST['data']
         return HttpResponseRedirect(reverse('social:begin', args=['google-oauth2']))
     else:
         _tnail = request.POST['thumbnail']
         data = request.POST['data']
 
-        try:
-            tnail = base64_to_image(_tnail, "thumbnail")
-        except AttributeError:
-            pass
-
-        record = Template(thumbnail=tnail, data=data, owner=request.user)
-        record.save()
+        save_tmpl(_tnail, data, request.user)
 
         return HttpResponseRedirect(reverse('fabric_canvas:index'))
 

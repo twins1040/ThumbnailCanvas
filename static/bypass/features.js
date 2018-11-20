@@ -244,20 +244,20 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 
 // Set click event for template upload button
 $('#upload').click(function(){
-	if ($("#switch-user").attr("data-user") === "") {
-		alert("저장은 로그인 후 가능합니다.\n우선 다운로드하세요.");
-	} else {
-		var jdata = canvas.toJSON();
+	var jdata = canvas.toJSON();
 
-		// Delete bg for data reduce
-		jdata["backgroundImage"] = undefined;
+	// Delete bg for data reduce
+	jdata["backgroundImage"] = undefined;
 
-		$('#input-data').attr('value', JSON.stringify(jdata));
-		$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-		$('#upload-tmpl-form').submit(function(){
+	$('#input-data').attr('value', JSON.stringify(jdata));
+	$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
+	$('#upload-tmpl-form').submit(function(){
+		if ($("#switch-user").attr("data-user") === "") {
+			alert("저장은 로그인 후 가능합니다.");
+		} else {
 			alert("내 템플릿을 저장했습니다");
-		}).submit();
-	}
+		}
+	}).submit();
 });
 
 
