@@ -1,3 +1,19 @@
+var login_url = '/login/google-oauth2/';
+var logout_url = '/logout/';
+
+function isLogin() {
+	var b = $("#switch-user").attr("data-user");
+
+	if (b === "false") {
+		return false;
+	} else if (b === "true") {
+		return true;
+	} else {
+		alert("invalid acess");
+		return false;
+	}
+}
+
 function Copy() {
 	// clone what are you copying since you
 	// may want copy and paste on different moment.
@@ -252,7 +268,7 @@ $('#upload').click(function(){
 	$('#input-data').attr('value', JSON.stringify(jdata));
 	$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
 	$('#upload-tmpl-form').submit(function(){
-		if ($("#switch-user").attr("data-user") === "") {
+		if (isLogin()) {
 			alert("저장은 로그인 후 가능합니다.");
 		} else {
 			alert("내 템플릿을 저장했습니다");
@@ -346,5 +362,19 @@ $(".block-thumbnail").each(function(i, item) {
 	// Set first templete in canvas
 	if (i === 0) {
 		$(item).click();
+	}
+});
+
+$("#switch-user").click(function() {
+	var href, txt;
+	if (isLogin()) {
+		href = logout_url;
+		txt = '로그아웃'
+	} else {
+		href = login_url;
+		txt = '로그인'
+	}
+	if (confirm(txt+" 시 데이터가 사라집니다. 계속하시겠습니까?")) {
+		location.href = href;
 	}
 });

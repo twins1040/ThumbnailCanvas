@@ -49,9 +49,9 @@
 			<!-- 로그인 -->
 			<div class="mr-1">
 				{% if user.is_authenticated %}
-				<a class="btn btn-link mb-0" id="switch-user" data-user="{{ user.id }}" href="{% url 'logout' %}">로그아웃</a>
+					<a class="btn btn-link mb-0" id="switch-user" data-user="true">로그아웃</a>
 				{% else %}
-					<a class="btn btn-link mb-0" id="switch-user" data-user="" href="{% url 'social:begin' 'google-oauth2' %}">로그인</a>
+					<a class="btn btn-link mb-0" id="switch-user" data-user="false">로그인</a>
 				{% endif %}
 				<input type="file" id="imgLoader" class="hide-input"/>
 			</div>
