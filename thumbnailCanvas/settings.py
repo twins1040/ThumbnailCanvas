@@ -122,8 +122,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = data["secret"]
 
 LOGIN_URL = '/auth/login/google-oauth2/'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/static/html/after-login.html'
+LOGOUT_REDIRECT_URL = '/static/html/after-logout.html'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 

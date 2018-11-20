@@ -245,7 +245,8 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 // Set click event for template upload button
 $('#upload').click(function(){
 	if ($("#switch-user").attr("data-user") === "") {
-		alert("저장은 로그인 후 가능합니다.\n우선 다운로드하세요.");
+		alert("저장은 로그인 후 가능합니다.");
+		switchUser();
 	} else {
 		var jdata = canvas.toJSON();
 
@@ -348,3 +349,36 @@ $(".block-thumbnail").each(function(i, item) {
 		$(item).click();
 	}
 });
+
+
+// Login Popup
+var login_adress = '/login/google-oauth2/';
+var logout_adress = '/logout/';
+var loginCallBack = function() {
+	$("#switch-user").attr("data-user", "true");
+	$("#switch-user").attr("href", logout_adress);
+	$("#switch-user").html("로그아웃");
+}
+var logoutCallBack = function() {
+	$("#switch-user").attr("data-user", "false");
+	$("#switch-user").attr("href", login_adress);
+	$("#switch-user").html("로그인");
+}
+
+
+function switchUser() {
+	var a = $("#switch-user");
+	var user = a.attr("data-user");
+	var href = a.attr("href");
+	var txt = (user === "true" ? "로그아웃" : "로그인");
+
+	window.open(href, txt,
+				'height=500,width=400,left=10,top=10,resizable=yes,\
+				 scrollbars=yes,toolbar=yes,menubar=no,location=no,\
+				 directories=no,status=yes');
+
+	return false;
+}
+
+$("#switch-user").click(switchUser);
+
