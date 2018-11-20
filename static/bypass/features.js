@@ -269,9 +269,9 @@ $('#upload').click(function(){
 	$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
 	$('#upload-tmpl-form').submit(function(){
 		if (isLogin()) {
-			alert("저장은 로그인 후 가능합니다.");
-		} else {
 			alert("내 템플릿을 저장했습니다");
+		} else {
+			alert("저장은 로그인 후 가능합니다.");
 		}
 	}).submit();
 });
