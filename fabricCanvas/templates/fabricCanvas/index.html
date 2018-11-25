@@ -42,20 +42,34 @@
 
 
 	<nav class="bd-navbar">
-		<img class="ic-big mr-3" src="{% static "img/youthumb.svg" %}">
-		<h4 class="bd-title d-inline">썸네일 메이커</h4>
+		<h4 class="m-0 d-inline">Thumbnail Maker</h4>
 
 		<div class="btn-group ml-auto">
 			<!-- 로그인 -->
 			<div class="mr-1">
 				{% if user.is_authenticated %}
-					<a class="btn btn-link mb-0" id="switch-user" data-user="true">로그아웃</a>
+					<a class="btn btn-with-icon btn-primary color-white mb-0" id="switch-user" data-user="true">
+						<i>cloud_download</i> Save thumbanil</a>
 				{% else %}
-					<a class="btn btn-link mb-0" id="switch-user" data-user="false">로그인</a>
+					<a class="btn btn-with-icon btn-primary color-white mb-0" id="switch-user" data-user="false">
+						<i>cloud_download</i> Save thumbanil</a>
 				{% endif %}
 				<input type="file" id="imgLoader" class="hide-input"/>
 			</div>
 		</div>
+	</nav>
+	<nav class="bd-navbar">
+		<div>
+			<button id="btn-undo" class="btn btn-primary btn-icon">
+				<i >reply</i>
+				<span>Undo</span>
+			</button>
+			<button id="btn-undo" class="btn btn-primary btn-icon">
+				<i class="y-flip">reply</i>
+				<span>Redo</span>
+			</button>	
+		</div>
+
 	</nav>
 
 	<div class="container-fluid">
@@ -96,7 +110,7 @@
 				</div>
 
 				<div class="block-canvas transition">
-					<canvas id="myCanvas" class="canvas-artboard sticky-header">
+					<canvas id="myCanvas" class="canvas-artboard sticky-header b-1">
 						Your browser does not support the canvas element
 					</canvas>
 				</div>
@@ -111,15 +125,6 @@
 						</label>
 					</div>
 
-					<!-- 콤포넌트 제어 -->
-					<div class="btn-group" role="group" aria-label="Basic example">
-						<button class="btn btn-secondary" id="btn-undo">
-							<i >undo</i>
-						</button>
-						<button class="btn btn-secondary" id="btn-redo">
-							<i >redo</i>
-						</button>
-					</div>
 					<!-- 콤포넌트 제어 -->
 					<div class="btn-group" role="group" aria-label="Basic example">
 						<button class="btn btn-secondary" id="btn-copy" alt="ctr+c">

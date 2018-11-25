@@ -2,9 +2,9 @@
 .hide {
 	display: none;
 }
-#myCanvas {
+/* #myCanvas {
 	border:1px solid #d3d3d3;
-}
+} */
 .canvas-container,
 .lower-canvas,
 .upper-canvas {
@@ -39,16 +39,6 @@
 .bd-content {
 	padding: 1.5rem;
 }
-/* #imgLoader {
-	width: 200px;
-} */
-/* .img-loader label {
-	display: inline-block; padding: .75em 1rem; color: white; font-size: inherit; line-height: normal; vertical-align: middle;
-	background-color: #ff0000;
-	cursor: pointer; border: 1px solid #ebebeb;
-	border-bottom-color: #e2e2e2; border-radius: .25em;
-	margin-bottom: 0;
-} */
 
 .hide-input {
 	position: absolute;
@@ -60,47 +50,17 @@
 	clip:rect(0,0,0,0);
 	border: 0;
 }
-.ic-big {
-	width: 48px;
-}
-.ic-add-photo {
-	color: white;
-	width: 24px;
-	position: relative;
-	top: 2px;
-	margin-top: -0.5rem;
-}
+
 .canvas-tool .btn {
 	height: 44px;
 }
-.bd-title {
-	margin: 0 !important;
-}
-.btn-primary {
-	background-color: #ff0000;
-	border-color: #ff0000;
-}
-.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
-	background-color: #cc0000;
-	border-color: #cc0000;
-}
-.btn-tool {
 
-}
-.color-group {
-	display: flex;
-	align-items: flex-start;
-	padding: 1rem;
-	/* background-color: #fbfbfb;
-	border: 1px solid #ebebeb; */
-}
-.color-chip {
-	width: 2rem;
-	height: 2rem;
-	/* border-radius: 2px; */
-	display: inline-block;
-	/* margin-right: 2px; */
-}
+
+
+
+
+/*================ Color ================*/
+
 .red { background-color: red; }
 .orange { background-color: orange; }
 .yellow { background-color: yellow; }
@@ -129,9 +89,8 @@
 .b-gray { border: 2px solid gray; }
 .b-brown { border: 2px solid brown; }
 
-.canvas-tool > .btn-group {
-	margin-bottom: 0.5rem;
-}
+
+/*================ Buttons ================*/
 .btn-with-icon,
 .btn-icon {
 	display: flex;
@@ -140,12 +99,24 @@
 .btn-with-icon i {
 	margin-right: 0.5rem;
 }
-.page-header {
-
+.btn-primary {
+	background-color: #ff0000;
+	border-color: #ff0000;
 }
+.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+	background-color: #cc0000;
+	border-color: #cc0000;
+}
+
+/* transition */
 .transition {
 	transition: all 2s ease ;
 }
+.y-flip {
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+}
+
 .sticky-header {
 	position: fixed;
 	top: 0;
