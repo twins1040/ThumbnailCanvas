@@ -7,3 +7,4 @@ uwsgi_params
 oauth.json
 staticfiles
 media
+static/admin/

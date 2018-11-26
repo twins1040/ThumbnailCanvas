@@ -24,20 +24,10 @@ def save_tmpl(_tnail, data, user):
     record = Template(thumbnail=tnail, data=data, owner=user)
     record.save()
 
-
 def index(request):
     tmpls = Template.objects.all()
     user_tmpls = {}
     if request.user.is_authenticated:
-        try:
-            _tnail = request.session['thumbnail']
-            data = request.session['canvas_data']
-            save_tmpl(_tnail, data, request.user)
-            del request.session['thumbnail']
-            del request.session['canvas_data']
-        except KeyError:
-            pass
-
         user = User.objects.get(pk=request.user.id)
         user_tmpls = user.template_set.all()
 
@@ -45,10 +35,25 @@ def index(request):
             {'templates':tmpls,
              'user_templates':user_tmpls})
 
+def session(request):
+    if request.method == 'POST':
+        request.session['canvas_data'] = request.POST['data']
+        request.session.set_expiry(300)
+        return HttpResponse('session saved')
+
+    if request.method == 'GET':
+        data = "";
+        try:
+            data = request.session['canvas_data']
+        except KeyError:
+            pass
+        return HttpResponse(data)
+
+
 def insert_tmpl(request):
     if not request.user.is_authenticated:
-        request.session['thumbnail'] = request.POST['thumbnail']
         request.session['canvas_data'] = request.POST['data']
+        request.session.set_expiry(300)
         return HttpResponseRedirect(reverse('social:begin', args=['google-oauth2']))
     else:
         _tnail = request.POST['thumbnail']

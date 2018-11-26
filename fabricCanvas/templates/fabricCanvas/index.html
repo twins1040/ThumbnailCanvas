@@ -118,17 +118,12 @@
 
 				<div class="canvas-tool">
 
-					<div class="btn-group" id="upload" role="group" aria-label="Basic example">
-						<!-- save -->
-						<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
-							{% csrf_token %}
-							<input type="hidden" id="input-data" name="data">
-							<input type="hidden" id="input-thumbnail" name="thumbnail">
-							<label for="upload" class="btn btn-secondary btn-with-icon mb-0" >
-								<i >save</i>
-								<span>저장</span>
-							</label>
-						</form>
+					<!-- 임시저장 -->
+					<div class="btn-group" id="temp-save" role="group" aria-label="Basic example">
+						<label for="upload" class="btn btn-secondary btn-with-icon mb-0" >
+							<i >save</i>
+							<span>임시저장</span>
+						</label>
 					</div>
 
 					<!-- 콤포넌트 제어 -->
@@ -196,6 +191,12 @@
 		</div>
 	</div>
 
+	<!-- It is not visible, for server -->
+	<form id="upload-tmpl-form" action="{% url 'fabric_canvas:insert_tmpl' %}" method="POST">
+		{% csrf_token %}
+		<input type="hidden" id="input-data" name="data">
+		<input type="hidden" id="input-thumbnail" name="thumbnail">
+	</form>
 
 
 

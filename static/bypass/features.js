@@ -115,6 +115,48 @@ function activeObjectSet(callback) {
 }
 
 
+function load_template(json) {
+	var pjson = JSON.parse(json);
+	var items = pjson["objects"];
+
+	canvas.forEachObject(function(t) {
+		canvas.remove(t);
+	});
+
+	fabric.util.enlivenObjects(items, function(objects) {
+		canvas.renderOnAddRemove = false;
+		objects.forEach(function(o) {
+			canvas.add(o);
+		});
+		canvas.renderOnAddRemove = true;
+		canvas.renderAll();
+	});
+
+	add_history();
+}
+
+
+function save_session(e, callback) {
+	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
+	var jdata = canvas.toJSON();
+	var tmpl_data = JSON.stringify(jdata);
+
+	// Save session data
+	$.post({
+		url:'session/',
+		data: {data: tmpl_data, csrfmiddlewaretoken: token},
+		success: function() {
+			if (callback) {callback()}
+		}
+	});
+}
+
+
+function restore_session(json) {
+	var pjson = JSON.parse(json);
+
+	canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+}
 
 // Canvas start!!
 var canvas = new fabric.Canvas('myCanvas');
@@ -223,11 +265,29 @@ fonts.forEach(function(font) {
 
 
 // Event for download btn
-var link = document.getElementById("download-btn-a");
-link.addEventListener('click', function(ev) {
-	link.href = canvas.toDataURL();
-	link.download = "mypainting.png";
-}, false);
+$("#download-btn-a").click(function(ev) {
+	if (isLogin()) {
+		// Download Image
+		this.href = canvas.toDataURL();
+		this.download = "mypainting.png";
+
+		// Upload template
+		var jdata = canvas.toJSON();
+
+		// Delete bg for data reduce
+		jdata["backgroundImage"] = undefined;
+
+		// Fill form, submit
+		$('#input-data').attr('value', JSON.stringify(jdata));
+		$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
+		$('#upload-tmpl-form').submit();
+	} else {
+		alert("다운로드는 로그인 후 가능합니다.");
+		save_session(null, function() {
+			location.href = login_url;
+		});
+	}
+});
 
 
 // Create image loader btn
@@ -258,24 +318,11 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 }
 
 
-// Set click event for template upload button
-$('#upload').click(function(){
-	var jdata = canvas.toJSON();
-
-	// Delete bg for data reduce
-	jdata["backgroundImage"] = undefined;
-
-	$('#input-data').attr('value', JSON.stringify(jdata));
-	$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-	$('#upload-tmpl-form').submit(function(){
-		if (isLogin()) {
-			alert("내 템플릿을 저장했습니다");
-		} else {
-			alert("저장은 로그인 후 가능합니다.");
-		}
-	}).submit();
+// Temp save button event
+$('#temp-save').click(function() {
+	save_session();
+	alert("임시저장 되었습니다.");
 });
-
 
 // Scroll evented
 /*
@@ -337,44 +384,35 @@ $(".block-thumbnail").each(function(i, item) {
 	$(item).click(function() {
 		$.ajax({
 			url:'templates/'+id+'/data/',
-			success:function(json) {
-				var pjson = JSON.parse(json);
-				var items = pjson["objects"];
-
-				canvas.forEachObject(function(t) {
-					canvas.remove(t);
-				});
-
-				fabric.util.enlivenObjects(items, function(objects) {
-					canvas.renderOnAddRemove = false;
-					objects.forEach(function(o) {
-						canvas.add(o);
-					});
-					canvas.renderOnAddRemove = true;
-					canvas.renderAll();
-				});
-
-				add_history();
-			}
+			success:load_template
 		});
 	});
 
 	// Set first templete in canvas
+	// It needs to be here for fast loading
+	// Try to get session data, if get, use it
 	if (i === 0) {
-		$(item).click();
+		let _item = item;
+		$.get("session/", function(json) {
+			if (json === "") {
+				$(_item).click();
+			} else {
+				console.log("clear, load canvas");
+				restore_session(json);
+			}
+		});
 	}
 });
 
 $("#switch-user").click(function() {
 	var href, txt;
 	if (isLogin()) {
-		href = logout_url;
-		txt = '로그아웃'
+		if(confirm("데이터가 사라집니다. 계속하시겠습니까?")) {
+			location.href = logout_url;
+		}
 	} else {
-		href = login_url;
-		txt = '로그인'
-	}
-	if (confirm(txt+" 시 데이터가 사라집니다. 계속하시겠습니까?")) {
-		location.href = href;
+		save_session(null, function() {
+			location.href = login_url;
+		});
 	}
 });
