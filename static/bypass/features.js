@@ -166,6 +166,29 @@ canvas.selection = true;
 canvas.on("object:modified", add_history);
 canvas.on("mouse:up", function(opt) {console.log(opt)});
 
+// Set color-picker to obj color
+function set_huebee(obj) {
+	// Use first obj if group
+	if (obj.selected.length !== 1) {
+		return
+	}
+
+	var f = obj.selected[0].fill;
+	var s = obj.selected[0].stroke;
+
+	console.log("fill:"+f+" stroke:"+s);
+
+	//var ws = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+
+	//$("#fill-hueb").html(ws);
+	//$("#stroke-hueb").html(ws);
+
+	fillHue.setColor(f);
+	strokeHue.setColor(s);
+}
+canvas.on("selection:created", set_huebee);
+canvas.on("selection:updated", set_huebee);
+
 
 // Controller design setting
 fabric.Object.prototype.set({
@@ -235,17 +258,21 @@ var gradients = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 // Color picker event
 var fillElem = $("#fill-hueb")[0];
 var strokeElem = $("#stroke-hueb")[0];
-var fillHue = new Huebee(fillElem, {});
-var strokeHue = new Huebee(strokeElem, {});
+var fillHue = new Huebee(fillElem, {setText:false});
+var strokeHue = new Huebee(strokeElem, {setText:false});
 
 fillHue.on('change', function(color) {
-	console.log('fill '+color);
-	activeObjectSet(function(obj) {obj.set("fill", color)});
+	if($(".huebee").length !== 0) {
+		console.log('fill '+color);
+		activeObjectSet(function(obj) {obj.set("fill", color)});
+	}
 });
 
 strokeHue.on('change', function(color) {
-	console.log('stroke '+color);
-	activeObjectSet(function(obj) {obj.set("stroke", color)});
+	if($(".huebee").length !== 0) {
+		console.log('stroke '+color);
+		activeObjectSet(function(obj) {obj.set("stroke", color)});
+	}
 });
 
 // Font selector
