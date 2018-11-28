@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Template
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.views.decorators.cache import cache_control, never_cache
 
 from django.core.files.base import ContentFile
 import base64
@@ -24,6 +25,7 @@ def save_tmpl(_tnail, data, user):
     record = Template(thumbnail=tnail, data=data, owner=user)
     record.save()
 
+@cache_control(no_cache=True)
 def index(request):
     tmpls = Template.objects.all()
     user_tmpls = {}
@@ -35,6 +37,7 @@ def index(request):
             {'templates':tmpls,
              'user_templates':user_tmpls})
 
+@never_cache
 def session(request):
     if request.method == 'POST':
         request.session['canvas_data'] = request.POST['data']

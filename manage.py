@@ -12,4 +12,10 @@ if __name__ == "__main__":
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+
+    # Static file will serve with never_cache
+    # See project/urls.py
+    if '--nostatic' not in sys.argv:
+            sys.argv.append('--nostatic')
+
     execute_from_command_line(sys.argv)
