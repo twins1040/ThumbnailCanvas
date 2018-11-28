@@ -1,5 +1,6 @@
 var login_url = '/login/google-oauth2/';
 var logout_url = '/logout/';
+var sample_background_url = "static/img/blue_furniture_resize.jpg";
 
 function isLogin() {
 	var b = $("#switch-user").attr("data-user");
@@ -157,6 +158,31 @@ function restore_session(json) {
 
 	canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
 }
+
+
+function set_background_image(src) {
+	var imgObj = new Image();
+	imgObj.src = src;
+	imgObj.onload = function () {
+		var image = new fabric.Image(imgObj);
+		var wRatio = canvas.width / image.width;
+		var hRatio = canvas.height / image.height;
+		var scale = (wRatio > hRatio) ? hRatio : wRatio;
+
+		canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
+			scaleX: scale,
+			scaleY: scale,
+			top: canvas.height / 2,
+			left: canvas.width / 2,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		add_history();
+	}
+}
+
+
 
 // Canvas start!!
 var canvas = new fabric.Canvas('myCanvas');
@@ -321,25 +347,7 @@ $("#download-btn-a").click(function(ev) {
 document.getElementById('imgLoader').onchange = function handleImage(e) {
 	var reader = new FileReader();
 	reader.onload = function (event){
-		var imgObj = new Image();
-		imgObj.src = event.target.result;
-		imgObj.onload = function () {
-			var image = new fabric.Image(imgObj);
-			var wRatio = canvas.width / image.width;
-			var hRatio = canvas.height / image.height;
-			var scale = (wRatio > hRatio) ? hRatio : wRatio;
-
-			canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
-				scaleX: scale,
-				scaleY: scale,
-				top: canvas.height / 2,
-				left: canvas.width / 2,
-				originX: 'center',
-				originY: 'center'
-			});
-
-			add_history();
-		}
+		set_background_image(event.target.result);
 	}
 	reader.readAsDataURL(e.target.files[0]);
 }
@@ -422,6 +430,7 @@ $(".block-thumbnail").each(function(i, item) {
 		let _item = item;
 		$.get("session/", function(json) {
 			if (json === "") {
+				set_background_image(sample_background_url);
 				$(_item).click();
 			} else {
 				console.log("clear, load canvas");
