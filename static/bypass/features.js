@@ -183,6 +183,16 @@ function set_background_image(src) {
 }
 
 
+function add_image(src) {
+	var imgObj = new Image();
+	imgObj.src = src;
+	imgObj.onload = function () {
+		var image = new fabric.Image(imgObj);
+
+		canvas.add(image);
+		add_history();
+	}
+}
 
 // Canvas start!!
 var canvas = new fabric.Canvas('myCanvas');
@@ -344,7 +354,7 @@ $("#download-btn-a").click(function(ev) {
 
 
 // Create image loader btn
-document.getElementById('imgLoader').onchange = function handleImage(e) {
+document.getElementById('imgLoader').onchange = function(e) {
 	var reader = new FileReader();
 	reader.onload = function (event){
 		set_background_image(event.target.result);
@@ -352,6 +362,24 @@ document.getElementById('imgLoader').onchange = function handleImage(e) {
 	reader.readAsDataURL(e.target.files[0]);
 }
 
+
+// Create clip loader btn
+document.getElementById('clipLoader').onchange = function(e) {
+	function readAndAdd(file) {
+		if ( /\.(jpe?g|png|gif)$/i.test(file.name) ) {
+			var reader = new FileReader();
+
+			reader.onload = function (event) {
+				add_image(event.target.result);
+			}
+			reader.readAsDataURL(file);
+		}
+	}
+
+	if (e.target.files) {
+		[].forEach.call(e.target.files, readAndAdd);
+	}
+}
 
 // Temp save button event
 $('#temp-save').click(function() {
