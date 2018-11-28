@@ -58,27 +58,19 @@
 			</div>
 		</div>
 	</nav>
-	<div class="d-flex justify-content-between py-2">
-		<div class="d-flex flex-grow-1">
-			<button id="btn-undo" class="btn btn-icon">
+	<nav class="bd-navbar">
+		<div>
+			<button id="btn-undo" class="btn btn-primary btn-icon">
 				<i >reply</i>
 				<span>Undo</span>
 			</button>
-			<button id="btn-undo" class="btn btn-icon">
+			<button id="btn-undo" class="btn btn-primary btn-icon">
 				<i class="y-flip">reply</i>
 				<span>Redo</span>
-			</button>
+			</button>	
 		</div>
-		<div class="d-flex flex-grow-1">
-			<button id="btn-undo" class="btn btn-icon">
-				<i class="y-flip">image</i>
-			</button>
-			<button id="btn-undo" class="btn btn-icon">
-				<i class="y-flip">text_fields</i>
-			</button>
-		</div>
-		<div class="d-flex flex-grow-1"></div>
-	</div>
+
+	</nav>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -92,7 +84,7 @@
 						<i >add</i>
 						<span>이미지 추가</span>
 					</label>
-
+					<input type="file" id="imgLoader" class="hide-input"/>
 
 					<!-- capture image -->
 					<a class="mr-auto" rel="noopener noreferrer" href="http://www.youtubescreenshot.com/">
