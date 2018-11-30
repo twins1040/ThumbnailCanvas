@@ -47,14 +47,15 @@
 		<div class="btn-group ml-auto">
 			<!-- 로그인 -->
 			<div class="mr-1">
-				<!-- {% if user.is_authenticated %}
-				<a class="btn btn-with-icon btn-primary color-white mb-0" id="switch-user" data-user="true">
-					<i>cloud_download</i> Save</a>
-					{% else %}
-					<a class="btn btn-with-icon btn-primary color-white mb-0" id="switch-user" data-user="false">
-						<i>cloud_download</i> Save
+				{% if user.is_authenticated %}
+					<a class="btn btn-with-icon btn-text color-white mb-0" id="switch-user" data-user="true">
+						log out
 					</a>
-				{% endif %} -->
+				{% else %}
+					<a class="btn btn-with-icon btn-text color-white mb-0" id="switch-user" data-user="false">
+						log in
+					</a>
+				{% endif %}
 				<input type="file" id="imgLoader" class="hide-input"/>
 			</div>
 		</div>
@@ -75,9 +76,17 @@
 		</div>
 		<!-- Add Component -->
 		<div class="btn-group">
-			<button id="btn-undo" class="btn btn-secondary btn-icon">
+			<!-- load background-image -->
+			<label for="imgLoader" class="btn btn-secondary btn-icon mb-0">
 				<i class="y-flip">image</i>
-			</button>
+				<input type="file" id="imgLoader" class="hide-input" multiple/>
+			</label>
+			<!-- add image-clip -->
+			<label for="clipLoader" class="btn btn-secondary btn-icon mb-0">
+				<i class="y-flip">image</i>
+				<input type="file" id="clipLoader" class="hide-input" multiple/>
+			</label>
+			<!-- add-text -->
 			<button id="btn-undo" class="btn btn-secondary btn-icon">
 				<i class="y-flip">text_fields</i>
 			</button>
@@ -94,30 +103,19 @@
 	<div class="container-fluid gray800">
 		<div class="row">
 			<!-- Canvas -->
-			<div class="col-sm-8 bd-content">
-
+			<div class="col-sm-8">
 				<div class="block-canvas transition">
-					<canvas id="myCanvas" class="canvas-artboard sticky-header b-1">
+					<canvas id="myCanvas" class="canvas-artboard sticky-header">
 						Your browser does not support the canvas element
 					</canvas>
 				</div>
 
+
 				<!-- file controller -->
 				<div class="d-flex justify-content-start mb-2">
 
-					<!-- load image -->
-					<!-- <label for="imgLoader" class="btn btn-primary btn-with-icon mb-0 mr-1">
-						<i >add</i>
-						<span>배경</span>
-					</label> -->
-
 
 					<!-- load clip image -->
-					<!-- <label for="clipLoader" class="btn btn-primary btn-with-icon mb-0 mr-1">
-						<i >add</i>
-						<span>클립</span>
-					</label> -->
-					<input type="file" id="clipLoader" class="hide-input" multiple/>
 
 					<!-- capture image -->
 					<!-- <a class="mr-auto" rel="noopener noreferrer" href="http://www.youtubescreenshot.com/">

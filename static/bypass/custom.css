@@ -73,14 +73,28 @@
 	-webkit-transform: scaleX(-1);
 	transform: scaleX(-1);
 }
+.sticky-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
 
 
 /*================ Canvas Control ================*/
+
 .canvas-container,
 .lower-canvas,
 .upper-canvas {
 	width: 100% !important;
 	height: auto !important;
+}
+.lower-canvas {
+	position: relative !important;
+}
+.canvas-artboard {
+	width: 100% !important;
+	height: 100%;
 }
 
 .block-thumbnail img {
