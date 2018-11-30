@@ -38,21 +38,21 @@
 	<![endif]-->
 </head>
 
-<body class="gray900 white-text">
+<body class="gray800 white-text">
 
 	<!-- Navbar -->
-	<nav class="navbar gray900">
+	<nav class="navbar gray800">
 		<h4 class="m-0 d-inline">Thumbnail Maker</h4>
 
 		<div class="btn-group ml-auto">
 			<!-- 로그인 -->
 			<div class="mr-1">
 				{% if user.is_authenticated %}
-					<a class="btn btn-with-icon btn-text color-white mb-0" id="switch-user" data-user="true">
+					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
 						log out
 					</a>
 				{% else %}
-					<a class="btn btn-with-icon btn-text color-white mb-0" id="switch-user" data-user="false">
+					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
 						log in
 					</a>
 				{% endif %}
@@ -62,75 +62,82 @@
 	</nav>
 
 	<!-- Toolbar -->
-	<nav class="navbar gray900">
+	<nav id="toolbar" class="navbar gray800">
 		<!-- Undo Redo -->
 		<div class="btn-group">
-			<button id="btn-undo" class="btn btn-secondary btn-icon">
+			<button id="btn-undo" class="btn btn-text-white btn-icon">
 				<i >reply</i>
 				<!-- <span>Undo</span> -->
 			</button>
-			<button id="btn-undo" class="btn btn-secondary btn-icon">
+			<button id="btn-undo" class="btn btn-text-white btn-icon">
 				<i class="y-flip">reply</i>
 				<!-- <span>Redo</span> -->
 			</button>
 		</div>
 		<!-- Add Component -->
 		<div class="btn-group">
-			<!-- load background-image -->
-			<label for="imgLoader" class="btn btn-secondary btn-icon mb-0">
+			<button id="addImage" class="btn btn-text-white btn-icon">
 				<i class="y-flip">image</i>
-				<input type="file" id="imgLoader" class="hide-input" multiple/>
-			</label>
-			<!-- add image-clip -->
-			<label for="clipLoader" class="btn btn-secondary btn-icon mb-0">
-				<i class="y-flip">image</i>
-				<input type="file" id="clipLoader" class="hide-input" multiple/>
-			</label>
+			</button>
 			<!-- add-text -->
-			<button id="btn-undo" class="btn btn-secondary btn-icon">
+			<button id="addText" class="btn btn-text-white btn-icon">
 				<i class="y-flip">text_fields</i>
 			</button>
 		</div>
 		<!-- Save -->
 		<div class="btn-group">
-			<a id="download-btn-a" class="btn btn-primary btn-icon">
-				<i>cloud_download</i>
-				<!-- Save -->
+			<a id="download-btn-a" class="btn btn-text-white btn-icon">
+				<i>file_download</i>
 			</a>
 		</div>
 	</nav>
 
-	<div class="container-fluid gray800">
+	<div class="container-fluid gray900">
 		<div class="row">
 			<!-- Canvas -->
-			<div class="col-sm-8">
-				<div class="block-canvas transition">
-					<canvas id="myCanvas" class="canvas-artboard sticky-header">
-						Your browser does not support the canvas element
-					</canvas>
-				</div>
-
-
-				<!-- file controller -->
-				<div class="d-flex justify-content-start mb-2">
-
-
-					<!-- load clip image -->
-
-					<!-- capture image -->
-					<!-- <a class="mr-auto" rel="noopener noreferrer" href="http://www.youtubescreenshot.com/">
-						<button class="btn btn-primary btn-icon">
-							<i >link</i>
-							<span>링크</span>
-						</button>
-					</a> -->
-				</div>
-
+			<div class="col-sm-8 p-0">
+				<canvas id="myCanvas" class="canvas-artboard sticky-header">
+					Your browser does not support the canvas element
+				</canvas>
 			</div>
-			<!-- SideToolBar -->
-			<div class="col-sm-4 sidebar gray900">
-				<!-- Text Settings -->
-				<div id="settingText" class="block-setting">
+			<!-- Tool Options -->
+			<div id="toolOptions" class="col-sm-4 tool-options gray800 transition">
+				<div id="templates" class="block-option-group">
+					<div id="templateMy" class="border-bottom">
+						<div class="template-header">
+							<h5>내 썸네일</h5>
+						</div>
+						<div class="row">
+							<div class="block-thumbnail col-6">
+								<div class="block-thumbnail-empty">
+									<a id="" class="btn btn-text-white btn-icon m-auto">
+										<i>add</i>
+									</a>
+								</div>
+							</div>
+							{% if user.is_authenticated %}
+								{% for tmpl in user_templates reversed %}
+									<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
+										<img>
+									</div>
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+					<div id="templateFeatured">
+						<div class="template-header">
+							<h5>인기 템플릿</h5>
+						</div>
+						<div class="row">
+							{% for tmpl in templates reversed %}
+								<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
+									<img>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				<div id="settingText" class="block-option-group hide">
 					<!-- 글꼴 -->
 					<div class="block-option">
 						<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -142,7 +149,7 @@
 					<!-- 텍스트 -->
 					<div class="block-option d-flex btn-icon">
 						<input id="sliderFontSize" type="range" min="1" max="100" value="0" class="slider mr-2" >
-						<button class="btn btn-secondary color-button" >
+						<button class="btn btn-text-white color-button" >
 							<input class="color-input" id="fill-hueb" data-huebee readonly>
 						</button>
 					</div>
@@ -150,16 +157,40 @@
 					<!-- 외곽선 -->
 					<div class="block-option d-flex btn-icon">
 						<input id="sliderFontSize" type="range" min="1" max="100" value="0" class="slider mr-2" >
-						<button class="btn btn-secondary color-button" >
+						<button class="btn btn-text-white color-button" >
 							<input class="color-input" id="stroke-hueb" data-huebee readonly>
 						</button>
 					</div>
 				</div>
-				<!-- Etc Settings -->
-				<div class="block-setting">
+				<div id="addImageOptions" class="block-option-group hide">
+					<!-- load background-image -->
+					<label for="imgLoader" class="btn btn-block btn-primary mb-0">
+						배경 이미지 추가
+						<input type="file" id="imgLoader" class="hide-input" multiple/>
+					</label>
+					<!-- add image-clip -->
+					<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
+						소스 이미지 추가
+						<input type="file" id="clipLoader" class="hide-input" multiple/>
+					</label>
+				</div>
+				<div id="alignItems" class="block-option-group hide text-center">
+					<div class="btn-group">
+						<button id="alignLeft" class="btn btn-text-white btn-icon">
+							<i >format_align_left</i>
+						</button>
+						<button id="alignCenter" class="btn btn-text-white btn-icon">
+							<i >format_align_center</i>
+						</button>
+						<button id="btn-alignRight" class="btn btn-text-white btn-icon">
+							<i >format_align_right</i>
+						</button>
+					</div>
+				</div>
+				<div class="block-option-group hide">
 					<!-- 임시저장 -->
 					<!-- <div class="btn-group" id="temp-save" role="group">
-						<label for="upload" class="btn btn-secondary btn-with-icon mb-0" >
+						<label for="upload" class="btn btn-text-white btn-with-icon mb-0" >
 							<i >save</i>
 							<span>임시저장</span>
 						</label>
@@ -167,42 +198,26 @@
 
 					<!-- 콤포넌트 제어 -->
 					<!-- <div class="btn-group" role="group" aria-label="Basic example">
-						<button class="btn btn-secondary" id="btn-copy" alt="ctr+c">
+						<button class="btn btn-text-white" id="btn-copy" alt="ctr+c">
 							<i>content_copy</i>
 						</button>
-						<button class="btn btn-secondary btn-icon" id="btn-delete">
+						<button class="btn btn-text-white btn-icon" id="btn-delete">
 							<i >delete</i>
 						</button>
 					</div> -->
 
 				</div>
-				<!-- Templates -->
-				<div id="templateFeatured" class="block-template hide">
-					{% if user.is_authenticated %}
-					<div class="page-header">
-						<h5>내 템플릿</h5>
-					</div>
-					{% for tmpl in user_templates reversed %}
-					<div>
-						<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
-							<img>
-						</div>
-					</div>
-					{% endfor %}
-					{% endif %}
-					<hr>
-					<div class="page-header">
-						<h5>인기 템플릿</h5>
-					</div>
-					{% for tmpl in templates reversed %}
-					<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
-						<img>
-					</div>
-					{% endfor %}
-				</div>
 			</div>
 		</div>
 	</div>
+
+	<!-- capture image -->
+	<!-- <a class="mr-auto" rel="noopener noreferrer" href="http://www.youtubescreenshot.com/">
+		<button class="btn btn-primary btn-icon">
+			<i >link</i>
+			<span>링크</span>
+		</button>
+	</a> -->
 
 
 
@@ -227,6 +242,7 @@
 	<script src="static/js/fabric.min.js"></script>
 	<script src="static/js/js.cookie.min.js"></script>
 	<script src="static/bypass/features.js"></script>
+	<script src="static/bypass/functions.js"></script>
 
 
 </body>

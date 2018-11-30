@@ -454,18 +454,18 @@ $(".block-thumbnail").each(function(i, item) {
 	// Set first templete in canvas
 	// It needs to be here for fast loading
 	// Try to get session data, if get, use it
-	if (i === 0) {
-		let _item = item;
-		$.get("session/", function(json) {
-			if (json === "") {
-				set_background_image(sample_background_url);
-				$(_item).click();
-			} else {
-				console.log("clear, load canvas");
-				restore_session(json);
-			}
-		});
-	}
+	// if (i === 0) {
+	// 	let _item = item;
+	// 	$.get("session/", function(json) {
+	// 		if (json === "") {
+	// 			set_background_image(sample_background_url);
+	// 			$(_item).click();
+	// 		} else {
+	// 			console.log("clear, load canvas");
+	// 			restore_session(json);
+	// 		}
+	// 	});
+	// }
 });
 
 $("#switch-user").click(function() {
