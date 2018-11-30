@@ -59,7 +59,7 @@ var undo_work;
 
 (function() {
 	var work_history = [];
-	var history_max_len = 20;
+	var history_max_len = 50;
 	var history_head = 0;
 
 	add_history = function() {
@@ -193,6 +193,55 @@ function add_image(src) {
 		add_history();
 	}
 }
+
+
+function group_align(direction, opt) {
+	var options = ["left", "center", "right", "top", "bottom"];
+	var directions = ["originX", "originY"];
+	var actobj, key, value, distence;
+
+	if (!options.includes(opt)) {
+		return;
+	}
+
+	if (!directions.includes(direction)) {
+		return;
+	}
+
+	actobj = canvas.getActiveObject();
+	if (!actobj) {
+		return;
+	}
+
+	if (actobj.type != 'activeSelection') {
+		return;
+	}
+
+	if (direction === "originX") {
+		distence = actobj.width/2;
+		key = "left";
+
+	} else if (direction === "originY") {
+		distence = actobj.height/2;
+		key = "top";
+	}
+
+	if (opt === "left" || opt === "top") {
+		value = -distence;
+	} else if (opt === "center") {
+		value = 0;
+	} else if (opt === "right" || opt === "bottom") {
+		value = distence;
+	}
+
+	activeObjectSet(function(obj) {
+		console.log(direction+opt+key+value);
+		obj.set(direction, opt);
+		obj.set(key, value);
+	});
+}
+
+
 
 // Canvas start!!
 var canvas = new fabric.Canvas('myCanvas');
@@ -480,3 +529,25 @@ $("#switch-user").click(function() {
 		});
 	}
 });
+
+/*
+$("#align-left").click(function() {
+	group_align("originX", "left");
+});
+
+$("#align-center").click(function() {
+	group_align("originX", "center");
+});
+
+$("#align-right").click(function() {
+	group_align("originX", "right");
+});
+
+$("#align-top").click(function() {
+	group_align("originY", "top");
+});
+
+$("#align-bottom").click(function() {
+	group_align("originY", "bottom");
+});
+*/
