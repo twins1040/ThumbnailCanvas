@@ -1,65 +1,9 @@
-
-.hide {
-	display: none;
-}
-/* #myCanvas {
-	border:1px solid #d3d3d3;
-} */
-.canvas-container,
-.lower-canvas,
-.upper-canvas {
-	width: 100% !important;
-	height: auto !important;
-}
-.lower-canvas {
-	position: relative !important;
-}
-.canvas-artboard {
-	width: 100% !important;
-	height: 100%;
-}
-.canvas-tool {
-	width: 100%;
-}
-.block-thumbnail img {
-	width: 100%;
-	margin-bottom: 0.5rem;
-	height: auto;
-}
-.bd-sidebar {
-	padding: 1.5rem;
-	border-right: 1px solid rgba(0,0,0,.1);
-}
-.bd-navbar {
-	display: flex;
-	align-items: center;
-	padding: 1.5rem;
-	border-bottom: 1px solid rgba(0,0,0,.1);
-}
-.bd-content {
-	padding: 1.5rem;
-}
-
-.hide-input {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip:rect(0,0,0,0);
-	border: 0;
-}
-
-.canvas-tool .btn {
-	height: 44px;
-}
-
-
-
-
-
 /*================ Color ================*/
+
+.white-text { color : white; }
+
+.gray800 { background-color: #3C3C42; }
+.gray900 { background-color: #1E1E21; }
 
 .red { background-color: red; }
 .orange { background-color: orange; }
@@ -73,8 +17,6 @@
 .pink { background-color: pink; }
 .gray { background-color: gray; }
 .brown { background-color: brown; }
-
-.color-white { color: white !important;}
 
 .b-red { border: 2px solid red; }
 .b-orange { border: 2px solid orange; }
@@ -91,6 +33,11 @@
 
 
 /*================ Buttons ================*/
+.btn-text-white {
+	color: white;
+	background-color: transparent;
+}
+
 .btn-with-icon,
 .btn-icon {
 	display: flex;
@@ -107,6 +54,16 @@
 	background-color: #cc0000;
 	border-color: #cc0000;
 }
+.btn-secondary {
+	background-color: #3C3C42;
+	border: none;
+}
+.btn-group {
+	margin-right: 1rem;
+}
+.btn-group:last-of-type {
+	margin-right: 0;
+}
 
 /* transition */
 .transition {
@@ -116,6 +73,50 @@
 	-webkit-transform: scaleX(-1);
 	transform: scaleX(-1);
 }
+
+
+/*================ Canvas Control ================*/
+.canvas-container,
+.lower-canvas,
+.upper-canvas {
+	width: 100% !important;
+	height: auto !important;
+}
+
+.block-thumbnail img {
+	width: 100%;
+	margin-bottom: 0.5rem;
+	height: auto;
+}
+
+/*================ Navigation ================*/
+.sidebar {
+	padding: 1.5rem;
+	border-right: 1px solid rgba(0,0,0,.1);
+}
+.navbar {
+	display: flex;
+	align-items: center;
+	padding: 1rem;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+/*================ Show & Hide ================*/
+.hide {
+	display: none;
+}
+.hide-input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip:rect(0,0,0,0);
+	border: 0;
+}
+
+
 
 .sticky-header {
 	position: fixed;
