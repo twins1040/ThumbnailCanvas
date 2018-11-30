@@ -530,7 +530,6 @@ $("#switch-user").click(function() {
 	}
 });
 
-/*
 $("#align-left").click(function() {
 	group_align("originX", "left");
 });
@@ -550,4 +549,3 @@ $("#align-top").click(function() {
 $("#align-bottom").click(function() {
 	group_align("originY", "bottom");
 });
-*/
