@@ -159,6 +159,16 @@ function restore_session(json) {
 	canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
 }
 
+function clear_session() {
+	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
+
+	// Send "" session data
+	$.post({
+		url:'session/',
+		data: {data: "", csrfmiddlewaretoken: token},
+	});
+}
+
 
 function set_background_image(src) {
 	var imgObj = new Image();
@@ -251,29 +261,39 @@ canvas.selection = true;
 canvas.on("object:modified", add_history);
 canvas.on("mouse:up", function(opt) {console.log(opt)});
 
-// Set color-picker to obj color
-function set_huebee(obj) {
-	// Use first obj if group
-	if (obj.selected.length !== 1) {
-		return
+// Set values on text selection
+function setTextAttr(_obj) {
+	var obj;
+
+	if (_obj.selected.length !== 1) {
+		return;
 	}
 
-	var f = obj.selected[0].fill;
-	var s = obj.selected[0].stroke;
+	obj = _obj.selected[0];
 
-	console.log("fill:"+f+" stroke:"+s);
-
-	//var ws = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-
-	//$("#fill-hueb").html(ws);
-	//$("#stroke-hueb").html(ws);
-
-	fillHue.setColor(f);
-	strokeHue.setColor(s);
+	fillHue.setColor(obj.fill);
+	strokeHue.setColor(obj.stroke);
+	$("#sliderFontSize").attr("value", obj.fontSize);
+	$("#sliderTextStroke").attr("value", obj.strokeWidth);
 }
-canvas.on("selection:created", set_huebee);
-canvas.on("selection:updated", set_huebee);
 
+canvas.on("selection:created", setTextAttr);
+canvas.on("selection:updated", setTextAttr);
+
+// Get value of slider and set text
+$("#sliderFontSize").on("input", function() {
+	var actobj = canvas.getActiveObject();
+	actobj.fontSize = $(this).val();
+	canvas.renderAll();
+	console.log( $(this).val());
+	add_history();
+});
+$("#sliderTextStroke").on("input", function() {
+	var actobj = canvas.getActiveObject();
+	actobj.strokeWidth = $(this).val();
+	canvas.renderAll();
+	add_history();
+});
 
 // Controller design setting
 fabric.Object.prototype.set({
@@ -310,8 +330,23 @@ var ubuntuText = new fabric.IText("템플릿을 골라보세요!", {
 	originY: 'center',
 });
 
+// For Add text
+var sampleText = new fabric.IText("Double Click to edit!", {
+	fontFamily: 'Noto Sans KR',
+	fontSize: 50,
+	fontWeight: 900,
+	fill: 'white',
+	stroke: 'black',
+	strokeWidth:20,
+	paintFirst: 'stroke',
+	charSpacing: -100,
+	angle:  0,
+	top: canvas.height/2,
+	left: canvas.width/2,
+	originX: 'center',
+	originY: 'center',
+});
 canvas.add(ubuntuText);
-
 
 // Button event except color picker
 $("#btn-undo").click(undo_work);
@@ -382,7 +417,17 @@ $("#download-btn-a").click(function(ev) {
 		// Download Image
 		this.href = canvas.toDataURL();
 		this.download = "mypainting.png";
+	} else {
+		alert("다운로드는 로그인 후 가능합니다.");
+		save_session(null, function() {
+			location.href = login_url;
+		});
+	}
+});
 
+
+$("#add-my-template").click(function(ev) {
+	if (isLogin()) {
 		// Upload template
 		var jdata = canvas.toJSON();
 
@@ -390,11 +435,13 @@ $("#download-btn-a").click(function(ev) {
 		jdata["backgroundImage"] = undefined;
 
 		// Fill form, submit
-		$('#input-data').attr('value', JSON.stringify(jdata));
-		$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-		$('#upload-tmpl-form').submit();
+		save_session(null, function() {
+			$('#input-data').attr('value', JSON.stringify(jdata));
+			$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
+			$('#upload-tmpl-form').submit();
+		});
 	} else {
-		alert("다운로드는 로그인 후 가능합니다.");
+		alert("로그인 후 가능합니다.");
 		save_session(null, function() {
 			location.href = login_url;
 		});
@@ -479,6 +526,10 @@ $(window).keydown(function(e){
 
 // Thumbnail image loading and hook event
 $(".block-thumbnail").each(function(i, item) {
+	// First item is add template button
+	if (i === 0) {
+		return;
+	}
 	// Template id
 	let id = item.id.split('-')[1];
 	console.log(id);
@@ -503,18 +554,18 @@ $(".block-thumbnail").each(function(i, item) {
 	// Set first templete in canvas
 	// It needs to be here for fast loading
 	// Try to get session data, if get, use it
-	// if (i === 0) {
-	// 	let _item = item;
-	// 	$.get("session/", function(json) {
-	// 		if (json === "") {
-	// 			set_background_image(sample_background_url);
-	// 			$(_item).click();
-	// 		} else {
-	// 			console.log("clear, load canvas");
-	// 			restore_session(json);
-	// 		}
-	// 	});
-	// }
+	if (i === 1) {
+		let _item = item;
+		$.get("session/", function(json) {
+			if (json === "") {
+				set_background_image(sample_background_url);
+				$(_item).click();
+			} else {
+				console.log("clear, load canvas");
+				restore_session(json);
+			}
+		});
+	}
 });
 
 $("#switch-user").click(function() {
@@ -534,7 +585,7 @@ $("#align-left").click(function() {
 	group_align("originX", "left");
 });
 
-$("#align-center").click(function() {
+$("#align-vertical-center").click(function() {
 	group_align("originX", "center");
 });
 
@@ -546,6 +597,18 @@ $("#align-top").click(function() {
 	group_align("originY", "top");
 });
 
+$("#align-horizontal-center").click(function() {
+	group_align("originY", "center");
+});
+
 $("#align-bottom").click(function() {
 	group_align("originY", "bottom");
+});
+
+$("#addText").click(function() {
+	sampleText.clone(function(clonedObj) {
+		canvas.add(clonedObj);
+		canvas.setActiveObject(clonedObj);
+		add_history();
+	});
 });
