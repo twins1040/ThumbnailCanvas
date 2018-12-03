@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['175.113.156.193',
                  '127.0.0.1',
                  'youtube-thumbnail-maker.tk',
                  'youtube-thumbnail-maker.ga',
+                 'www.thumbnail-maker.ga',
                  'thumbnail-maker.ga']
 
 
