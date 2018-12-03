@@ -204,9 +204,17 @@ function load_template(json) {
 }
 
 function save_session(e, callback) {
-	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
-	var jdata = canvas.toJSON();
-	var tmpl_data = JSON.stringify(jdata);
+	var obj = $("input[name='csrfmiddlewaretoken']");
+	var token = obj && obj.attr('value');
+	var jdata, tmpl_data;
+
+	if (!token) {
+		console.log("no token data");
+		return;
+	}
+
+	jdata = canvas.toJSON();
+	tmpl_data = JSON.stringify(jdata);
 
 	// Save session data
 	$.post({
@@ -267,59 +275,62 @@ function add_image(src) {
 	}
 }
 
-function group_align(direction, opt) {
-	var options = ["left", "center", "right", "top", "bottom"];
-	var directions = ["originX", "originY"];
-	var actobj, key, value, distence;
-
-	if (!options.includes(opt) ||
-		!directions.includes(direction)) {
-		return;
-	}
-
-	actobj = canvas.getActiveObject();
+function group_align(axis, align) {
+	var actobj = canvas.getActiveObject();
+	var opts, origin, distence;
 
 	if (!actobj || actobj.type != 'activeSelection') {
+		console.log("no actobj");
 		return;
 	}
 
-	if (direction === "originX") {
-		distence = actobj.width/2;
-		key = "left";
+	opts = {originX:{key: "left",
+		             left: -actobj.width/2,
+					 center: 0,
+					 right: actobj.width/2},
+			originY:{key: "top",
+				     top: -actobj.height/2,
+					 center: 0,
+					 bottom: actobj.height/2}}
 
-	} else if (direction === "originY") {
-		distence = actobj.height/2;
-		key = "top";
-	}
+	origin = opts[axis];
 
-	if (opt === "left" || opt === "top") {
-		value = -distence;
-	} else if (opt === "center") {
-		value = 0;
-	} else if (opt === "right" || opt === "bottom") {
-		value = distence;
+	if (!origin || origin[align] == null) {
+		console.log("wrong args");
+		return;
 	}
 
 	activeObjectSet(function(obj) {
-		obj.set(direction, opt);
-		obj.set(key, value);
+		obj.set(axis, align);
+		obj.set(origin['key'], origin[align]);
 	});
 }
 
-// Set values on text selection
-function setTextAttr(_obj) {
+// set values on text selection
+function setTextAttr(objs) {
 	var obj;
 
-	if (_obj.selected.length !== 1) {
+	if (objs.selected.length !== 1) {
 		return;
 	}
 
-	obj = _obj.selected[0];
+	obj = objs.selected[0];
 
 	fillHue.setColor(obj.fill);
 	strokeHue.setColor(obj.stroke);
+
 	$("#sliderFontSize").attr("value", obj.fontSize);
 	$("#sliderTextStroke").attr("value", obj.strokeWidth);
+}
+
+function isTextSelected() {
+   var obj = canvas.getActiveObject();
+   return !!(obj && obj.type === "i-text");
+}
+
+function isMultipleSelected() {
+   var obj = canvas.getActiveObject();
+   return !!(obj && obj.type === "activeSelection");
 }
 
 
@@ -354,7 +365,6 @@ $("#sliderFontSize").on("input", function() {
 	var actobj = canvas.getActiveObject();
 	actobj.fontSize = $(this).val();
 	canvas.renderAll();
-	console.log( $(this).val());
 	History.add();
 });
 $("#sliderTextStroke").on("input", function() {
@@ -465,9 +475,11 @@ $("#addText").click(function() {
 });
 $('#imgLoader').on('change', function(e) {
 	var reader = new FileReader();
+
 	reader.onload = function (event){
 		set_background_image(event.target.result);
 	}
+
 	reader.readAsDataURL(e.target.files[0]);
 });
 $('#clipLoader').on('change', function(e) {
@@ -478,6 +490,7 @@ $('#clipLoader').on('change', function(e) {
 			reader.onload = function (event) {
 				add_image(event.target.result);
 			}
+
 			reader.readAsDataURL(file);
 		}
 	}
@@ -553,4 +566,36 @@ $(window).keydown(function(e){
 	});
 
 	canvas.add(ubuntuText);
+})();
+
+// Option group Controll by kk
+(function() {
+	var og = $(".block-option-group");
+	var ai = $("#addImageOptions");
+	var tm = $("#templates");
+	var txt = $("#settingText");
+	var al = $("#alignItems");
+	var textSelect = false;
+
+	$("#addImage").click(function(){
+	   og.addClass("hide");
+	   if( $(this).hasClass("btn-active") ){
+		  tm.removeClass("hide");
+	   } else {
+		  ai.removeClass("hide");
+	   }
+	});
+
+	canvas.on("mouse:up", function(obj){
+	   og.addClass("hide");
+	   console.log(isMultipleSelected());
+
+	   if (isTextSelected()) {
+		  txt.removeClass("hide");
+	   } else if (isMultipleSelected()) {
+		  al.removeClass("hide");
+	   } else {
+		  tm.removeClass("hide");
+	   }
+	});
 })();
