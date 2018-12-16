@@ -1,3 +1,4 @@
+@import "slider.css";
 /*================ Color ================*/
 
 .white-text { color : white; }
@@ -156,36 +157,6 @@
 	border-bottom: 1px solid rgba(0,0,0,.1);
 }
 
-/*================ slider ================*/
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 2px;
-  border-radius: 5px;
-  background: #979797;
-  outline: none;
-  /* opacity:0.7; */
-  -webkit-transition: opacity .15s ease-in-out;
-  transition: opacity .15s ease-in-out;
-}
-.slider:hover {
-  opacity:1;
-}
-.slider::-webkit-slider-thumb {
-  width: 24px;
-  height: 24px;
-  align-content: white;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.slider::-moz-range-thumb {
-  width: 23px;
-  height: 24px;
-  border: 0;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
 /*================ setting ================*/
 .block-option {
 	margin-bottom: 1.5rem;
@@ -199,7 +170,7 @@
 }
 
 /*================ Media Query ================*/
-@media only screen and (max-width: 475px) {
+/* @media only screen and (max-width: 475px) {
 	.tool-options {
 		z-index: 100;
 		position: absolute;
@@ -208,4 +179,4 @@
 	.tool-open {
 		margin-top: 277px;
 	}
-}
+} */

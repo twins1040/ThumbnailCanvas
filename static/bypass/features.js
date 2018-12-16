@@ -546,6 +546,8 @@ $(window).keydown(function(e){
 	}
 
 	// Bind with key code
+	console.log(e.which === 90);
+	console.log(isCtrlKey());
 	if(e.which === 90 && isCtrlKey()) {
 		(e.shiftKey) ? History.redo() : History.undo();
 	} else if (isDeleteKey()) {
