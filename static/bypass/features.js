@@ -41,8 +41,6 @@ var History = new function() {
 	var _work_history = [];
 	var _history_head = 0;
 
-	this.add = function() { console.log("block history") }
-	/*
 	this.add = function() {
 		var snap = JSON.stringify(canvas);
 
@@ -60,7 +58,6 @@ var History = new function() {
 
 		console.log("add history");
 	}
-	*/
 
 	// Undo
 	this.undo = function() {
@@ -95,16 +92,8 @@ canvas.selection = true;
 
 canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
-	console.log(opt.target.__eventListeners);
 });
 canvas.on("object:modified", History.add);
-
-// It is test function for object check
-var CLICKED_OBJECT = {};
-canvas.on("mouse:up", function(opt) {
-	console.log("compare: "+(opt.target === CLICKED_OBJECT));
-	CLICKED_OBJECT = opt.target;
-});
 
 
 
@@ -131,7 +120,6 @@ fabric.Object.prototype.setControlsVisibility({
 });
 
 // Declare getter and setter of Text like types
-/*
 Object.assign(fabric.IText.prototype, {
 	getColor: function() {
 		return this.fill;
@@ -149,7 +137,6 @@ Object.assign(fabric.IText.prototype, {
 		this.set("strokeWidth", width);
 	},
 });
-*/
 Object.assign(fabric.Group.prototype, {
 	getColor: function() {
 		if (!this.isDoubleText) return;
@@ -211,7 +198,8 @@ fabric.Group.prototype.on("selected", function() {
 	if (hasExtraStroke()) setTextAttrBox();
 });
 
-fabric.Object.prototype.on("added", function() {console.log(this)});
+
+
 //
 // FUNCTIONS
 //
@@ -446,13 +434,11 @@ function addExtraStroke(_clonedObj) {
 		return;
 	}
 
-		console.log(actobj.type);
 	if (actobj.type !== "i-text") {
 		console.log("addExtraStroke: it is not i-text");
 		return;
 	}
 
-		History.add();
 	if (!_clonedObj) {
 		console.log("no attr");
 		actobj.clone(function(obj) {
@@ -542,15 +528,12 @@ function editExtraStroke() {
 			// Caustion: IText share event!!
 			// It should be off after event exit
 			clonedObj1.on("editing:exited", function() {
-				//let clone0 = clonedObj0;
-				//addExtraStroke(clone0);
 				addExtraStroke(clonedObj0);
-				//clonedObj1.off("editing:exited");
 				clonedObj1.off("changed");
+				clonedObj1.off("editing:exited");
 			});
 
 			clonedObj1.on("changed", function() {
-				console.log(clonedObj0);
 				clonedObj0.set("text", this.text);
 				canvas.renderAll();
 			});
