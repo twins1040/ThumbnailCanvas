@@ -547,7 +547,7 @@ $(window).keydown(function(e){
 
 	// Bind with key code
 	if(e.which === 90 && isCtrlKey()) {
-		(e.shiftKey) ? History.undo() : History.redo();
+		(e.shiftKey) ? History.redo() : History.undo();
 	} else if (isDeleteKey()) {
 		activeObjectSet(function(obj) {canvas.remove(obj)});
 	} else if (e.which === 67 && isCtrlKey()) {
