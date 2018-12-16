@@ -15,8 +15,10 @@ var canvas = new fabric.Canvas('myCanvas');
 // Color picker
 var fillElem = $("#fill-hueb")[0];
 var strokeElem = $("#stroke-hueb")[0];
+var strokeElem2 = $("#stroke2-hueb")[0];
 var fillHue = new Huebee(fillElem, {setText:false});
 var strokeHue = new Huebee(strokeElem, {setText:false});
+var strokeHue2 = new Huebee(strokeElem2, {setText:false});
 
 // For Add text
 var sampleText = new fabric.IText("Double Click to edit!", {
@@ -39,6 +41,8 @@ var History = new function() {
 	var _work_history = [];
 	var _history_head = 0;
 
+	this.add = function() { console.log("block history") }
+	/*
 	this.add = function() {
 		var snap = JSON.stringify(canvas);
 
@@ -56,6 +60,7 @@ var History = new function() {
 
 		console.log("add history");
 	}
+	*/
 
 	// Undo
 	this.undo = function() {
@@ -88,10 +93,24 @@ var History = new function() {
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
 
-canvas.on("mouse:up", function(opt) {console.log(opt)});
-canvas.on("selection:created", setTextAttr);
-canvas.on("selection:updated", setTextAttr);
+canvas.on("mouse:up", function(opt) {
+	console.log(opt.target);
+	console.log(opt.target.__eventListeners);
+});
 canvas.on("object:modified", History.add);
+
+// It is test function for object check
+var CLICKED_OBJECT = {};
+canvas.on("mouse:up", function(opt) {
+	console.log("compare: "+(opt.target === CLICKED_OBJECT));
+	CLICKED_OBJECT = opt.target;
+});
+
+
+
+//
+// Prototype wrapper
+//
 
 // Controller design setting
 fabric.Object.prototype.set({
@@ -103,6 +122,7 @@ fabric.Object.prototype.set({
 	borderScaleFactor: 4,	// controller border width
 	padding: 2,
 	cornerStyle: 'circle',
+	isDoubleText: false,
 });
 
 // Remove middle point of controller
@@ -110,11 +130,92 @@ fabric.Object.prototype.setControlsVisibility({
 	mb: false, ml: false, mr: false, mt: false
 });
 
+// Declare getter and setter of Text like types
+/*
+Object.assign(fabric.IText.prototype, {
+	getColor: function() {
+		return this.fill;
+	},
+	getStroke: function() {
+		return this.stroke;
+	},
+	setStroke: function(fill) {
+		this.set("stroke", fill);
+	},
+	getStrokeWidth: function() {
+		return this.strokeWidth;
+	},
+	setStrokeWidth: function(width) {
+		this.set("strokeWidth", width);
+	},
+});
+*/
+Object.assign(fabric.Group.prototype, {
+	getColor: function() {
+		if (!this.isDoubleText) return;
+		return this.item(1).fill;
+	},
+	setColor: function(color) {
+		if (!this.isDoubleText) return;
+		this.item(1).setColor(color);
+	},
+	getStroke: function() {
+		if (!this.isDoubleText) return;
+		return this.item(1).stroke;
+	},
+	setStroke: function(fill) {
+		if (!this.isDoubleText) return;
+		this.item(1).set("stroke", fill);
+	},
+	getStrokeWidth: function() {
+		if (!this.isDoubleText) return;
+		return this.item(1).strokeWidth;
+	},
+	setStrokeWidth: function(width) {
+		if (!this.isDoubleText) return;
+		this.item(1).set("strokeWidth", width);
+	},
 
+	// Stroke2 start
+	getStroke2: function() {
+		if (!this.isDoubleText) return;
+		return this.item(0).stroke;
+	},
+	setStroke2: function(fill) {
+		if (!this.isDoubleText) return;
+		this.item(0).set("stroke", fill);
+	},
+	getStroke2Width: function() {
+		if (!this.isDoubleText) return;
+		return this.item(0).strokeWidth;
+	},
+	setStroke2Width: function(width) {
+		if (!this.isDoubleText) return;
+		this.item(0).set("strokeWidth", width);
+	},
+});
 
+fabric.Group.prototype.on("scaled", function(opt){
+	opt.target._lastSelected = false;
+});
+fabric.Group.prototype.on("moved", function(opt){
+	opt.target._lastSelected = false;
+});
+fabric.Group.prototype.on("mouseup", editExtraStroke);
+
+fabric.IText.prototype.on("selected", function() {
+	setTextAttrBox();
+});
+
+fabric.Group.prototype.on("selected", function() {
+	if (hasExtraStroke()) setTextAttrBox();
+});
+
+fabric.Object.prototype.on("added", function() {console.log(this)});
 //
 // FUNCTIONS
 //
+
 function isLogin() {
 	var b = $("#switch-user").attr("data-user");
 
@@ -307,20 +408,26 @@ function group_align(axis, align) {
 }
 
 // set values on text selection
-function setTextAttr(objs) {
-	var obj;
+function setTextAttrBox() {
+	var obj = canvas.getActiveObject();
 
-	if (objs.selected.length !== 1) {
-		return;
+	if(!obj) {
+		return
 	}
 
-	obj = objs.selected[0];
+	// First line of attr box
+	$("#sliderFontSize")[0].value = obj.scaleX * 20;
+	fillHue.setColor(obj.getColor());
 
-	fillHue.setColor(obj.fill);
-	strokeHue.setColor(obj.stroke);
+	// Second line of attr box
+	$("#sliderTextStroke")[0].value = obj.getStrokeWidth();
+	strokeHue.setColor(obj.getStroke());
 
-	$("#sliderFontSize").attr("value", obj.fontSize);
-	$("#sliderTextStroke").attr("value", obj.strokeWidth);
+	// Third line if it has double stroke
+	if (hasExtraStroke()) {
+		$("#sliderTextStroke2")[0].value = obj.getStroke2Width();
+		strokeHue2.setColor(obj.getStroke2());
+	}
 }
 
 function isTextSelected() {
@@ -333,6 +440,153 @@ function isMultipleSelected() {
    return !!(obj && obj.type === "activeSelection");
 }
 
+function addExtraStroke(_clonedObj) {
+	let actobj = canvas.getActiveObject();
+	if (!actobj) {
+		return;
+	}
+
+		console.log(actobj.type);
+	if (actobj.type !== "i-text") {
+		console.log("addExtraStroke: it is not i-text");
+		return;
+	}
+
+		History.add();
+	if (!_clonedObj) {
+		console.log("no attr");
+		actobj.clone(function(obj) {
+			obj.set({stroke: "green"});
+			obj.strokeWidth += 16;
+			clonedObj = obj;
+		});
+	} else {
+		console.log("attr");
+		_clonedObj.clone(function(obj) {
+			clonedObj = obj;
+			canvas.remove(_clonedObj);
+		});
+	}
+
+	actobj.clone(function(clonedObjUpper) {
+		var scale = clonedObjUpper.scaleX;
+		var coords = clonedObj.aCoords.tl;
+		let group;
+
+		// Pass scale to Group
+		clonedObjUpper.set({scaleX: 1, scaleY: 1});
+		clonedObj.set({scaleX: 1, scaleY: 1});
+
+		group = new fabric.Group([clonedObj, clonedObjUpper]);
+
+		// Context of objects now Group, centerize
+		group.forEachObject(function(obj){
+			obj.set({
+				originX: "center",
+				originY: "center",
+				left: 0,
+				top: 0,
+			});
+		});
+
+		// Apply passed scale
+		// Because of Bug, reset left and top
+		group.set({scaleX: scale, scaleY: scale});
+		group.set({left: coords.x, top: coords.y});
+		group.set("isDoubleText", true);
+
+		group.on("deselected", function() {
+			group._lastSelected = false;
+		});
+
+		canvas.remove(actobj).renderAll();
+		canvas.add(group);
+
+		History.add();
+
+		canvas.setActiveObject(group);
+	});
+}
+
+function editExtraStroke() {
+	var actobj = canvas.getActiveObject();
+
+	if (!hasExtraStroke()) {
+		return;
+	}
+
+	if (!actobj._lastSelected) {
+		actobj._lastSelected = true;
+		return;
+	}
+
+	// Prevent Scale Bug
+	canvas.renderAll();
+
+	actobj.item(0).clone(function(clonedObj0) {
+		actobj.item(1).clone(function(clonedObj1) {
+			var opt = {
+				originX: "center",
+				originY: "center",
+				scaleX: actobj.item(0).scaleX * actobj.scaleX,
+				scaleY: actobj.item(0).scaleY * actobj.scaleY,
+				left: actobj.left + actobj.width/2 * actobj.scaleX,
+				top: actobj.top + actobj.height/2 * actobj.scaleY,
+			};
+
+			clonedObj0.set(opt);
+			clonedObj1.set(opt);
+
+			canvas.remove(actobj);
+
+			// Caustion: IText share event!!
+			// It should be off after event exit
+			clonedObj1.on("editing:exited", function() {
+				//let clone0 = clonedObj0;
+				//addExtraStroke(clone0);
+				addExtraStroke(clonedObj0);
+				//clonedObj1.off("editing:exited");
+				clonedObj1.off("changed");
+			});
+
+			clonedObj1.on("changed", function() {
+				console.log(clonedObj0);
+				clonedObj0.set("text", this.text);
+				canvas.renderAll();
+			});
+
+			canvas.add(clonedObj0);
+			canvas.add(clonedObj1);
+
+			// It should be active before enterEditing
+			canvas.setActiveObject(clonedObj1);
+			clonedObj1.enterEditing();
+			clonedObj1.selectAll();
+		});
+	});
+}
+
+function hasExtraStroke() {
+	var obj = canvas.getActiveObject();
+
+	if (!obj) {
+		//console.log("hasExtraStroke error!!");
+		return false;
+	}
+
+	return obj.type === "group";
+}
+
+function setExtraStroke(obj, options) {
+	if (!hasExtraStroke()) {
+		console.log("it is not extra stroke!");
+		return;
+	}
+
+	obj.item(0).set(options);
+	canvas.renderAll();
+}
+
 
 
 //
@@ -340,14 +594,23 @@ function isMultipleSelected() {
 //
 fillHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		console.log('fill '+color);
-		activeObjectSet(function(obj) {obj.set("fill", color)});
+		activeObjectSet(function(obj) {
+			if (obj.setColor) obj.setColor(color);
+		});
 	}
 });
 strokeHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		console.log('stroke '+color);
-		activeObjectSet(function(obj) {obj.set("stroke", color)});
+		activeObjectSet(function(obj) {
+			if (obj.setStroke) obj.setStroke(color);
+		});
+	}
+});
+strokeHue2.on('change', function(color) {
+	if($(".huebee").length !== 0) {
+		activeObjectSet(function(obj) {
+			if (obj.setStroke2) obj.setStroke2(color);
+		});
 	}
 });
 // DOM events
@@ -363,15 +626,37 @@ $("#stroke-delete").click(function() {
 // Get value of slider and set text
 $("#sliderFontSize").on("input", function() {
 	var actobj = canvas.getActiveObject();
-	actobj.fontSize = $(this).val();
+	var value;
+
+	if (!actobj) {
+		return;
+	}
+
+	// slider is 0 ~ 100
+	// max is x5
+	value = $(this).val() / 20;
+
+	actobj.set("scaleX", value);
+	actobj.set("scaleY", value);
+
 	canvas.renderAll();
 	History.add();
 });
 $("#sliderTextStroke").on("input", function() {
 	var actobj = canvas.getActiveObject();
-	actobj.strokeWidth = $(this).val();
+
+	actobj.setStrokeWidth($(this).val());
 	canvas.renderAll();
 	History.add();
+});
+$("#sliderTextStroke2").on("input", function() {
+	var actobj = canvas.getActiveObject();
+
+	if (hasExtraStroke()) {
+		actobj.setStroke2Width($(this).val());
+		canvas.renderAll();
+		History.add();
+	}
 });
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
@@ -499,6 +784,12 @@ $('#clipLoader').on('change', function(e) {
 		[].forEach.call(e.target.files, readAndAdd);
 	}
 });
+$("#stroke2-text").click(function(){
+	addExtraStroke();
+	setTextAttrBox();
+	$("#stroke2-text").addClass("hide");
+	$("#stroke2-console").removeClass("hide");
+});
 
 
 
@@ -537,7 +828,7 @@ $(window).keydown(function(e){
 
 	// Bind with key code
 	if(e.which === 90 && e.ctrlKey) {
-		(e.shiftKey) ? History.undo() : History.redo();
+		(e.shiftKey) ? History.redo() : History.undo();
 	} else if (e.which === 46) {
 		activeObjectSet(function(obj) {canvas.remove(obj)});
 	} else if (e.which === 67 && e.ctrlKey) {
@@ -588,10 +879,16 @@ $(window).keydown(function(e){
 
 	canvas.on("mouse:up", function(obj){
 	   og.addClass("hide");
-	   console.log(isMultipleSelected());
 
+	   // If text has extra stroke, it is 'group' not 'i-text'
 	   if (isTextSelected()) {
-		  txt.removeClass("hide");
+			$("#stroke2-text").removeClass("hide");
+			$("#stroke2-console").addClass("hide");
+			txt.removeClass("hide");
+	   } else if (hasExtraStroke()) {
+			$("#stroke2-text").addClass("hide");
+			$("#stroke2-console").removeClass("hide");
+			txt.removeClass("hide");
 	   } else if (isMultipleSelected()) {
 		  al.removeClass("hide");
 	   } else {
