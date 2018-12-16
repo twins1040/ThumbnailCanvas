@@ -524,6 +524,16 @@ FONTS.forEach(function(font) {
 $(window).keydown(function(e){
 	var actobj = canvas.getActiveObject();
 
+	function isCtrlKey() {
+		// 91 is Mac command key
+		return e.ctrlKey || e.which === 91;
+	}
+
+	function isDeleteKey() {
+		// 8 is Backspace Key
+		return e.which === 46 || e.which === 8;
+	}
+
 	console.log('key: '+e.which);
 
 	// Prevent conflict with IText key shortcut
@@ -536,13 +546,13 @@ $(window).keydown(function(e){
 	}
 
 	// Bind with key code
-	if(e.which === 90 && e.ctrlKey) {
+	if(e.which === 90 && isCtrlKey()) {
 		(e.shiftKey) ? History.undo() : History.redo();
-	} else if (e.which === 46) {
+	} else if (isDeleteKey()) {
 		activeObjectSet(function(obj) {canvas.remove(obj)});
-	} else if (e.which === 67 && e.ctrlKey) {
+	} else if (e.which === 67 && isCtrlKey()) {
 		Copy();
-	} else if (e.which === 86 && e.ctrlKey) {
+	} else if (e.which === 86 && isCtrlKey()) {
 		Paste();
 	}
 });
