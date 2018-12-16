@@ -446,6 +446,8 @@ $(".block-thumbnail").each(function(i, item) {
 				restore_session(json);
 			}
 		});
+
+		History.add();
 	}
 });
 $("#switch-user").click(function() {
