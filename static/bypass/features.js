@@ -67,6 +67,9 @@ var History = new function() {
 
 		canvas.loadFromJSON(_work_history[_history_head]);
 
+		// Remove attribute box
+		Toolbox.switchTo("template");
+
 		console.log('undo');
 	}
 
@@ -78,7 +81,38 @@ var History = new function() {
 
 		canvas.loadFromJSON(_work_history[_history_head]);
 
+		// Remove attribute box
+		Toolbox.switchTo("template");
+
 		console.log('redo');
+	}
+}
+
+// Option group Controll by kk
+var Toolbox = new function() {
+	var og = $(".block-option-group");
+	var boxes = {
+		image: [$("#addImageOptions"), null],
+		template: [$("#templates"), null],
+		text: [$("#settingText"), function() {
+			if (isTextSelected()) {
+				$("#stroke2-text").removeClass("hide");
+				$("#stroke2-console").addClass("hide");
+			} else if (hasExtraStroke()) {
+				$("#stroke2-text").addClass("hide");
+				$("#stroke2-console").removeClass("hide");
+			}
+		}],
+		multi: [$("#alignItems"), null],
+	};
+
+	this.switchTo = function(opt) {
+		var target = boxes[opt][0];
+		var callback = boxes[opt][1];
+
+		og.addClass("hide");
+		target.removeClass("hide");
+		if (callback) callback();
 	}
 }
 // END OF GLOBAL VARIABLES
@@ -93,6 +127,16 @@ canvas.selection = true;
 
 canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
+});
+canvas.on("mouse:up", function(obj){
+	// If text has extra stroke, it is 'group' not 'i-text'
+	if (isTextSelected() || hasExtraStroke()) {
+		Toolbox.switchTo("text");
+	} else if (isMultipleSelected()) {
+		Toolbox.switchTo("multi");
+	} else {
+		Toolbox.switchTo("template");
+	}
 });
 canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
@@ -743,6 +787,8 @@ $("#addText").click(function() {
 		canvas.setActiveObject(clonedObj);
 		History.add();
 	});
+
+	Toolbox.switchTo("text");
 });
 $('#imgLoader').on('change', function(e) {
 	var reader = new FileReader();
@@ -780,6 +826,9 @@ $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();
 });
+$("#addImage").click(function(){Toolbox.switchTo("image")});
+
+
 // END OF EVENT HANDLERS
 
 
@@ -858,43 +907,5 @@ $(window).keydown(function(e){
 	});
 
 	canvas.add(ubuntuText);
-})();
-
-// Option group Controll by kk
-(function() {
-	var og = $(".block-option-group");
-	var ai = $("#addImageOptions");
-	var tm = $("#templates");
-	var txt = $("#settingText");
-	var al = $("#alignItems");
-	var textSelect = false;
-
-	$("#addImage").click(function(){
-	   og.addClass("hide");
-	   if( $(this).hasClass("btn-active") ){
-		  tm.removeClass("hide");
-	   } else {
-		  ai.removeClass("hide");
-	   }
-	});
-
-	canvas.on("mouse:up", function(obj){
-	   og.addClass("hide");
-
-	   // If text has extra stroke, it is 'group' not 'i-text'
-	   if (isTextSelected()) {
-			$("#stroke2-text").removeClass("hide");
-			$("#stroke2-console").addClass("hide");
-			txt.removeClass("hide");
-	   } else if (hasExtraStroke()) {
-			$("#stroke2-text").addClass("hide");
-			$("#stroke2-console").removeClass("hide");
-			txt.removeClass("hide");
-	   } else if (isMultipleSelected()) {
-		  al.removeClass("hide");
-	   } else {
-		  tm.removeClass("hide");
-	   }
-	});
 })();
 // END OF EDIT DOM ELEMENTS
