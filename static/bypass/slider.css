@@ -1,0 +1,72 @@
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+}
+.slider:focus {
+    outline: none;
+}
+/*webkit (Chrome)의 경우*/
+.slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #2497E3;
+}
+.slider::-webkit-slider-thumb {
+    border: 1px solid #2497E3;
+    height: 15px;
+    width: 10px;
+    background: #ffffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -5px; /*chrome의 경우 margin-top값을 부여해야합니다.*/
+}
+.slider:focus::-webkit-slider-runnable-track {
+    background: #2497E3; /*네모버튼에 포커스를 줬을때 뒤에 라인(ㅡ)의 효과*/
+}
+/*Firefox의 경우*/
+.slider::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #2497E3;
+}
+.slider::-moz-range-thumb {
+    border: 1px solid #2497E3;
+    height: 15px;
+    width: 10px;
+    background: #ffffff;
+    cursor: pointer;
+}
+/*IE의 경우*/
+.slider::-ms-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+.slider::-ms-fill-lower {
+    background: #2497E3;
+}
+.slider::-ms-fill-upper {
+    background: #2497E3;
+}
+.slider::-ms-thumb {
+    margin-top: 1px;
+    border: 1px solid #2497E3;
+    height: 15px;
+    width: 10px;
+    background: #ffffff;
+    cursor: pointer;
+}
+.slider:focus::-ms-fill-lower {
+    background: #2497E3;/*네모버튼에 포커스를 줬을때 뒤에 라인(ㅡ)의 효과*/
+}
+.slider:focus::-ms-fill-upper {
+    background: #2497E3; /*네모버튼에 포커스를 줬을때 뒤에 라인(ㅡ)의 효과*/
+}
