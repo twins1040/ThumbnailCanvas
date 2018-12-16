@@ -627,14 +627,12 @@ $("#sliderFontSize").on("input", function() {
 	actobj.set("scaleY", value);
 
 	canvas.renderAll();
-	History.add();
 });
 $("#sliderTextStroke").on("input", function() {
 	var actobj = canvas.getActiveObject();
 
 	actobj.setStrokeWidth($(this).val());
 	canvas.renderAll();
-	History.add();
 });
 $("#sliderTextStroke2").on("input", function() {
 	var actobj = canvas.getActiveObject();
@@ -642,7 +640,6 @@ $("#sliderTextStroke2").on("input", function() {
 	if (hasExtraStroke()) {
 		actobj.setStroke2Width($(this).val());
 		canvas.renderAll();
-		History.add();
 	}
 });
 $("#download-btn-a").click(function(ev) {
@@ -778,6 +775,10 @@ $("#stroke2-text").click(function(){
 	setTextAttrBox();
 	$("#stroke2-text").addClass("hide");
 	$("#stroke2-console").removeClass("hide");
+});
+$("input[type='range']").mouseup(function() {
+	// Prevent slider to add lots of history
+	History.add();
 });
 // END OF EVENT HANDLERS
 
