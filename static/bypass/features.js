@@ -525,8 +525,8 @@ $(window).keydown(function(e){
 	var actobj = canvas.getActiveObject();
 
 	function isCtrlKey() {
-		// 91 is Mac command key
-		return e.ctrlKey || e.which === 91;
+		// metaKey is Mac command key
+		return e.ctrlKey || e.metaKey;
 	}
 
 	function isDeleteKey() {
