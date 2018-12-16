@@ -81,6 +81,7 @@ var History = new function() {
 		console.log('redo');
 	}
 }
+// END OF GLOBAL VARIABLES
 
 
 
@@ -94,11 +95,12 @@ canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
 });
 canvas.on("object:modified", History.add);
+// END OF CANVAS SETTINGS
 
 
 
 //
-// Prototype wrapper
+// PROTOTYPE WRAPPER
 //
 
 // Controller design setting
@@ -197,6 +199,7 @@ fabric.IText.prototype.on("selected", function() {
 fabric.Group.prototype.on("selected", function() {
 	if (hasExtraStroke()) setTextAttrBox();
 });
+// END OF PROTOTYPE WRAPPER
 
 
 
@@ -569,6 +572,7 @@ function setExtraStroke(obj, options) {
 	obj.item(0).set(options);
 	canvas.renderAll();
 }
+// END OF FUNCTIONS
 
 
 
@@ -775,6 +779,7 @@ $("#stroke2-text").click(function(){
 	$("#stroke2-text").addClass("hide");
 	$("#stroke2-console").removeClass("hide");
 });
+// END OF EVENT HANDLERS
 
 
 
@@ -891,3 +896,4 @@ $(window).keydown(function(e){
 	   }
 	});
 })();
+// END OF EDIT DOM ELEMENTS
