@@ -5,6 +5,7 @@ db.sqlite3
 __pycache__
 uwsgi_params
 oauth.json
+server.json
 staticfiles
 media
 static/admin/
