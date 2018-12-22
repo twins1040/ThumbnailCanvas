@@ -121,7 +121,9 @@
 									<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
 										<img>
 										{% if user.is_superuser %}
-											<i >highlight_off</i>
+											<div class="block-thumbnail-icon">
+												<i >highlight_off</i>
+											</div>
 										{% endif %}
 									</div>
 								{% endfor %}
@@ -137,7 +139,9 @@
 								<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
 									<img>
 									{% if user.is_superuser %}
-										<i >highlight_off</i>
+										<div class="block-thumbnail-icon">
+											<i >highlight_off</i>
+										</div>
 									{% endif %}
 								</div>
 							{% endfor %}

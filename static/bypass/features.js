@@ -741,7 +741,7 @@ $(".block-thumbnail").each(function(i, item) {
 	});
 
 	// Hook image click event
-	$(item).click(function() {
+	$(img).click(function() {
 		$.ajax({
 			url:'templates/'+id+'/data/',
 			success:load_template
@@ -756,8 +756,10 @@ $(".block-thumbnail").each(function(i, item) {
 			if(confirm("Are you sure to delete?")) {
 				$.ajax({
 					url:'templates/'+id+'/',
-					data: {csrfmiddlewaretoken: token},
 					type:'DELETE',
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader("X-CSRFToken", token);
+					},
 					success:function() {
 						location.href = '';
 					}
