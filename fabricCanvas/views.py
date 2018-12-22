@@ -66,6 +66,17 @@ def insert_tmpl(request):
 
         return HttpResponseRedirect(reverse('fabric_canvas:index'))
 
+@never_cache
+def tmpl(request, template_id):
+    if request.method == 'DELETE':
+        if not request.user.has_perm('fabricCanvas.delete_template'):
+            return HttpResponse(status=401)
+        tmpl = get_object_or_404(Template, pk=template_id)
+        tmpl.delete()
+        return HttpResponse("delete success")
+    else:
+        return HttpResponse(status=400)
+
 def template_data(request, template_id):
     tmpl = get_object_or_404(Template, pk=template_id)
 

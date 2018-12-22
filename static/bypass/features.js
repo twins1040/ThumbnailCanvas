@@ -721,15 +721,18 @@ $("#add-my-template").click(function(ev) {
 });
 // Thumbnail image loading and hook event
 $(".block-thumbnail").each(function(i, item) {
+	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
+	let id, img, icon;
+
 	// First item is add template button
 	if (i === 0) {
 		return;
 	}
 	// Template id
-	let id = item.id.split('-')[1];
+	id = item.id.split('-')[1];
 
 	// Load Image
-	let img = $(item).find('img')[0];
+	img = $(item).find('img')[0];
 	$.ajax({
 		url:'templates/'+id+'/thumbnail/',
 		success:function(src) {
@@ -737,13 +740,31 @@ $(".block-thumbnail").each(function(i, item) {
 		}
 	});
 
-	// Hook event
+	// Hook image click event
 	$(item).click(function() {
 		$.ajax({
 			url:'templates/'+id+'/data/',
 			success:load_template
 		});
 	});
+
+	// Hook delete btn click event
+	// find icon <i> tag
+	icon = $(item).find('i');
+	if (icon) {
+		icon.click(function() {
+			if(confirm("Are you sure to delete?")) {
+				$.ajax({
+					url:'templates/'+id+'/',
+					data: {csrfmiddlewaretoken: token},
+					type:'DELETE',
+					success:function() {
+						location.href = '';
+					}
+				});
+			}
+		});
+	}
 
 	// Set first templete in canvas
 	// It needs to be here for fast loading

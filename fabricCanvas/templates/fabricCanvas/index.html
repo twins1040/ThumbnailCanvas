@@ -120,6 +120,9 @@
 								{% for tmpl in user_templates reversed %}
 									<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
 										<img>
+										{% if user.is_superuser %}
+											<i >highlight_off</i>
+										{% endif %}
 									</div>
 								{% endfor %}
 							{% endif %}
@@ -133,6 +136,9 @@
 							{% for tmpl in templates reversed %}
 								<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
 									<img>
+									{% if user.is_superuser %}
+										<i >highlight_off</i>
+									{% endif %}
 								</div>
 							{% endfor %}
 						</div>
