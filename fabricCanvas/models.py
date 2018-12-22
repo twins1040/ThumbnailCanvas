@@ -7,7 +7,7 @@ import os
 class Template(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     thumbnail = models.ImageField(upload_to="templates")
-    data = models.CharField(max_length=100000)
+    data = models.TextField()
 
 @receiver(models.signals.post_delete, sender=Template)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

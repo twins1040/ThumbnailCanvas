@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     # Static file will serve with never_cache
     # See project/urls.py
-    if '--nostatic' not in sys.argv:
+    if ('runserver' in sys.argv) and ('--nostatic' not in sys.argv):
             sys.argv.append('--nostatic')
 
     execute_from_command_line(sys.argv)
