@@ -42,7 +42,7 @@
 <body class="noScroll gray900 white-text">
 	<div class="view-control">
 		<!-- Navbar -->
-		<nav class="navbar gray800">
+		<nav class="navbar gray800 z-100">
 			<h1 class="m-0 h4 d-inline">Viewster</h1>
 
 			<div class="btn-group ml-auto">
@@ -105,7 +105,7 @@
 							</div>
 						</nav>
 						<!-- pannels -->
-						<div id="pannels" class="px-3 py-4">
+						<div id="pannels" class="pannels px-3 py-4">
 							<!-- align items -->
 							<div id="alignItems" class="block-option-group hide text-center">
 								<div class="btn-group">
@@ -137,14 +137,14 @@
 									</div>
 									<div class="block-thumbnail">
 										<div class="block-thumbnail-empty">
-											<a id="add-my-template" class="btn btn-text-white btn-icon m-auto">
-												<i>add</i>
+											<a id="add-my-template" class="btn btn-text-white btn-with-icon m-auto">
+												<i>add</i> 추가하기
 											</a>
 										</div>
 									</div>
 									{% if user.is_authenticated %}
 										{% for tmpl in user_templates reversed %}
-											<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
+											<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
 												<img>
 												{% if user.is_superuser %}
 													<i >highlight_off</i>
