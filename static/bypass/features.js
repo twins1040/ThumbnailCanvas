@@ -915,11 +915,11 @@ $(window).keydown(function(e){
 (function() {
 	var ubuntuText = new fabric.IText("Select Your Template!", {
 		fontFamily: 'Noto Sans KR',
-		fontSize: 100,
+		fontSize: 50,
 		fontWeight: 900,
 		fill: '#F00',
 		stroke: 'black',
-		strokeWidth:20,
+		strokeWidth:10,
 		paintFirst: 'stroke',
 		charSpacing: -100,
 		angle:  0,
