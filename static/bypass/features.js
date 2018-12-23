@@ -749,7 +749,7 @@ $(".block-thumbnail").each(function(i, item) {
 	});
 
 	// Hook delete btn click event
-	// find icon <i> tag
+	// Find icon <i> tag
 	icon = $(item).find('i');
 	if (icon) {
 		icon.click(function() {
@@ -772,11 +772,11 @@ $(".block-thumbnail").each(function(i, item) {
 	// It needs to be here for fast loading
 	// Try to get session data, if get, use it
 	if (i === 1) {
-		let _item = item;
+		let _img = $(item).find('img')[0];
 		$.get("session/", function(json) {
 			if (json === "") {
 				set_background_image(SAMPLE_BACKGROUND_URL);
-				$(_item).click();
+				$(_img).click();
 			} else {
 				console.log("restore session");
 				restore_session(json);
