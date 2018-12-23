@@ -18,8 +18,7 @@
 
 	<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
 	<!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
-	<title>유튜브 100만뷰 썸네일 만들기</title>
-	<meta name="description" content="유튜브에서 100만 조회를 기록한 썸네일을 내 동영상에 적용해보세요. 온라인에서 쉽게 편집하고 무료로 다운로드 할 수 있습니다.">
+	<meta name="description" content="클릭률 높은 100개 이상의 썸네일 템플릿을 무료로 드립니다. 더 이상 직접 썸네일을 만들지 마세요. 이미 성공한 썸네일을 고르고, 원하는 문구를 넣으면 끝!">
 
 	<!-- 합쳐지고 최소화된 최신 CSS -->
 	<link rel="stylesheet" href="static/bootstrap-4.1.3-dist/css/bootstrap.min.css">
@@ -40,82 +39,97 @@
 	<![endif]-->
 </head>
 
-<body class="gray800 white-text">
+<body class="noScroll gray900 white-text">
+	<div class="view-control">
+		<!-- Navbar -->
+		<nav class="navbar gray800">
+			<h1 class="m-0 h4 d-inline">Viewster</h1>
 
-	<!-- Navbar -->
-	<nav class="navbar gray800">
-		<h1 class="m-0 h4 d-inline">썸네일 만들기</h1>
-
-		<div class="btn-group ml-auto">
-			<!-- 로그인 -->
-			<div class="mr-1">
-				{% if user.is_authenticated %}
-					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
-						log out
-					</a>
-				{% else %}
-					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
-						log in
-					</a>
-				{% endif %}
+			<div class="btn-group ml-auto">
+				<!-- 로그인 -->
+				<div class="mr-1">
+					{% if user.is_authenticated %}
+						<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
+							로그아웃
+						</a>
+					{% else %}
+						<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
+							로그인
+						</a>
+					{% endif %}
+				</div>
 			</div>
-		</div>
-	</nav>
+		</nav>
 
-	<!-- Toolbar -->
-	<nav id="toolbar" class="navbar gray800">
-		<!-- Undo Redo -->
-		<div class="btn-group">
-			<button id="btn-undo" class="btn btn-text-white btn-icon">
-				<i >reply</i>
-				<!-- <span>Undo</span> -->
-			</button>
-			<button id="btn-redo" class="btn btn-text-white btn-icon">
-				<i class="y-flip">reply</i>
-				<!-- <span>Redo</span> -->
-			</button>
-		</div>
-		<!-- Add Component -->
-		<div class="btn-group">
-			<button id="addImage" class="btn btn-text-white btn-icon">
-				<i class="y-flip">image</i>
-			</button>
-			<!-- add-text -->
-			<button id="addText" class="btn btn-text-white btn-icon">
-				<i class="y-flip">text_fields</i>
-			</button>
-		</div>
-		<!-- Save -->
-		<div class="btn-group">
-			<a id="download-btn-a" class="btn btn-text-white btn-icon">
-				<i>file_download</i>
-			</a>
-		</div>
-	</nav>
+		<!-- Contents -->
+			<div class="container-fluid gray900">
+				<div class="row scroll-wraper">
+					<!-- Canvas -->
+					<div class="col-md-7 p-0">
+						<canvas id="myCanvas" class="canvas-artboard sticky-header">
+							Your browser does not support the canvas element
+						</canvas>
+					</div>
 
-	<div class="container-fluid gray900">
-		<div class="row">
-			<!-- Canvas -->
-			<div class="col-sm-8 p-0">
-				<canvas id="myCanvas" class="canvas-artboard sticky-header">
-					Your browser does not support the canvas element
-				</canvas>
-			</div>
-			<!-- Tool Options -->
-			<div id="toolOptions" class="col-sm-4 tool-options gray800 transition">
-				<div id="templates" class="block-option-group">
-					<div id="templateMy" class="border-bottom">
-						<div class="template-header">
-							<h5>내 썸네일</h5>
-						</div>
-						<div class="row">
-							<div class="block-thumbnail col-6">
-								<div class="block-thumbnail-empty">
-									<a id="add-my-template" class="btn btn-text-white btn-icon m-auto">
-										<i>add</i>
-									</a>
+					<!-- Tool Options -->
+					<div id="toolOptions" class="col-md-5 tool-options gray800 transition">
+
+						<!-- Toolbar -->
+						<nav id="toolbar" class="navbar gray800">
+							<!-- Undo Redo -->
+							<div class="btn-group">
+								<button id="btn-undo" class="btn btn-text-white btn-icon">
+									<i >reply</i>
+									<!-- <span>Undo</span> -->
+								</button>
+								<button id="btn-redo" class="btn btn-text-white btn-icon">
+									<i class="y-flip">reply</i>
+									<!-- <span>Redo</span> -->
+								</button>
+							</div>
+							<!-- Add Component -->
+							<div class="btn-group">
+								<button id="addImage" class="btn btn-text-white btn-icon">
+									<i class="y-flip">image</i>
+								</button>
+								<!-- add-text -->
+								<button id="addText" class="btn btn-text-white btn-icon">
+									<i class="y-flip">text_fields</i>
+								</button>
+							</div>
+							<!-- Save -->
+							<div class="btn-group">
+								<a id="download-btn-a" class="btn btn-primary btn-icon">
+									<i>file_download</i>
+								</a>
+							</div>
+						</nav>
+						<!-- pannels -->
+						<div id="pannels" class="px-3 py-4">
+							<!-- align items -->
+							<div id="alignItems" class="block-option-group hide text-center">
+								<div class="btn-group">
+									<button id="align-left" class="btn btn-text-white btn-icon">
+										<i >format_align_left</i>
+									</button>
+									<button id="align-vertical-center" class="btn btn-text-white btn-icon">
+										<i >format_align_center</i>
+									</button>
+									<button id="align-right" class="btn btn-text-white btn-icon">
+										<i >format_align_right</i>
+									</button>
+									<button id="align-top" class="btn btn-text-white btn-icon">
+										<i >vertical_align_top</i>
+									</button>
+									<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
+										<i >vertical_align_center</i>
+									</button>
+									<button id="align-bottom" class="btn btn-text-white btn-icon">
+										<i >vertical_align_bottom</i>
+									</button>
 								</div>
 							</div>
+<<<<<<< Updated upstream
 							{% if user.is_authenticated %}
 								{% for tmpl in user_templates reversed %}
 									<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
@@ -142,115 +156,124 @@
 										<div class="block-thumbnail-icon">
 											<i >highlight_off</i>
 										</div>
+=======
+							<!-- templates -->
+							<div id="templates" class="block-option-group">
+								<div id="templateMy" class="d-flex flex-wrap mb-3">
+									<div class="template-header">
+										<h4>내 썸네일</h4>
+									</div>
+									<div class="block-thumbnail">
+										<div class="block-thumbnail-empty">
+											<a id="add-my-template" class="btn btn-text-white btn-icon m-auto">
+												<i>add</i>
+											</a>
+										</div>
+									</div>
+									{% if user.is_authenticated %}
+										{% for tmpl in user_templates reversed %}
+											<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
+												<img>
+											</div>
+										{% endfor %}
+>>>>>>> Stashed changes
 									{% endif %}
 								</div>
-							{% endfor %}
+								<div id="templateFeatured" class="d-flex flex-wrap">
+									<div class="template-header">
+										<h4>인기 썸네일</h4>
+									</div>
+									{% for tmpl in templates reversed %}
+										<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
+											<img>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+							<!-- text -->
+							<div id="settingText" class="block-option-group hide">
+
+								<!-- 글꼴 -->
+								<div class="block-option">
+									<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										글꼴
+									</button>
+									<div class="dropdown-menu" id="font-dropdown-menu" aria-labelledby="btnGroupDrop1"></div>
+								</div>
+
+								<!-- 텍스트 -->
+								<div class="block-option d-flex btn-icon">
+									<button class="btn btn-text-white color-button" >
+										<input class="color-input" id="fill-hueb" data-huebee readonly>
+									</button>
+									<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
+								</div>
+
+								<!-- 외곽선 -->
+								<div class="block-option d-flex btn-icon">
+									<button class="btn btn-text-white color-button" >
+										<input class="color-input" id="stroke-hueb" data-huebee readonly>
+									</button>
+									<input id="sliderTextStroke" type="range" min="1" max="100" value="0" class="slider mr-2" >
+								</div>
+
+								<!-- 이중 외곽선 -->
+								<div class="block-option d-flex btn-icon" id="stroke2-console">
+									<button class="btn btn-text-white color-button" >
+										<input class="color-input" id="stroke2-hueb" data-huebee readonly>
+									</button>
+									<input id="sliderTextStroke2" type="range" min="1" max="100" value="0" class="slider mr-2" >
+								</div>
+
+								<!-- 지우기 -->
+								<div class="block-option d-flex">
+									<button class="btn btn-text-white btn-with-icon" id="btn-copy" alt="ctr+c">
+										<i>content_copy</i>복사
+									</button>
+									<button class="btn btn-text-white btn-with-icon" id="btn-delete">
+										<i >delete</i>삭제
+									</button>
+									<div class="block-option d-flex btn-icon" id="stroke2-text">
+										<button class="btn btn-text-white btn-with-icon" >
+											<i>add</i>
+											외곽선 추가
+										</button>
+									</div>
+								</div>
+							</div>
+							<!-- add image -->
+							<div id="addImageOptions" class="block-option-group hide">
+								<!-- load background-image -->
+								<label for="imgLoader" class="btn btn-block btn-secondary mb-0">
+									배경 이미지 추가
+									<input type="file" id="imgLoader" class="hide-input" multiple/>
+								</label>
+								<!-- add image-clip -->
+								<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
+									소스 이미지 추가
+									<input type="file" id="clipLoader" class="hide-input" multiple/>
+								</label>
+							</div>
+
+							<div class="block-option-group hide">
+								<!-- 임시저장 -->
+								<!-- <div class="btn-group" id="temp-save" role="group">
+									<label for="upload" class="btn btn-text-white btn-with-icon mb-0" >
+										<i >save</i>
+										<span>임시저장</span>
+									</label>
+								</div> -->
+
+								<!-- 콤포넌트 제어 -->
+								<!-- <div class="btn-group" role="group" aria-label="Basic example">
+								</div> -->
+
+							</div>
 						</div>
 					</div>
 				</div>
-				<div id="settingText" class="block-option-group hide">
-					<!-- 글꼴 -->
-					<div class="block-option">
-						<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							글꼴
-						</button>
-						<div class="dropdown-menu" id="font-dropdown-menu" aria-labelledby="btnGroupDrop1"></div>
-					</div>
-
-					<!-- 텍스트 -->
-					<div class="block-option d-flex btn-icon">
-						<button class="btn btn-text-white color-button" >
-							<input class="color-input" id="fill-hueb" data-huebee readonly>
-						</button>
-						<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
-					</div>
-
-					<!-- 외곽선 -->
-					<div class="block-option d-flex btn-icon">
-						<button class="btn btn-text-white color-button" >
-							<input class="color-input" id="stroke-hueb" data-huebee readonly>
-						</button>
-						<input id="sliderTextStroke" type="range" min="1" max="100" value="0" class="slider mr-2" >
-					</div>
-
-					<!-- 이중 외곽선 -->
-					<div class="block-option d-flex btn-icon" id="stroke2-console">
-						<button class="btn btn-text-white color-button" >
-							<input class="color-input" id="stroke2-hueb" data-huebee readonly>
-						</button>
-						<input id="sliderTextStroke2" type="range" min="1" max="100" value="0" class="slider mr-2" >
-					</div>
-					<div class="block-option d-flex btn-icon" id="stroke2-text">
-						<button class="btn btn-text-white color-button" >
-							외곽선 추가
-						</button>
-					</div>
-				</div>
-				<div id="addImageOptions" class="block-option-group hide">
-					<!-- load background-image -->
-					<label for="imgLoader" class="btn btn-block btn-primary mb-0">
-						배경 이미지 추가
-						<input type="file" id="imgLoader" class="hide-input" multiple/>
-					</label>
-					<!-- add image-clip -->
-					<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
-						소스 이미지 추가
-						<input type="file" id="clipLoader" class="hide-input" multiple/>
-					</label>
-				</div>
-				<div id="alignItems" class="block-option-group hide text-center">
-					<div class="btn-group">
-						<button id="align-left" class="btn btn-text-white btn-icon">
-							<i >format_align_left</i>
-						</button>
-						<button id="align-vertical-center" class="btn btn-text-white btn-icon">
-							<i >format_align_center</i>
-						</button>
-						<button id="align-right" class="btn btn-text-white btn-icon">
-							<i >format_align_right</i>
-						</button>
-						<button id="align-top" class="btn btn-text-white btn-icon">
-							<i >vertical_align_top</i>
-						</button>
-						<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
-							<i >vertical_align_center</i>
-						</button>
-						<button id="align-bottom" class="btn btn-text-white btn-icon">
-							<i >vertical_align_bottom</i>
-						</button>
-					</div>
-				</div>
-				<div class="block-option-group hide">
-					<!-- 임시저장 -->
-					<!-- <div class="btn-group" id="temp-save" role="group">
-						<label for="upload" class="btn btn-text-white btn-with-icon mb-0" >
-							<i >save</i>
-							<span>임시저장</span>
-						</label>
-					</div> -->
-
-					<!-- 콤포넌트 제어 -->
-					<!-- <div class="btn-group" role="group" aria-label="Basic example">
-						<button class="btn btn-text-white" id="btn-copy" alt="ctr+c">
-							<i>content_copy</i>
-						</button>
-						<button class="btn btn-text-white btn-icon" id="btn-delete">
-							<i >delete</i>
-						</button>
-					</div> -->
-
-				</div>
 			</div>
-		</div>
 	</div>
-
-	<!-- capture image -->
-	<!-- <a class="mr-auto" rel="noopener noreferrer" href="http://www.youtubescreenshot.com/">
-		<button class="btn btn-primary btn-icon">
-			<i >link</i>
-			<span>링크</span>
-		</button>
-	</a> -->
 
 
 
