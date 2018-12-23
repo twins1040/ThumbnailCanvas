@@ -616,6 +616,19 @@ function setExtraStroke(obj, options) {
 	obj.item(0).set(options);
 	canvas.renderAll();
 }
+
+function loadAndUse(font) {
+	var myfont = new FontFaceObserver(font);
+	myfont.load()
+		.then(function() {
+			// when font is loaded, use it.
+			canvas.getActiveObject().set("fontFamily", font);
+			canvas.requestRenderAll();
+		}).catch(function(e) {
+			console.log(e)
+			alert('font loading failed ' + font);
+		});
+}
 // END OF FUNCTIONS
 
 
@@ -868,7 +881,7 @@ FONTS.forEach(function(font) {
 	$(e).html(font);
 	$(e).click(function() {
 		activeObjectSet(function(obj) {
-			obj.set("fontFamily", font);
+			loadAndUse(font);
 		});
 	});
 	$("#font-dropdown-menu").append(e);
