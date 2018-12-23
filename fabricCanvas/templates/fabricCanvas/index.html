@@ -129,34 +129,6 @@
 									</button>
 								</div>
 							</div>
-<<<<<<< Updated upstream
-							{% if user.is_authenticated %}
-								{% for tmpl in user_templates reversed %}
-									<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
-										<img>
-										{% if user.is_superuser %}
-											<div class="block-thumbnail-icon">
-												<i >highlight_off</i>
-											</div>
-										{% endif %}
-									</div>
-								{% endfor %}
-							{% endif %}
-						</div>
-					</div>
-					<div id="templateFeatured">
-						<div class="template-header">
-							<h5>인기 썸네일</h5>
-						</div>
-						<div class="row">
-							{% for tmpl in templates reversed %}
-								<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
-									<img>
-									{% if user.is_superuser %}
-										<div class="block-thumbnail-icon">
-											<i >highlight_off</i>
-										</div>
-=======
 							<!-- templates -->
 							<div id="templates" class="block-option-group">
 								<div id="templateMy" class="d-flex flex-wrap mb-3">
@@ -174,9 +146,11 @@
 										{% for tmpl in user_templates reversed %}
 											<div class="block-thumbnail col-6" id="tmpl-{{tmpl.id}}">
 												<img>
+												{% if user.is_superuser %}
+													<i >highlight_off</i>
+												{% endif %}
 											</div>
 										{% endfor %}
->>>>>>> Stashed changes
 									{% endif %}
 								</div>
 								<div id="templateFeatured" class="d-flex flex-wrap">
@@ -186,6 +160,9 @@
 									{% for tmpl in templates reversed %}
 										<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
 											<img>
+											{% if user.is_superuser %}
+												<i >highlight_off</i>
+											{% endif %}
 										</div>
 									{% endfor %}
 								</div>
