@@ -5,6 +5,7 @@ var LOGIN_URL = '/login/google-oauth2/';
 var LOGOUT_URL = '/logout/';
 var SAMPLE_BACKGROUND_URL = "static/img/blue_furniture_resize.jpg";
 var HISTORY_MAX_LEN = 50;
+var SLIDER_TO_1X = 20;
 var FONTS = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor Story"];
 var GRADIENTS = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 				 {name: "blue darkblue", h:0, v:1, stops:{0:"blue", 1:"darkblue"}},
@@ -95,10 +96,10 @@ var Toolbox = new function() {
 		image: [$("#addImageOptions"), null],
 		template: [$("#templates"), null],
 		text: [$("#settingText"), function() {
-			if (isTextSelected()) {
+			if (isIText()) {
 				$("#stroke2-text").removeClass("hide");
 				$("#stroke2-console").addClass("hide");
-			} else if (hasExtraStroke()) {
+			} else if (isDoubleText()) {
 				$("#stroke2-text").addClass("hide");
 				$("#stroke2-console").removeClass("hide");
 			}
@@ -130,7 +131,8 @@ canvas.on("mouse:up", function(opt) {
 });
 canvas.on("mouse:up", function(obj){
 	// If text has extra stroke, it is 'group' not 'i-text'
-	if (isTextSelected() || hasExtraStroke()) {
+	if (isIText() || isDoubleText()) {
+		setTextAttrBox();
 		Toolbox.switchTo("text");
 	} else if (isMultipleSelected()) {
 		Toolbox.switchTo("multi");
@@ -166,65 +168,22 @@ fabric.Object.prototype.setControlsVisibility({
 });
 
 // Declare getter and setter of Text like types
-Object.assign(fabric.IText.prototype, {
-	getColor: function() {
-		return this.fill;
-	},
-	getStroke: function() {
-		return this.stroke;
-	},
-	setStroke: function(fill) {
-		this.set("stroke", fill);
-	},
-	getStrokeWidth: function() {
-		return this.strokeWidth;
-	},
-	setStrokeWidth: function(width) {
-		this.set("strokeWidth", width);
-	},
-});
 Object.assign(fabric.Group.prototype, {
-	getColor: function() {
+	setUpper: function(key, value) {
 		if (!this.isDoubleText) return;
-		return this.item(1).fill;
+		this.item(1).set(key, value);
 	},
-	setColor: function(color) {
+	getUpper: function(key) {
 		if (!this.isDoubleText) return;
-		this.item(1).setColor(color);
+		return this.item(1).get(key);
 	},
-	getStroke: function() {
+	setLower: function(key, value) {
 		if (!this.isDoubleText) return;
-		return this.item(1).stroke;
+		this.item(0).set(key, value);
 	},
-	setStroke: function(fill) {
+	getLower: function(key) {
 		if (!this.isDoubleText) return;
-		this.item(1).set("stroke", fill);
-	},
-	getStrokeWidth: function() {
-		if (!this.isDoubleText) return;
-		return this.item(1).strokeWidth;
-	},
-	setStrokeWidth: function(width) {
-		if (!this.isDoubleText) return;
-		this.item(1).set("strokeWidth", width);
-	},
-
-	// Stroke2 start
-	getStroke2: function() {
-		if (!this.isDoubleText) return;
-		return this.item(0).stroke;
-	},
-	setStroke2: function(fill) {
-		if (!this.isDoubleText) return;
-		this.item(0).set("stroke", fill);
-	},
-	getStroke2Width: function() {
-		if (!this.isDoubleText) return;
-		return this.item(0).strokeWidth;
-	},
-	setStroke2Width: function(width) {
-		if (!this.isDoubleText) return;
-		this.item(0).set("strokeWidth", width);
+		return this.item(0).get(key);
 	},
 });
 
@@ -235,14 +194,6 @@ fabric.Group.prototype.on("moved", function(opt){
 	opt.target._lastSelected = false;
 });
 fabric.Group.prototype.on("mouseup", editExtraStroke);
-
-fabric.IText.prototype.on("selected", function() {
-	setTextAttrBox();
-});
-
-fabric.Group.prototype.on("selected", function() {
-	if (hasExtraStroke()) setTextAttrBox();
-});
 // END OF PROTOTYPE WRAPPER
 
 
@@ -349,7 +300,7 @@ function save_session(e, callback) {
 		return;
 	}
 
-	jdata = canvas.toJSON();
+	jdata = canvas.toJSON(['isDoubleText']);
 	tmpl_data = JSON.stringify(jdata);
 
 	// Save session data
@@ -446,26 +397,24 @@ function group_align(axis, align) {
 function setTextAttrBox() {
 	var obj = canvas.getActiveObject();
 
-	if(!obj) {
-		return
-	}
+	if (!obj) return;
 
 	// First line of attr box
-	$("#sliderFontSize")[0].value = obj.scaleX * 20;
-	fillHue.setColor(obj.getColor());
+	$("#sliderFontSize")[0].value = obj.scaleX * SLIDER_TO_1X;
+	fillHue.setColor(getTextShortcut('fill'));
 
 	// Second line of attr box
-	$("#sliderTextStroke")[0].value = obj.getStrokeWidth();
-	strokeHue.setColor(obj.getStroke());
+	$("#sliderTextStroke")[0].value = getTextShortcut('strokeWidth');
+	strokeHue.setColor(getTextShortcut('stroke'));
 
 	// Third line if it has double stroke
-	if (hasExtraStroke()) {
-		$("#sliderTextStroke2")[0].value = obj.getStroke2Width();
-		strokeHue2.setColor(obj.getStroke2());
+	if (isDoubleText()) {
+		$("#sliderTextStroke2")[0].value = obj.getLower('strokeWidth');
+		strokeHue2.setColor(obj.getLower('stroke'));
 	}
 }
 
-function isTextSelected() {
+function isIText() {
    var obj = canvas.getActiveObject();
    return !!(obj && obj.type === "i-text");
 }
@@ -473,6 +422,11 @@ function isTextSelected() {
 function isMultipleSelected() {
    var obj = canvas.getActiveObject();
    return !!(obj && obj.type === "activeSelection");
+}
+
+function isDoubleText() {
+	var obj = canvas.getActiveObject();
+	return !!(obj && obj.type === "group");
 }
 
 function addExtraStroke(_clonedObj) {
@@ -544,7 +498,7 @@ function addExtraStroke(_clonedObj) {
 function editExtraStroke() {
 	var actobj = canvas.getActiveObject();
 
-	if (!hasExtraStroke()) {
+	if (!isDoubleText()) {
 		return;
 	}
 
@@ -596,19 +550,8 @@ function editExtraStroke() {
 	});
 }
 
-function hasExtraStroke() {
-	var obj = canvas.getActiveObject();
-
-	if (!obj) {
-		//console.log("hasExtraStroke error!!");
-		return false;
-	}
-
-	return obj.type === "group";
-}
-
 function setExtraStroke(obj, options) {
-	if (!hasExtraStroke()) {
+	if (!isDoubleText()) {
 		console.log("it is not extra stroke!");
 		return;
 	}
@@ -629,6 +572,26 @@ function loadAndUse(font) {
 			alert('font loading failed ' + font);
 		});
 }
+
+function setTextShortcut(key, value) {
+	var actobj = canvas.getActiveObject();
+	if (!actobj) return;
+	if (isIText()) {
+		actobj.set(key, value);
+	} else if(isDoubleText()) {
+		actobj.setUpper(key, value);
+	}
+}
+
+function getTextShortcut(key) {
+	var actobj = canvas.getActiveObject();
+	if (!actobj) return;
+	if (isIText()) {
+		return actobj.get(key);
+	} else if(isDoubleText()) {
+		return actobj.getUpper(key);
+	}
+}
 // END OF FUNCTIONS
 
 
@@ -638,22 +601,20 @@ function loadAndUse(font) {
 //
 fillHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		activeObjectSet(function(obj) {
-			if (obj.setColor) obj.setColor(color);
-		});
+		setTextShortcut('fill', color);
+		canvas.renderAll();
 	}
 });
 strokeHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		activeObjectSet(function(obj) {
-			if (obj.setStroke) obj.setStroke(color);
-		});
+		setTextShortcut('stroke', color);
+		canvas.renderAll();
 	}
 });
 strokeHue2.on('change', function(color) {
 	if($(".huebee").length !== 0) {
 		activeObjectSet(function(obj) {
-			if (obj.setStroke2) obj.setStroke2(color);
+			if (obj.setLower) obj.setLower('stroke', color);
 		});
 	}
 });
@@ -678,7 +639,7 @@ $("#sliderFontSize").on("input", function() {
 
 	// slider is 0 ~ 100
 	// max is x5
-	value = $(this).val() / 20;
+	value = $(this).val() / SLIDER_TO_1X;
 
 	actobj.set("scaleX", value);
 	actobj.set("scaleY", value);
@@ -686,16 +647,14 @@ $("#sliderFontSize").on("input", function() {
 	canvas.renderAll();
 });
 $("#sliderTextStroke").on("input", function() {
-	var actobj = canvas.getActiveObject();
-
-	actobj.setStrokeWidth($(this).val());
+	setTextShortcut('strokeWidth', $(this).val());
 	canvas.renderAll();
 });
 $("#sliderTextStroke2").on("input", function() {
 	var actobj = canvas.getActiveObject();
 
-	if (hasExtraStroke()) {
-		actobj.setStroke2Width($(this).val());
+	if (isDoubleText()) {
+		actobj.setLower('strokeWidth', $(this).val());
 		canvas.renderAll();
 	}
 });
@@ -714,7 +673,7 @@ $("#download-btn-a").click(function(ev) {
 $("#add-my-template").click(function(ev) {
 	if (isLogin()) {
 		// Upload template
-		var jdata = canvas.toJSON();
+		var jdata = canvas.toJSON(['isDoubleText']);
 
 		// Delete bg for data reduce
 		jdata["backgroundImage"] = undefined;
