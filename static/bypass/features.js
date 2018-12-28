@@ -96,25 +96,30 @@ var Toolbox = new function() {
 		image: [$("#addImageOptions"), null],
 		template: [$("#templates"), null],
 		text: [$("#settingText"), function() {
-			if (isIText()) {
-				$("#stroke2-text").removeClass("hide");
-				$("#stroke2-console").addClass("hide");
-			} else if (isDoubleText()) {
+			if (isDoubleText() || isAllDoubleText()) {
 				$("#stroke2-text").addClass("hide");
 				$("#stroke2-console").removeClass("hide");
+			} else {
+				$("#stroke2-text").removeClass("hide");
+				$("#stroke2-console").addClass("hide");
 			}
 		}],
 		multi: [$("#alignItems"), null],
 	};
 
-	this.switchTo = function(opt) {
+	this.add = function(opt) {
 		var target = boxes[opt][0];
 		var callback = boxes[opt][1];
 
-		og.addClass("hide");
 		target.removeClass("hide");
 		if (callback) callback();
 	}
+
+	this.switchTo = function(opt) {
+		og.addClass("hide");
+		this.add(opt);
+	}
+
 }
 // END OF GLOBAL VARIABLES
 
@@ -129,16 +134,24 @@ canvas.selection = true;
 canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
 });
-canvas.on("mouse:up", function(obj){
+// Attribute box control
+function boxControl(e){
+	var obj = e.target;
 	// If text has extra stroke, it is 'group' not 'i-text'
-	if (isIText() || isDoubleText()) {
+	if (isIText(obj) || isDoubleText(obj)) {
 		setTextAttrBox();
 		Toolbox.switchTo("text");
-	} else if (isMultipleSelected()) {
+	} else if (isMultipleSelected(obj)) {
 		Toolbox.switchTo("multi");
-	} else {
-		Toolbox.switchTo("template");
+		if (isAllIText(obj) || isAllDoubleText()) Toolbox.add("text");
 	}
+	console.log("switch box");
+}
+canvas.on("selection:created", boxControl);
+canvas.on("selection:updated", boxControl);
+canvas.on("selection:cleared", function() {
+	Toolbox.switchTo("template");
+	console.log("hide boxes");
 });
 canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
@@ -222,7 +235,7 @@ function Copy() {
 	// later to reflect on the copy.
 	canvas.getActiveObject().clone(function(cloned) {
 		_clipboard = cloned;
-	});
+	}, ['isDoubleText']);
 }
 
 function Paste() {
@@ -249,7 +262,7 @@ function Paste() {
 		_clipboard.left += 10;
 		canvas.setActiveObject(clonedObj);
 		canvas.requestRenderAll();
-	});
+	}, ['isDoubleText']);
 }
 
 function activeObjectSet(callback) {
@@ -258,6 +271,7 @@ function activeObjectSet(callback) {
 	if (actobj) {
 		if (actobj.type == 'activeSelection') {
 			actobj.forEachObject(function(obj){
+				console.log(obj);
 				callback(obj);
 			});
 		} else {
@@ -401,11 +415,11 @@ function setTextAttrBox() {
 
 	// First line of attr box
 	$("#sliderFontSize")[0].value = obj.scaleX * SLIDER_TO_1X;
-	fillHue.setColor(getTextShortcut('fill'));
+	fillHue.setColor(getTextShortcut(obj, 'fill'));
 
 	// Second line of attr box
-	$("#sliderTextStroke")[0].value = getTextShortcut('strokeWidth');
-	strokeHue.setColor(getTextShortcut('stroke'));
+	$("#sliderTextStroke")[0].value = getTextShortcut(obj, 'strokeWidth');
+	strokeHue.setColor(getTextShortcut(obj, 'stroke'));
 
 	// Third line if it has double stroke
 	if (isDoubleText()) {
@@ -414,19 +428,41 @@ function setTextAttrBox() {
 	}
 }
 
-function isIText() {
-   var obj = canvas.getActiveObject();
+function isIText(obj) {
+   if (!obj) obj = canvas.getActiveObject();
    return !!(obj && obj.type === "i-text");
 }
 
-function isMultipleSelected() {
-   var obj = canvas.getActiveObject();
+function isMultipleSelected(obj) {
+   if (!obj) obj = canvas.getActiveObject();
    return !!(obj && obj.type === "activeSelection");
 }
 
-function isDoubleText() {
-	var obj = canvas.getActiveObject();
+function isDoubleText(obj) {
+	if (!obj) obj = canvas.getActiveObject();
 	return !!(obj && obj.type === "group");
+}
+
+// Return false if test one IText
+function isAllIText(obj) {
+	var i;
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj || obj.type !== 'activeSelection') return false;
+	for (i=0; i<obj._objects.length; i++) {
+		if (obj.item(i).type !== 'i-text') return false;
+	}
+	return true;
+}
+
+// Return false if test one doubleText
+function isAllDoubleText(obj) {
+	var i;
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj || obj.type !== 'activeSelection') return false;
+	for (i=0; i<obj._objects.length; i++) {
+		if (!isDoubleText(obj.item(i))) return false;
+	}
+	return true;
 }
 
 function addExtraStroke(_clonedObj) {
@@ -573,25 +609,26 @@ function loadAndUse(font) {
 		});
 }
 
-function setTextShortcut(key, value) {
-	var actobj = canvas.getActiveObject();
-	if (!actobj) return;
-	if (isIText()) {
-		actobj.set(key, value);
-	} else if(isDoubleText()) {
-		actobj.setUpper(key, value);
+function setTextShortcut(obj, key, value) {
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj) return;
+	if (isIText(obj)) {
+		obj.set(key, value);
+	} else if(isDoubleText(obj)) {
+		obj.setUpper(key, value);
 	}
 }
 
-function getTextShortcut(key) {
-	var actobj = canvas.getActiveObject();
-	if (!actobj) return;
-	if (isIText()) {
-		return actobj.get(key);
-	} else if(isDoubleText()) {
-		return actobj.getUpper(key);
+function getTextShortcut(obj, key) {
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj) return;
+	if (isIText(obj)) {
+		return obj.get(key);
+	} else if(isDoubleText(obj)) {
+		return obj.getUpper(key);
 	}
 }
+
 // END OF FUNCTIONS
 
 
@@ -601,14 +638,16 @@ function getTextShortcut(key) {
 //
 fillHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		setTextShortcut('fill', color);
-		canvas.renderAll();
+		activeObjectSet(function(obj) {
+			setTextShortcut(obj, 'fill', color);
+		});
 	}
 });
 strokeHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
-		setTextShortcut('stroke', color);
-		canvas.renderAll();
+		activeObjectSet(function(obj) {
+			setTextShortcut(obj, 'stroke', color);
+		});
 	}
 });
 strokeHue2.on('change', function(color) {
@@ -647,16 +686,16 @@ $("#sliderFontSize").on("input", function() {
 	canvas.renderAll();
 });
 $("#sliderTextStroke").on("input", function() {
-	setTextShortcut('strokeWidth', $(this).val());
-	canvas.renderAll();
+	var value = $(this).val();
+	activeObjectSet(function(obj) {
+		setTextShortcut(obj, 'strokeWidth', value);
+	});
 });
 $("#sliderTextStroke2").on("input", function() {
-	var actobj = canvas.getActiveObject();
-
-	if (isDoubleText()) {
-		actobj.setLower('strokeWidth', $(this).val());
-		canvas.renderAll();
-	}
+	var value = $(this).val();
+	activeObjectSet(function(obj) {
+		if (isDoubleText(obj)) obj.setLower('strokeWidth', value);
+	});
 });
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
