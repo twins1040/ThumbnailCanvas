@@ -139,7 +139,7 @@ function boxControl(e){
 	var obj = e.target;
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
-		setTextAttrBox();
+		setTextAttrBox(obj);
 		Toolbox.switchTo("text");
 	} else if (isMultipleSelected(obj)) {
 		Toolbox.switchTo("multi");
@@ -173,6 +173,8 @@ fabric.Object.prototype.set({
 	padding: 2,
 	cornerStyle: 'circle',
 	isDoubleText: false,
+	originX: 'center',
+	originY: 'center',
 });
 
 // Remove middle point of controller
@@ -408,9 +410,8 @@ function group_align(axis, align) {
 }
 
 // set values on text selection
-function setTextAttrBox() {
-	var obj = canvas.getActiveObject();
-
+function setTextAttrBox(obj) {
+	if (!obj) obj = canvas.getActiveObject();
 	if (!obj) return;
 
 	// First line of attr box
@@ -465,26 +466,23 @@ function isAllDoubleText(obj) {
 	return true;
 }
 
-function addExtraStroke(_clonedObj) {
-	let actobj = canvas.getActiveObject();
-	if (!actobj) {
-		return;
-	}
+function addExtraStroke(actobj, _clonedObj) {
+	var ret;
 
-	if (actobj.type !== "i-text") {
-		console.log("addExtraStroke: it is not i-text");
-		return;
-	}
+	if (!actobj) actobj = canvas.getActiveObject();
+	if (!actobj || !isIText(actobj)) return;
+
+	// Orign left, top -> center, center
+	centeralize(actobj);
 
 	if (!_clonedObj) {
-		console.log("no attr");
 		actobj.clone(function(obj) {
 			obj.set({stroke: "green"});
 			obj.strokeWidth += 16;
 			clonedObj = obj;
 		});
 	} else {
-		console.log("attr");
+		// _clonedObj must have absolute top, left
 		_clonedObj.clone(function(obj) {
 			clonedObj = obj;
 			canvas.remove(_clonedObj);
@@ -493,7 +491,6 @@ function addExtraStroke(_clonedObj) {
 
 	actobj.clone(function(clonedObjUpper) {
 		var scale = clonedObjUpper.scaleX;
-		var coords = clonedObj.aCoords.tl;
 		let group;
 
 		// Pass scale to Group
@@ -502,44 +499,42 @@ function addExtraStroke(_clonedObj) {
 
 		group = new fabric.Group([clonedObj, clonedObjUpper]);
 
-		// Context of objects now Group, centerize
-		group.forEachObject(function(obj){
-			obj.set({
-				originX: "center",
-				originY: "center",
-				left: 0,
-				top: 0,
+		// If it is member of group, needs to find absolute coords
+		if (actobj.group) {
+			group.set({
+				left: actobj.group.left + group.left,
+				top: actobj.group.top + group.top,
 			});
-		});
+		}
 
 		// Apply passed scale
-		// Because of Bug, reset left and top
 		group.set({scaleX: scale, scaleY: scale});
-		group.set({left: coords.x, top: coords.y});
 		group.set("isDoubleText", true);
-
-		group.on("deselected", function() {
-			group._lastSelected = false;
-		});
 
 		canvas.remove(actobj).renderAll();
 		canvas.add(group);
 
 		History.add();
 
-		canvas.setActiveObject(group);
+		ret = group;
 	});
+
+	return ret;
 }
 
 function editExtraStroke() {
-	var actobj = canvas.getActiveObject();
+	let actobj = canvas.getActiveObject();
 
-	if (!isDoubleText()) {
-		return;
-	}
+	if (!isDoubleText(actobj)) return;
 
 	if (!actobj._lastSelected) {
 		actobj._lastSelected = true;
+		// Group event needs to be offed
+		// Group share hander (bug?)
+		actobj.on("deselected", function() {
+			actobj._lastSelected = false;
+			actobj.off("deselected");
+		});
 		return;
 	}
 
@@ -549,12 +544,10 @@ function editExtraStroke() {
 	actobj.item(0).clone(function(clonedObj0) {
 		actobj.item(1).clone(function(clonedObj1) {
 			var opt = {
-				originX: "center",
-				originY: "center",
 				scaleX: actobj.item(0).scaleX * actobj.scaleX,
 				scaleY: actobj.item(0).scaleY * actobj.scaleY,
-				left: actobj.left + actobj.width/2 * actobj.scaleX,
-				top: actobj.top + actobj.height/2 * actobj.scaleY,
+				left: actobj.left,
+				top: actobj.top,
 			};
 
 			clonedObj0.set(opt);
@@ -565,7 +558,7 @@ function editExtraStroke() {
 			// Caustion: IText share event!!
 			// It should be off after event exit
 			clonedObj1.on("editing:exited", function() {
-				addExtraStroke(clonedObj0);
+				addExtraStroke(clonedObj1, clonedObj0);
 				clonedObj1.off("changed");
 				clonedObj1.off("editing:exited");
 			});
@@ -629,6 +622,19 @@ function getTextShortcut(obj, key) {
 	}
 }
 
+function centeralize(obj) {
+	var crd = obj.aCoords;
+	if (!obj) return;
+	if (obj.originX !== 'center') {
+		obj.originX = 'center';
+		obj.set('left', obj.left + (crd.tr.x - crd.tl.x)/2);
+	}
+	if (obj.originY !== 'center') {
+		obj.originY = 'center';
+		obj.set('top', obj.top + (crd.bl.y - crd.tl.y)/2);
+	}
+	return;
+}
 // END OF FUNCTIONS
 
 
@@ -851,8 +857,20 @@ $('#clipLoader').on('change', function(e) {
 	}
 });
 $("#stroke2-text").click(function(){
-	addExtraStroke();
-	setTextAttrBox();
+	var newObjs = [];
+	var act;
+
+	activeObjectSet(function(obj) {
+		var obj2 = addExtraStroke(obj);
+		newObjs.push(obj2);
+	});
+
+	// Discard empty selection, change to new one
+	canvas.discardActiveObject();
+	act = new fabric.ActiveSelection(newObjs, {canvas: canvas});
+	canvas.setActiveObject(act);
+	canvas.requestRenderAll();
+
 	$("#stroke2-text").addClass("hide");
 	$("#stroke2-console").removeClass("hide");
 });
