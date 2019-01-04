@@ -168,9 +168,9 @@ fabric.Object.prototype.set({
 	cornerColor: 'white',
 	cornerStrokeColor: "#69F",
 	borderColor: "#69F",
-	cornerSize: 20,
-	borderScaleFactor: 4,	// controller border width
-	padding: 2,
+	cornerSize: 40,
+	borderScaleFactor: 10,	// controller border width
+	padding: 8,
 	cornerStyle: 'circle',
 	isDoubleText: false,
 	originX: 'center',
