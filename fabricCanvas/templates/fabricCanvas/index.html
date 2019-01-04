@@ -225,6 +225,14 @@
 									배경 이미지 추가
 									<input type="file" id="imgLoader" class="hide-input" multiple/>
 								</label>
+								<!-- load background-image by url-->
+								<label class="btn btn-block btn-secondary mb-0">
+									 URL로 배경 추가
+								</label>
+								<div>
+									<input type="text" id="urlText" placeholder="https://www.youtube.com/watch?v=0uoct0s5kdM"/>
+									<input type="button" id="urlLoader" value="확인"/>
+								</div>
 								<!-- add image-clip -->
 								<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
 									소스 이미지 추가
@@ -268,6 +276,7 @@
 		<input type="hidden" id="input-thumbnail" name="thumbnail">
 	</form>
 
+	<!-- <script src="https://code.jquery.com/jquery-3.3.1.js"></script> -->
 	<script src="static/js/jquery-3.3.1.min.js"></script>
 	<script src="static/js/popper.min.js"></script>
 	<script src="static/bootstrap-4.1.3-dist/js/bootstrap.min.js"></script>

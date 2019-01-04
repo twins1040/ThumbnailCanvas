@@ -345,7 +345,7 @@ function clear_session() {
 	});
 }
 
-function set_background_image(src) {
+function set_background_image(src, errCallback) {
 	var imgObj = new Image();
 	imgObj.src = src;
 	imgObj.onload = function () {
@@ -353,6 +353,14 @@ function set_background_image(src) {
 		var wRatio = canvas.width / image.width;
 		var hRatio = canvas.height / image.height;
 		var scale = (wRatio > hRatio) ? hRatio : wRatio;
+
+		// Check image by size, until now, no solution to verify CORS image
+		console.log(image.width);
+		if (image.width === 120 && image.height === 90) {
+			console.log("image seems like empty");
+			if (errCallback) errCallback();
+			return;
+		}
 
 		canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
 			scaleX: scale,
@@ -363,6 +371,7 @@ function set_background_image(src) {
 			originY: 'center'
 		});
 
+		$("#urlText").val("");
 		History.add();
 	}
 }
@@ -838,6 +847,28 @@ $('#imgLoader').on('change', function(e) {
 	}
 
 	reader.readAsDataURL(e.target.files[0]);
+});
+$("#urlLoader").click(function() {
+	var result = $("#urlText").val().match('[\\?&]v=([^&#]*)');
+	var id, normalUrl, maxUrl;
+
+	if (!result) {
+		alert("잘못된 url 입니다.");
+		$("#urlText").val("");
+		return;
+	}
+
+	id = result[1];
+	console.log(id);
+	normalUrl = "https://img.youtube.com/vi/"+id+"/mqdefault.jpg";
+	maxUrl = "https://img.youtube.com/vi/"+id+"/maxresdefault.jpg";
+
+	set_background_image(maxUrl, function() {
+		set_background_image(normalUrl, function() {
+			alert("fail to load "+normalUrl);
+		});
+	});
+	$("#urlText").val("");
 });
 $('#clipLoader').on('change', function(e) {
 	function readAndAdd(file) {
