@@ -794,13 +794,13 @@ $(".block-thumbnail").each(function(i, item) {
 			if (json === "") {
 				set_background_image(SAMPLE_BACKGROUND_URL);
 				$(_img).click();
+				History.add();
 			} else {
 				console.log("restore session");
 				restore_session(json);
+				History.add();
 			}
 		});
-
-		History.add();
 	}
 });
 $("#switch-user").click(function() {
