@@ -694,13 +694,15 @@ $("#sliderFontSize").on("input", function() {
 $("#sliderTextStroke").on("input", function() {
 	var value = $(this).val();
 	activeObjectSet(function(obj) {
-		setTextShortcut(obj, 'strokeWidth', value);
+		// - 1 need to make 0
+		setTextShortcut(obj, 'strokeWidth', value - 1);
 	});
 });
 $("#sliderTextStroke2").on("input", function() {
 	var value = $(this).val();
 	activeObjectSet(function(obj) {
-		if (isDoubleText(obj)) obj.setLower('strokeWidth', value);
+		// - 1 need to make 0
+		if (isDoubleText(obj)) obj.setLower('strokeWidth', value - 1);
 	});
 });
 $("#download-btn-a").click(function(ev) {
