@@ -6,7 +6,9 @@ var LOGOUT_URL = '/logout/';
 var SAMPLE_BACKGROUND_URL = "static/img/blue_furniture_resize.jpg";
 var HISTORY_MAX_LEN = 50;
 var SLIDER_TO_1X = 20;
-var FONTS = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor Story"];
+var FONTS = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor Story",
+			'Gothic A1 Regular', 'Gothic A1 Light', 'Gothic A1 Thin', 'TmonMonsori',
+			'Cute Font', 'HANNA Pro', 'Black Han Sans',	'JUA', 'Swagger'];
 var GRADIENTS = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 				 {name: "blue darkblue", h:0, v:1, stops:{0:"blue", 1:"darkblue"}},
 				 {name: "red darkred", h:0, v:1, stops:{0:"red", 1:"darkred"}}];

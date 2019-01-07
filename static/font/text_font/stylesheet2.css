@@ -1,0 +1,108 @@
+@font-face {
+    font-family: 'Gothic A1';
+    src: url('GothicA1-Regular.eot');
+    src: url('GothicA1-Regular.eot?#iefix') format('embedded-opentype'),
+        url('GothicA1-Regular.woff2') format('woff2'),
+        url('GothicA1-Regular.woff') format('woff'),
+        url('GothicA1-Regular.ttf') format('truetype'),
+        url('GothicA1-Regular.svg#GothicA1-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TmonMonsori';
+    src: url('TmonMonsoriBlack.eot');
+    src: url('TmonMonsoriBlack.eot?#iefix') format('embedded-opentype'),
+        url('TmonMonsoriBlack.woff2') format('woff2'),
+        url('TmonMonsoriBlack.woff') format('woff'),
+        url('TmonMonsoriBlack.ttf') format('truetype'),
+        url('TmonMonsoriBlack.svg#TmonMonsoriBlack') format('svg');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cute Font';
+    src: url('CuteFont-Regular.eot');
+    src: url('CuteFont-Regular.eot?#iefix') format('embedded-opentype'),
+        url('CuteFont-Regular.woff2') format('woff2'),
+        url('CuteFont-Regular.woff') format('woff'),
+        url('CuteFont-Regular.ttf') format('truetype'),
+        url('CuteFont-Regular.svg#CuteFont-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BM HANNA Pro';
+    src: url('BMHANNAPro.eot');
+    src: url('BMHANNAPro.eot?#iefix') format('embedded-opentype'),
+        url('BMHANNAPro.woff2') format('woff2'),
+        url('BMHANNAPro.woff') format('woff'),
+        url('BMHANNAPro.ttf') format('truetype'),
+        url('BMHANNAPro.svg#BMHANNAPro') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gothic A1';
+    src: url('GothicA1-Light.eot');
+    src: url('GothicA1-Light.eot?#iefix') format('embedded-opentype'),
+        url('GothicA1-Light.woff2') format('woff2'),
+        url('GothicA1-Light.woff') format('woff'),
+        url('GothicA1-Light.ttf') format('truetype'),
+        url('GothicA1-Light.svg#GothicA1-Light') format('svg');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Black Han Sans';
+    src: url('BlackHanSans-Regular.eot');
+    src: url('BlackHanSans-Regular.eot?#iefix') format('embedded-opentype'),
+        url('BlackHanSans-Regular.woff2') format('woff2'),
+        url('BlackHanSans-Regular.woff') format('woff'),
+        url('BlackHanSans-Regular.ttf') format('truetype'),
+        url('BlackHanSans-Regular.svg#BlackHanSans-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BM JUA';
+    src: url('BMJUA.eot');
+    src: url('BMJUA.eot?#iefix') format('embedded-opentype'),
+        url('BMJUA.woff2') format('woff2'),
+        url('BMJUA.woff') format('woff'),
+        url('BMJUA.ttf') format('truetype'),
+        url('BMJUA.svg#BMJUA') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Swagger TTF';
+    src: url('SwaggerTTF.eot');
+    src: url('SwaggerTTF.eot?#iefix') format('embedded-opentype'),
+        url('SwaggerTTF.woff2') format('woff2'),
+        url('SwaggerTTF.woff') format('woff'),
+        url('SwaggerTTF.ttf') format('truetype'),
+        url('SwaggerTTF.svg#SwaggerTTF') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gothic A1';
+    src: url('GothicA1-Thin.eot');
+    src: url('GothicA1-Thin.eot?#iefix') format('embedded-opentype'),
+        url('GothicA1-Thin.woff2') format('woff2'),
+        url('GothicA1-Thin.woff') format('woff'),
+        url('GothicA1-Thin.ttf') format('truetype'),
+        url('GothicA1-Thin.svg#GothicA1-Thin') format('svg');
+    font-weight: 100;
+    font-style: normal;
+}
+
