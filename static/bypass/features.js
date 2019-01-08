@@ -596,10 +596,10 @@ function loadAndUse(font, obj) {
 		.then(function() {
 			var opt = ["fontFamily", font];
 			// when font is loaded, use it.
-			obj.set(opt);
+			obj.set("fontFamily", font);
 			if(isDoubleText(obj)) {
-				obj.setUpper.apply(obj, opt);
-				obj.setLower.apply(obj, opt);
+				obj.setUpper("fontFamily", font);
+				obj.setLower("fontFamily", font);
 			}
 			canvas.requestRenderAll();
 		}).catch(function(e) {
