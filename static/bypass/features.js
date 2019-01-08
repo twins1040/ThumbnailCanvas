@@ -679,7 +679,7 @@ $("#sliderFontSize").on("input", function() {
 
 	// slider is 0 ~ 100
 	// max is x5
-	value = $(this).val() / SLIDER_TO_1X;
+	value = parseInt($(this).val()) / SLIDER_TO_1X;
 
 	actobj.set("scaleX", value);
 	actobj.set("scaleY", value);
@@ -687,19 +687,22 @@ $("#sliderFontSize").on("input", function() {
 	canvas.renderAll();
 });
 $("#sliderTextStroke").on("input", function() {
-	var value = $(this).val();
+	var strVal = $(this).val();
+	var value = parseInt(strVal);
 	activeObjectSet(function(obj) {
 		obj.setUpper('strokeWidth', value);
 	});
 });
 $("#sliderTextStroke2").on("input", function() {
-	var value = $(this).val();
+	var strVal = $(this).val();
+	var value = parseInt(strVal);
 	activeObjectSet(function(obj) {
 		if (isDoubleText(obj)) obj.setLower('strokeWidth', value);
 	});
 });
 $("#sliderCharSpace").on("input", function() {
-	var value = $(this).val();
+	var strVal = $(this).val();
+	var value = parseInt(strVal);
 	activeObjectSet(function(obj) {
 		obj.setAllText('charSpacing', value);
 	});
