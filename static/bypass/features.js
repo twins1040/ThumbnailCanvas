@@ -275,7 +275,6 @@ function activeObjectSet(callback) {
 	if (actobj) {
 		if (actobj.type == 'activeSelection') {
 			actobj.forEachObject(function(obj){
-				console.log(obj);
 				callback(obj);
 			});
 		} else {
@@ -591,12 +590,17 @@ function setExtraStroke(obj, options) {
 	canvas.renderAll();
 }
 
-function loadAndUse(font) {
+function loadAndUse(font, obj) {
 	var myfont = new FontFaceObserver(font);
 	myfont.load()
 		.then(function() {
+			var opt = ["fontFamily", font];
 			// when font is loaded, use it.
-			canvas.getActiveObject().set("fontFamily", font);
+			obj.set(opt);
+			if(isDoubleText(obj)) {
+				obj.setUpper.apply(obj, opt);
+				obj.setLower.apply(obj, opt);
+			}
 			canvas.requestRenderAll();
 		}).catch(function(e) {
 			console.log(e)
@@ -901,7 +905,7 @@ FONTS.forEach(function(font) {
 	$(e).html(font);
 	$(e).click(function() {
 		activeObjectSet(function(obj) {
-			loadAndUse(font);
+			loadAndUse(font, obj);
 		});
 	});
 	$("#font-dropdown-menu").append(e);
