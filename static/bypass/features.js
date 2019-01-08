@@ -184,11 +184,25 @@ fabric.Object.prototype.setControlsVisibility({
 	mb: false, ml: false, mr: false, mt: false
 });
 
+// Add method to match with DoubleText
+Object.assign(fabric.IText.prototype, {
+	setAllText: function(key, value) {
+		this.set(key, value);
+	},
+	setUpper: function(key, value) {
+		this.set(key, value);
+	},
+	getUpper: function(key) {
+		return this.get(key);
+	},
+});
+
 // Declare getter and setter of Text like types
 Object.assign(fabric.Group.prototype, {
 	setUpper: function(key, value) {
 		if (!this.isDoubleText) return;
 		this.item(1).set(key, value);
+		this.addWithUpdate();
 	},
 	getUpper: function(key) {
 		if (!this.isDoubleText) return;
@@ -197,10 +211,17 @@ Object.assign(fabric.Group.prototype, {
 	setLower: function(key, value) {
 		if (!this.isDoubleText) return;
 		this.item(0).set(key, value);
+		this.addWithUpdate();
 	},
 	getLower: function(key) {
 		if (!this.isDoubleText) return;
 		return this.item(0).get(key);
+	},
+	setAllText: function(key, value) {
+		if (!this.isDoubleText) return;
+		this.item(0).set(key, value);
+		this.item(1).set(key, value);
+		this.addWithUpdate();
 	},
 });
 
@@ -417,17 +438,20 @@ function setTextAttrBox(obj) {
 
 	// First line of attr box
 	$("#sliderFontSize")[0].value = obj.scaleX * SLIDER_TO_1X;
-	fillHue.setColor(getTextShortcut(obj, 'fill'));
+	fillHue.setColor(obj.getUpper('fill'));
 
 	// Second line of attr box
-	$("#sliderTextStroke")[0].value = getTextShortcut(obj, 'strokeWidth');
-	strokeHue.setColor(getTextShortcut(obj, 'stroke'));
+	$("#sliderTextStroke")[0].value = obj.getUpper('strokeWidth');
+	strokeHue.setColor(obj.getUpper('stroke'));
 
 	// Third line if it has double stroke
-	if (isDoubleText()) {
+	if (isDoubleText(obj)) {
 		$("#sliderTextStroke2")[0].value = obj.getLower('strokeWidth');
 		strokeHue2.setColor(obj.getLower('stroke'));
 	}
+
+	// Fourth line of char spacing
+	$("#sliderCharSpace")[0].value = obj.getUpper('charSpacing');
 }
 
 function isIText(obj) {
@@ -580,52 +604,17 @@ function editExtraStroke() {
 	});
 }
 
-function setExtraStroke(obj, options) {
-	if (!isDoubleText()) {
-		console.log("it is not extra stroke!");
-		return;
-	}
-
-	obj.item(0).set(options);
-	canvas.renderAll();
-}
-
 function loadAndUse(font, obj) {
 	var myfont = new FontFaceObserver(font);
 	myfont.load()
 		.then(function() {
-			var opt = ["fontFamily", font];
 			// when font is loaded, use it.
-			obj.set("fontFamily", font);
-			if(isDoubleText(obj)) {
-				obj.setUpper("fontFamily", font);
-				obj.setLower("fontFamily", font);
-			}
+			obj.setAllText("fontFamily", font);
 			canvas.requestRenderAll();
 		}).catch(function(e) {
 			console.log(e)
 			alert('font loading failed ' + font);
 		});
-}
-
-function setTextShortcut(obj, key, value) {
-	if (!obj) obj = canvas.getActiveObject();
-	if (!obj) return;
-	if (isIText(obj)) {
-		obj.set(key, value);
-	} else if(isDoubleText(obj)) {
-		obj.setUpper(key, value);
-	}
-}
-
-function getTextShortcut(obj, key) {
-	if (!obj) obj = canvas.getActiveObject();
-	if (!obj) return;
-	if (isIText(obj)) {
-		return obj.get(key);
-	} else if(isDoubleText(obj)) {
-		return obj.getUpper(key);
-	}
 }
 
 function centeralize(obj) {
@@ -651,14 +640,14 @@ function centeralize(obj) {
 fillHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
 		activeObjectSet(function(obj) {
-			setTextShortcut(obj, 'fill', color);
+			obj.setUpper('fill', color);
 		});
 	}
 });
 strokeHue.on('change', function(color) {
 	if($(".huebee").length !== 0) {
 		activeObjectSet(function(obj) {
-			setTextShortcut(obj, 'stroke', color);
+			obj.setUpper('stroke', color);
 		});
 	}
 });
@@ -700,15 +689,19 @@ $("#sliderFontSize").on("input", function() {
 $("#sliderTextStroke").on("input", function() {
 	var value = $(this).val();
 	activeObjectSet(function(obj) {
-		// - 1 need to make 0
-		setTextShortcut(obj, 'strokeWidth', value - 1);
+		obj.setUpper('strokeWidth', value);
 	});
 });
 $("#sliderTextStroke2").on("input", function() {
 	var value = $(this).val();
 	activeObjectSet(function(obj) {
-		// - 1 need to make 0
-		if (isDoubleText(obj)) obj.setLower('strokeWidth', value - 1);
+		if (isDoubleText(obj)) obj.setLower('strokeWidth', value);
+	});
+});
+$("#sliderCharSpace").on("input", function() {
+	var value = $(this).val();
+	activeObjectSet(function(obj) {
+		obj.setAllText('charSpacing', value);
 	});
 });
 $("#download-btn-a").click(function(ev) {
