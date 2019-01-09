@@ -137,7 +137,7 @@ canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
 });
 // Attribute box control
-function boxControl(e){
+canvas.on("mouse:up", function(e){
 	var obj = e.target;
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
@@ -146,14 +146,10 @@ function boxControl(e){
 	} else if (isMultipleSelected(obj)) {
 		Toolbox.switchTo("multi");
 		if (isAllIText(obj) || isAllDoubleText()) Toolbox.add("text");
+	} else {
+		Toolbox.switchTo("template");
 	}
 	console.log("switch box");
-}
-canvas.on("selection:created", boxControl);
-canvas.on("selection:updated", boxControl);
-canvas.on("selection:cleared", function() {
-	Toolbox.switchTo("template");
-	console.log("hide boxes");
 });
 canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
@@ -434,7 +430,14 @@ function group_align(axis, align) {
 // set values on text selection
 function setTextAttrBox(obj) {
 	if (!obj) obj = canvas.getActiveObject();
-	if (!obj) return;
+	if (!obj) {
+		console.log("no active obj");
+		return;
+	}
+	if (!isIText(obj) && !isDoubleText(obj)) {
+		console.log("can't set box attr. it is not text");
+		return;
+	}
 
 	// First line of attr box
 	$("#sliderFontSize")[0].value = obj.scaleX * SLIDER_TO_1X;
@@ -877,12 +880,24 @@ $("#stroke2-text").click(function(){
 
 	// Discard empty selection, change to new one
 	canvas.discardActiveObject();
-	act = new fabric.ActiveSelection(newObjs, {canvas: canvas});
+
+	if (newObjs.length === 0) {
+		console.log("try to set nothing to active");
+		return;
+	}
+
+	if (newObjs.length === 1) {
+		act = newObjs[0];
+	} else {
+		act = new fabric.ActiveSelection(newObjs, {canvas: canvas});
+	}
+
 	canvas.setActiveObject(act);
 	canvas.requestRenderAll();
 
 	$("#stroke2-text").addClass("hide");
 	$("#stroke2-console").removeClass("hide");
+	setTextAttrBox();
 });
 $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
