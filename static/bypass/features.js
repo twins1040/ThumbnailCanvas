@@ -630,6 +630,12 @@ function centeralize(obj) {
 	}
 	return;
 }
+
+function deleteActiveObject() {
+	activeObjectSet(function(obj) {canvas.remove(obj)});
+	canvas.discardActiveObject();
+	canvas.renderAll();
+}
 // END OF FUNCTIONS
 
 
@@ -663,7 +669,7 @@ $("#btn-undo").click(History.undo);
 $("#btn-redo").click(History.redo);
 $("#btn-copy").click(function() {Copy(); Paste()});
 $("#btn-delete").click(function(){
-	activeObjectSet(function(obj) {canvas.remove(obj)});
+	deleteActiveObject();
 });
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
@@ -936,7 +942,7 @@ $(window).keydown(function(e){
 	if(e.which === 90 && isCtrlKey()) {
 		(e.shiftKey) ? History.redo() : History.undo();
 	} else if (isDeleteKey()) {
-		activeObjectSet(function(obj) {canvas.remove(obj)});
+		deleteActiveObject();
 	} else if (e.which === 67 && isCtrlKey()) {
 		Copy();
 	} else if (e.which === 86 && isCtrlKey()) {
