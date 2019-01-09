@@ -137,8 +137,8 @@ canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
 });
 // Attribute box control
-canvas.on("mouse:up", function(e){
-	var obj = e.target;
+canvas.on("mouse:up", function(){
+	var obj = canvas.getActiveObject();
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
 		setTextAttrBox(obj);
