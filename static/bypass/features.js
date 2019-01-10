@@ -317,8 +317,13 @@ function load_template(json) {
 		objects.forEach(function(o) {
 			var font;
 			if (isDoubleText(o) || isIText(o)) {
-				font = o.getUpper('font');
-				if (font) loadAndUse(font, o);
+				font = o.getUpper('fontFamily');
+				if (font) {
+					loadAndUse(font , o).then(function() {
+						canvas.add(o);
+					});
+					return;
+				}
 			}
 			canvas.add(o);
 		});
@@ -614,7 +619,7 @@ function editExtraStroke() {
 
 function loadAndUse(font, obj) {
 	var myfont = new FontFaceObserver(font);
-	myfont.load()
+	return myfont.load()
 		.then(function() {
 			console.log(font + ' loaded');
 			// when font is loaded, use it.
