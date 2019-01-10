@@ -315,6 +315,11 @@ function load_template(json) {
 	fabric.util.enlivenObjects(items, function(objects) {
 		canvas.renderOnAddRemove = false;
 		objects.forEach(function(o) {
+			var font;
+			if (isDoubleText(o) || isIText(o)) {
+				font = o.getUpper('font');
+				if (font) loadAndUse(font, o);
+			}
 			canvas.add(o);
 		});
 		canvas.renderOnAddRemove = true;
@@ -611,6 +616,7 @@ function loadAndUse(font, obj) {
 	var myfont = new FontFaceObserver(font);
 	myfont.load()
 		.then(function() {
+			console.log(font + ' loaded');
 			// when font is loaded, use it.
 			obj.setAllText("fontFamily", font);
 			canvas.requestRenderAll();
