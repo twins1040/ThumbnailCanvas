@@ -198,7 +198,7 @@ Object.assign(fabric.Group.prototype, {
 	setUpper: function(key, value) {
 		if (!this.isDoubleText) return;
 		this.item(1).set(key, value);
-		this.addWithUpdate();
+		this.customSetCoords();
 	},
 	getUpper: function(key) {
 		if (!this.isDoubleText) return;
@@ -207,7 +207,7 @@ Object.assign(fabric.Group.prototype, {
 	setLower: function(key, value) {
 		if (!this.isDoubleText) return;
 		this.item(0).set(key, value);
-		this.addWithUpdate();
+		this.customSetCoords();
 	},
 	getLower: function(key) {
 		if (!this.isDoubleText) return;
@@ -217,7 +217,16 @@ Object.assign(fabric.Group.prototype, {
 		if (!this.isDoubleText) return;
 		this.item(0).set(key, value);
 		this.item(1).set(key, value);
+		this.customSetCoords();
+	},
+	customSetCoords: function() {
 		this.addWithUpdate();
+		// to fix Fabric's bug
+		// fabric's setCoords() is not for group of group
+		if (this.group) {
+			this.left -= this.group.left;
+			this.top -= this.group.top;
+		}
 	},
 });
 
@@ -953,7 +962,7 @@ $(window).keydown(function(e){
 		return e.which === 46 || e.which === 8;
 	}
 
-	console.log('key: '+e.which);
+	//console.log('key: '+e.which);
 
 	// Prevent conflict with IText key shortcut
 	// If type:group, it is not being edited
