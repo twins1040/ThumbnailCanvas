@@ -45,7 +45,7 @@ var History = new function() {
 	var _history_head = 0;
 
 	this.add = function() {
-		var snap = JSON.stringify(canvas);
+		var snap = JSON.stringify(canvas.toJSON());
 
 		// Make head 0
 		while (_history_head !=0) {
@@ -68,7 +68,7 @@ var History = new function() {
 			_history_head += 1;
 		}
 
-		canvas.loadFromJSON(_work_history[_history_head]);
+		load_template(_work_history[_history_head]);
 
 		// Remove attribute box
 		Toolbox.switchTo("template");
@@ -82,7 +82,7 @@ var History = new function() {
 			_history_head -= 1;
 		}
 
-		canvas.loadFromJSON(_work_history[_history_head]);
+		load_template(_work_history[_history_head]);
 
 		// Remove attribute box
 		Toolbox.switchTo("template");
@@ -313,6 +313,44 @@ function activeObjectSet(callback) {
 	}
 }
 
+function loadFontFromPJSON(pjson) {
+	var result = [];
+	var prom;
+	// Find all font in json from decendants
+	var recurse = function(obj) {
+		for (var e in obj) {
+			if (obj[e] instanceof Object) {
+				recurse(obj[e]);
+			} else {
+				if (e === 'fontFamily' && !result.includes(obj[e])) {
+					result.push(obj[e]);
+				}
+			}
+		}
+	}
+	var loadFont = function(font) {
+		var myfont = new FontFaceObserver(font);
+		return myfont.load();
+	}
+
+	recurse(pjson);
+	console.log(result);
+
+	if (result.length === 0) {
+		console.log("no font");
+		prom = new Promise(function(resolve, reject) {reject()});
+		return prom;
+	}
+
+	// Chaining All font loading sequences ex) p.then(f).then(f)....
+	prom = loadFont(result.shift());
+	for (var font in result) {
+		prom = prom.then(function() {loadFont(font)});
+	}
+
+	return prom;
+}
+
 function load_template(json) {
 	var pjson = JSON.parse(json);
 	var items = pjson["objects"];
@@ -321,27 +359,17 @@ function load_template(json) {
 		canvas.remove(t);
 	});
 
-	fabric.util.enlivenObjects(items, function(objects) {
-		canvas.renderOnAddRemove = false;
-		objects.forEach(function(o) {
-			var font;
-			if (isDoubleText(o) || isIText(o)) {
-				font = o.getUpper('fontFamily');
-				if (font) {
-					loadAndUse(font , o).then(function() {
-						if (isDoubleText(o)) o.customSetCoords();
-						canvas.add(o);
-					});
-					return;
-				}
-			}
-			canvas.add(o);
+	return loadFontFromPJSON(pjson).then(function() {
+		fabric.util.enlivenObjects(items, function(objects) {
+			canvas.renderOnAddRemove = false;
+			objects.forEach(function(o) {
+				if (isDoubleText(o)) o.customSetCoords();
+				canvas.add(o);
+			});
+			canvas.renderOnAddRemove = true;
+			canvas.renderAll();
 		});
-		canvas.renderOnAddRemove = true;
-		canvas.renderAll();
 	});
-
-	History.add();
 }
 
 function save_session(e, callback) {
@@ -354,7 +382,7 @@ function save_session(e, callback) {
 		return;
 	}
 
-	jdata = canvas.toJSON(['isDoubleText']);
+	jdata = canvas.toJSON();
 	tmpl_data = JSON.stringify(jdata);
 
 	// Save session data
@@ -369,8 +397,11 @@ function save_session(e, callback) {
 
 function restore_session(json) {
 	var pjson = JSON.parse(json);
-
-	canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+	var bg = pjson['backgroundImage'];
+	if (bg) set_background_image(bg.src);
+	load_template(json).then(function() {
+		History.add();
+	});
 }
 
 function clear_session() {
@@ -752,7 +783,7 @@ $("#download-btn-a").click(function(ev) {
 $("#add-my-template").click(function(ev) {
 	if (isLogin()) {
 		// Upload template
-		var jdata = canvas.toJSON(['isDoubleText']);
+		var jdata = canvas.toJSON();
 
 		// Delete bg for data reduce
 		jdata["backgroundImage"] = undefined;
@@ -795,7 +826,7 @@ $(".block-thumbnail").each(function(i, item) {
 	$(img).click(function() {
 		$.ajax({
 			url:'templates/'+id+'/data/',
-			success:load_template
+			success: restore_session,
 		});
 	});
 
@@ -832,7 +863,6 @@ $(".block-thumbnail").each(function(i, item) {
 			} else {
 				console.log("restore session");
 				restore_session(json);
-				History.add();
 			}
 		});
 	}
@@ -943,7 +973,9 @@ FONTS.forEach(function(font) {
 	$(e).html(font);
 	$(e).click(function() {
 		activeObjectSet(function(obj) {
-			loadAndUse(font, obj);
+			loadAndUse(font, obj).then(function() {
+				History.add();
+			});
 		});
 	});
 	$("#font-dropdown-menu").append(e);
