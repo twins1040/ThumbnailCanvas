@@ -196,25 +196,25 @@ Object.assign(fabric.IText.prototype, {
 // Declare getter and setter of Text like types
 Object.assign(fabric.Group.prototype, {
 	setUpper: function(key, value) {
-		if (!this.isDoubleText) return;
+		if (!isDoubleText(this)) return;
 		this.item(1).set(key, value);
 		this.customSetCoords();
 	},
 	getUpper: function(key) {
-		if (!this.isDoubleText) return;
+		if (!isDoubleText(this)) return;
 		return this.item(1).get(key);
 	},
 	setLower: function(key, value) {
-		if (!this.isDoubleText) return;
+		if (!isDoubleText(this)) return;
 		this.item(0).set(key, value);
 		this.customSetCoords();
 	},
 	getLower: function(key) {
-		if (!this.isDoubleText) return;
+		if (!isDoubleText(this)) return;
 		return this.item(0).get(key);
 	},
 	setAllText: function(key, value) {
-		if (!this.isDoubleText) return;
+		if (!isDoubleText(this)) return;
 		this.item(0).set(key, value);
 		this.item(1).set(key, value);
 		this.customSetCoords();
@@ -329,6 +329,7 @@ function load_template(json) {
 				font = o.getUpper('fontFamily');
 				if (font) {
 					loadAndUse(font , o).then(function() {
+						if (isDoubleText(o)) o.customSetCoords();
 						canvas.add(o);
 					});
 					return;
