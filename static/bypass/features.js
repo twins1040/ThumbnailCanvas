@@ -421,7 +421,7 @@ function set_background_image(src) {
 		var image = new fabric.Image(imgObj);
 		var wRatio = canvas.width / image.width;
 		var hRatio = canvas.height / image.height;
-		var scale = (wRatio > hRatio) ? hRatio : wRatio;
+		var scale = (wRatio > hRatio) ? wRatio : hRatio;
 
 		canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
 			scaleX: scale,
