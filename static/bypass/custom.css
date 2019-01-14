@@ -5,14 +5,22 @@
   overflow: hidden;
   height: 100%;
 }
-.view-control {
+.scroll-on {
+	overflow: auto;
+}
+@media only screen and (max-width: 767px) {
+	.scroll-on {
+		height: 60vh !important;
+	}
+}
+/* .view-control {
 	position: absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	overflow: auto;
-}
+} */
 .scroll-wraper {
 	display: flex;
 	overflow: hidden;
@@ -23,6 +31,12 @@
 	backface-visibility: hidden;
 	will-change: overflow;
 }
+.sticky-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
 .col-md-7,
 .col-md-5 {
 	overflow: auto;
@@ -30,11 +44,11 @@
 	-webkit-overflow-scrolling: touch;
 	-ms-overflow-style: none;
 }
-@media only screen and (max-width: 720px) {
+/* @media only screen and (max-width: 720px) {
 	.pannels {
 		margin-bottom: 56vw;
 	}
-}
+} */
 
 .z-100 { z-index: 100; }
 
@@ -133,12 +147,6 @@ h5, .h5 { font-size: 0.93rem; }
 .y-flip {
 	-webkit-transform: scaleX(-1);
 	transform: scaleX(-1);
-}
-.sticky-header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 100;
 }
 .btn-active {
 	background-color: rgba(0, 0, 0, 0.26);
