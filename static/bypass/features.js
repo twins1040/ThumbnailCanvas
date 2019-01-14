@@ -857,8 +857,8 @@ $(".block-thumbnail").each(function(i, item) {
 		let _img = $(item).find('img')[0];
 		$.get("session/", function(json) {
 			if (json === "") {
-				set_background_image(SAMPLE_BACKGROUND_URL);
-				$(_img).click();
+				//set_background_image(SAMPLE_BACKGROUND_URL);
+				//$(_img).click();
 				History.add();
 			} else {
 				console.log("restore session");
@@ -1020,22 +1020,26 @@ $(window).keydown(function(e){
 
 // Initail text
 (function() {
-	var ubuntuText = new fabric.IText("Select Your Template!", {
-		fontFamily: 'Noto Sans KR',
+	var ubuntuText = new fabric.IText("썸네일을 선택하세요!", {
+		//fontFamily: 'Cute Font',
 		fontSize: 50,
-		fontWeight: 900,
-		fill: '#F00',
+		fill: 'white',
 		stroke: 'black',
 		strokeWidth:10,
 		paintFirst: 'stroke',
-		charSpacing: -100,
+		//charSpacing: -100,
 		angle:  0,
 		top: canvas.height/2,
 		left: canvas.width/2,
 		originX: 'center',
 		originY: 'center',
+		scaleX: 2,
+		scaleY: 2,
 	});
-
-	canvas.add(ubuntuText);
+	loadAndUse('Cute Font', ubuntuText).then(function(){
+		canvas.add(ubuntuText);
+	});
+	canvas.backgroundColor="grey";
+	canvas.renderAll();
 })();
 // END OF EDIT DOM ELEMENTS
