@@ -253,7 +253,7 @@ function isLogin() {
 	} else if (b === "true") {
 		return true;
 	} else {
-		alert("invalid acess");
+		alert("잘못된 접근입니다");
 		return false;
 	}
 }
@@ -668,7 +668,7 @@ function loadAndUse(font, obj) {
 			canvas.requestRenderAll();
 		}).catch(function(e) {
 			console.log(e)
-			alert('font loading failed ' + font);
+			alert('폰트 로딩이 느려 기본으로 대체합니다 :' + font);
 		});
 }
 
@@ -774,7 +774,7 @@ $("#download-btn-a").click(function(ev) {
 		this.href = canvas.toDataURL();
 		this.download = "mypainting.png";
 	} else {
-		alert("Please Log In");
+		alert("로그인이 필요합니다");
 		save_session(null, function() {
 			location.href = LOGIN_URL;
 		});
@@ -795,7 +795,7 @@ $("#add-my-template").click(function(ev) {
 			$('#upload-tmpl-form').submit();
 		});
 	} else {
-		alert("Please Log In");
+		alert("로그인이 필요합니다");
 		save_session(null, function() {
 			location.href = LOGIN_URL;
 		});
