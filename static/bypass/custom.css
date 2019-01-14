@@ -55,6 +55,7 @@ h5, .h5 { font-size: 0.93rem; }
 .white-text { color : white; }
 
 .gray800 { background-color: #3C3C42; }
+.gray850 { background-color: #303036; }
 .gray900 { background-color: #1E1E21; }
 
 .red { background-color: red; }
@@ -142,6 +143,26 @@ h5, .h5 { font-size: 0.93rem; }
 .btn-active {
 	background-color: rgba(0, 0, 0, 0.26);
 }
+.btn-tool {
+	display: flex;
+	align-items: center;
+   font-size: 13px;
+	min-width: 68px;
+	height: 68px;
+	padding: 8px;
+	margin-bottom: 4px;
+	opacity: 0.3;
+	cursor: pointer;
+}
+.btn-tool.active {
+	opacity: 1;
+	/* background-color: #303036; */
+}
+#download-btn-a.btn-tool {
+	opacity: 1;
+	background-color: red;
+	/* background-color: #303036; */
+}
 
 /*================ Canvas Control ================*/
 
@@ -215,6 +236,9 @@ h5, .h5 { font-size: 0.93rem; }
 	align-items: center;
 	padding: 0.6rem 1rem;
 	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.nav-toolbar {
+	width: 68px;
 }
 
 /*================ setting ================*/

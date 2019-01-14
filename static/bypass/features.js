@@ -892,6 +892,9 @@ $("#addText").click(function() {
 		History.add();
 	});
 
+	$(".btn-tool").removeClass("active");
+	$(this).addClass("active");
+
 	Toolbox.switchTo("text");
 });
 $('#imgLoader').on('change', function(e) {
@@ -954,7 +957,19 @@ $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();
 });
-$("#addImage").click(function(){Toolbox.switchTo("image")});
+$("#addImage").click(function(){
+
+	$(".btn-tool").removeClass("active");
+	$(this).addClass("active");
+	Toolbox.switchTo("image")
+
+});
+
+$("#selectTemplate").click(function(){
+	$(".btn-tool").removeClass("active");
+	$(this).addClass("active");
+	Toolbox.switchTo("template")
+});
 
 
 // END OF EVENT HANDLERS
