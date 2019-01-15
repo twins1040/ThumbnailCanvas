@@ -771,8 +771,10 @@ $("#sliderCharSpace").on("input", function() {
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
 		// Download Image
-		this.href = canvas.toDataURL();
-		this.download = "mypainting.png";
+		var link=document.createElement('a');
+		link.href=canvas.toDataURL();
+		link.download="mypainting.png";
+		link.click();
 	} else {
 		alert("로그인이 필요합니다");
 		save_session(null, function() {
