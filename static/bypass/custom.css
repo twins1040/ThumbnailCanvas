@@ -105,6 +105,11 @@ h5, .h5 { font-size: 0.93rem; }
 
 
 /*================ Buttons ================*/
+/* fix google analytics event no bubble issue */
+i,
+.m-auto {
+	pointer-events:none;
+}
 .btn-block {
 	padding: 12px;
 }
