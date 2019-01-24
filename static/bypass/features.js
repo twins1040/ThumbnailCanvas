@@ -68,12 +68,7 @@ var History = new function() {
 		if (_history_head < _work_history.length - 1) {
 			_history_head += 1;
 		}
-
 		load_template(_work_history[_history_head]);
-
-		// Remove attribute box
-		Toolbox.switchTo("template");
-
 		console.log('undo');
 	}
 
@@ -82,24 +77,21 @@ var History = new function() {
 		if (_history_head > 0) {
 			_history_head -= 1;
 		}
-
 		load_template(_work_history[_history_head]);
-
-		// Remove attribute box
-		Toolbox.switchTo("template");
-
 		console.log('redo');
 	}
 }
 
-// Option group Controll by kk
 var Toolbox = new function() {
 	var wrapper = $("#pannels");
 	var og = $(".block-option-group");
 	var boxes = {
 		background: [$("#loadBackground"), null],
 		template: [$("#templates"), null],
-		object: [$("#objectControl"), this.toggleDouble],
+		object: [$("#objectControl"), function() {
+			setFirstActive();
+			Toolbox.toggleDouble();
+		}],
 		save: [$("#saveAndDown"), null],
 	};
 	var order = ["background", "template", "object", "save"];
@@ -134,7 +126,7 @@ var Toolbox = new function() {
 
 		if (Array.isArray(now)) {
 			console.log("wrong box");
-			return false;
+			return -1;
 		}
 
 		for (i; i<order.length; i++) {
@@ -149,6 +141,8 @@ var Toolbox = new function() {
 		var cnt = this.currentBox();
 		if (0 <= cnt && cnt < order.length - 1) {
 			this.switchTo(order[cnt+1]);
+		} else if (cnt == order.length - 1) {
+			this.switchTo(order[0]);
 		}
 	}
 
@@ -156,6 +150,8 @@ var Toolbox = new function() {
 		var cnt = this.currentBox();
 		if (1 <= cnt && cnt < order.length) {
 			this.switchTo(order[cnt-1]);
+		} else if (cnt == 0) {
+			this.switchTo(order[order.length -1]);
 		}
 	}
 }
@@ -723,6 +719,15 @@ function deleteActiveObject() {
 	canvas.discardActiveObject();
 	canvas.renderAll();
 }
+function setFirstActive() {
+	var objs = canvas.getObjects();
+	if (objs.length) {
+		canvas.setActiveObject(objs[0]);
+		if (isIText() || isDoubleText()) setTextAttrBox();
+		canvas.renderAll();
+	}
+}
+
 // END OF FUNCTIONS
 
 
@@ -949,6 +954,7 @@ $('#imgLoader').on('change', function(e) {
 	}
 
 	reader.readAsDataURL(e.target.files[0]);
+	Toolbox.nextBox();
 });
 $('#clipLoader').on('change', function(e) {
 	function readAndAdd(file) {
@@ -969,6 +975,7 @@ $('#clipLoader').on('change', function(e) {
 });
 $('#sampleLoader').click(function(e) {
 	set_background_image(SAMPLE_BACKGROUND_URL);
+	Toolbox.nextBox();
 });
 $("#stroke2-text").click(function(){
 	var newObjs = [];
@@ -1016,10 +1023,10 @@ $("#selectTemplate").click(function(){
 	$(this).addClass("active");
 	Toolbox.switchTo("template")
 });
-$("#nextStep").click(function() {
+$(".js-next-step").click(function() {
 	Toolbox.nextBox();
 });
-$("#previousStep").click(function() {
+$(".js-previous-step").click(function() {
 	Toolbox.previousBox();
 });
 
