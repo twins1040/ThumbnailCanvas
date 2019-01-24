@@ -119,6 +119,7 @@ var Toolbox = new function() {
 		this.add(opt);
 	}
 
+	// Send this value to session for restore
 	this.currentBox = function() {
 		var now = wrapper.children(":not(.hide)");
 		var i = 0;
@@ -134,6 +135,7 @@ var Toolbox = new function() {
 			if (boxes[key][0].attr("id") === now.attr("id")) return i;
 		}
 
+		console.log("wrong box2");
 		return -1;
 	}
 
@@ -153,6 +155,14 @@ var Toolbox = new function() {
 		} else if (cnt == 0) {
 			this.switchTo(order[order.length -1]);
 		}
+	}
+
+	this.jumpBoxTo = function(cnt) {
+		if (cnt < 0) {
+			console.log("wrong jump");
+			return;
+		}
+		this.switchTo(order[cnt]);
 	}
 }
 // END OF GLOBAL VARIABLES
@@ -403,7 +413,7 @@ function load_template(json) {
 function save_session(e, callback) {
 	var obj = $("input[name='csrfmiddlewaretoken']");
 	var token = obj && obj.attr('value');
-	var jdata, tmpl_data;
+	var jdata, tmpl_data, box_num;
 
 	if (!token) {
 		console.log("no token data");
@@ -412,18 +422,20 @@ function save_session(e, callback) {
 
 	jdata = canvas.toJSON();
 	tmpl_data = JSON.stringify(jdata);
+	// Error code -1 will also be passed
+	box_num = Toolbox.currentBox();
 
 	// Save session data
 	$.post({
 		url:'session/',
-		data: {data: tmpl_data, csrfmiddlewaretoken: token},
+		data: {data: tmpl_data, csrfmiddlewaretoken: token, box_info: box_num},
 		success: function() {
 			if (callback) {callback()}
 		}
 	});
 }
 
-function restore_session(json) {
+function restore_template(json) {
 	var pjson = JSON.parse(json);
 	var bg = pjson['backgroundImage'];
 	if (bg) set_background_image(bg.src);
@@ -862,7 +874,7 @@ $("#add-my-template").click(function(ev) {
 // Thumbnail image loading and hook event
 $(".block-thumbnail").each(function(i, item) {
 	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
-	let id, img, icon;
+	let id, img, icon, pjson;
 
 	// Template id
 	id = item.id.split('-')[1];
@@ -880,7 +892,7 @@ $(".block-thumbnail").each(function(i, item) {
 	$(img).click(function() {
 		$.ajax({
 			url:'templates/'+id+'/data/',
-			success: restore_session,
+			success: restore_template,
 		});
 	});
 
@@ -889,7 +901,7 @@ $(".block-thumbnail").each(function(i, item) {
 	icon = $(item).find('i');
 	if (icon) {
 		icon.click(function() {
-			if(confirm("Are you sure to delete?")) {
+			if(confirm("정말 삭제하시겠습니까?")) {
 				$.ajax({
 					url:'templates/'+id+'/',
 					type:'DELETE',
@@ -908,15 +920,16 @@ $(".block-thumbnail").each(function(i, item) {
 	// It needs to be here for fast loading
 	// Try to get session data, if get, use it
 	if (i === 1) {
-		let _img = $(item).find('img')[0];
 		$.get("session/", function(json) {
 			if (json === "") {
-				//set_background_image(SAMPLE_BACKGROUND_URL);
-				//$(_img).click();
+				set_background_image(DEFAULT_BACKGROUND_URL);
 				History.add();
 			} else {
+				pjson = JSON.parse(json);
+				Toolbox.jumpBoxTo(pjson['box_info']);
+				// Todo: clean up session data format
+				restore_template(JSON.stringify(pjson['cdata']));
 				console.log("restore session");
-				restore_session(json);
 			}
 		});
 	}
@@ -924,7 +937,7 @@ $(".block-thumbnail").each(function(i, item) {
 $("#switch-user").click(function() {
 	var href, txt;
 	if (isLogin()) {
-		if(confirm("Data will be removed, continue?")) {
+		if(confirm("데이터가 사라집니다 계속하시겠습니까?")) {
 			location.href = LOGOUT_URL;
 		}
 	} else {
@@ -1091,35 +1104,4 @@ $(window).keydown(function(e){
 		Paste();
 	}
 });
-
-// Initail text
-/*
-(function() {
-	var ubuntuText = new fabric.IText("먼저 배경을 가져오세요!", {
-		//fontFamily: 'Cute Font',
-		fontSize: 50,
-		fill: 'white',
-		stroke: 'black',
-		strokeWidth:10,
-		paintFirst: 'stroke',
-		//charSpacing: -100,
-		angle:  0,
-		top: canvas.height/2,
-		left: canvas.width/2,
-		originX: 'center',
-		originY: 'center',
-		scaleX: 3,
-		scaleY: 3,
-	});
-	loadAndUse('Cute Font', ubuntuText).then(function(){
-		canvas.add(ubuntuText);
-	});
-	canvas.backgroundColor="grey";
-	canvas.renderAll();
-})();
-*/
-(function() {
-	set_background_image(DEFAULT_BACKGROUND_URL);
-})();
-
 // END OF EDIT DOM ELEMENTS

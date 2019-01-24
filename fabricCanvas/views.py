@@ -40,14 +40,17 @@ def index(request):
 @never_cache
 def session(request):
     if request.method == 'POST':
+        print(request.POST['box_info'])
         request.session['canvas_data'] = request.POST['data']
+        request.session['box_info'] = request.POST['box_info']
         request.session.set_expiry(300)
         return HttpResponse('session saved')
 
     if request.method == 'GET':
         data = "";
         try:
-            data = request.session['canvas_data']
+            data += '{"cdata":'+request.session['canvas_data']+','
+            data += '"box_info":'+request.session['box_info']+'}'
         except KeyError:
             pass
         return HttpResponse(data)
