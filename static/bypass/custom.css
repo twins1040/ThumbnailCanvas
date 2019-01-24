@@ -248,6 +248,9 @@ h5, .h5 { font-size: 0.93rem; }
 .nav-toolbar {
 	width: 68px;
 }
+.step-wrapper {
+	width: 40px;
+}
 
 /*================ setting ================*/
 .block-option {

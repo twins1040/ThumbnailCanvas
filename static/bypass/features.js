@@ -3,7 +3,8 @@
 //
 var LOGIN_URL = '/login/google-oauth2/';
 var LOGOUT_URL = '/logout/';
-var SAMPLE_BACKGROUND_URL = "static/img/blue_furniture_resize.jpg";
+var DEFAULT_BACKGROUND_URL = "static/img/backgroundFirst.PNG";
+var SAMPLE_BACKGROUND_URL = "static/img/art_back.jpg";
 var HISTORY_MAX_LEN = 50;
 var SLIDER_TO_1X = 20;
 var FONTS = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor Story",
@@ -93,21 +94,25 @@ var History = new function() {
 
 // Option group Controll by kk
 var Toolbox = new function() {
+	var wrapper = $("#pannels");
 	var og = $(".block-option-group");
 	var boxes = {
-		image: [$("#addImageOptions"), null],
+		background: [$("#loadBackground"), null],
 		template: [$("#templates"), null],
-		text: [$("#settingText"), function() {
-			if (isDoubleText() || isAllDoubleText()) {
-				$("#stroke2-text").addClass("hide");
-				$("#stroke2-console").removeClass("hide");
-			} else {
-				$("#stroke2-text").removeClass("hide");
-				$("#stroke2-console").addClass("hide");
-			}
-		}],
-		multi: [$("#alignItems"), null],
+		object: [$("#objectControl"), this.toggleDouble],
+		save: [$("#saveAndDown"), null],
 	};
+	var order = ["background", "template", "object", "save"];
+
+	this.toggleDouble = function() {
+		if (isDoubleText() || isAllDoubleText()) {
+			$("#stroke2-text").addClass("hide");
+			$("#stroke2-console").removeClass("hide");
+		} else {
+			$("#stroke2-text").removeClass("hide");
+			$("#stroke2-console").addClass("hide");
+		}
+	}
 
 	this.add = function(opt) {
 		var target = boxes[opt][0];
@@ -122,6 +127,37 @@ var Toolbox = new function() {
 		this.add(opt);
 	}
 
+	this.currentBox = function() {
+		var now = wrapper.children(":not(.hide)");
+		var i = 0;
+		var key = "";
+
+		if (Array.isArray(now)) {
+			console.log("wrong box");
+			return false;
+		}
+
+		for (i; i<order.length; i++) {
+			key = order[i];
+			if (boxes[key][0].attr("id") === now.attr("id")) return i;
+		}
+
+		return -1;
+	}
+
+	this.nextBox = function() {
+		var cnt = this.currentBox();
+		if (0 <= cnt && cnt < order.length - 1) {
+			this.switchTo(order[cnt+1]);
+		}
+	}
+
+	this.previousBox = function() {
+		var cnt = this.currentBox();
+		if (1 <= cnt && cnt < order.length) {
+			this.switchTo(order[cnt-1]);
+		}
+	}
 }
 // END OF GLOBAL VARIABLES
 
@@ -142,13 +178,9 @@ canvas.on("mouse:up", function(){
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
 		setTextAttrBox(obj);
-		Toolbox.switchTo("text");
 	} else if (isMultipleSelected(obj)) {
-		Toolbox.switchTo("multi");
-		if (isAllIText(obj) || isAllDoubleText()) Toolbox.add("text");
-	} else {
-		Toolbox.switchTo("template");
 	}
+	Toolbox.toggleDouble();
 	console.log("switch box");
 });
 canvas.on("object:modified", History.add);
@@ -722,9 +754,28 @@ strokeHue2.on('change', function(color) {
 // DOM events
 $("#btn-undo").click(History.undo);
 $("#btn-redo").click(History.redo);
-$("#btn-copy").click(function() {Copy(); Paste()});
-$("#btn-delete").click(function(){
+$(".js-btn-copy").click(function() {Copy(); Paste()});
+$(".js-btn-delete").click(function(){
 	deleteActiveObject();
+});
+$(".js-btn-edit").click(function() {
+	var obj = canvas.getActiveObject();
+	if (isIText(obj)) {
+		obj.enterEditing();
+		obj.selectAll();
+	} else if (isDoubleText(obj)) {
+		// Run twice, like double click
+		editExtraStroke();
+		editExtraStroke();
+	}
+});
+$("#toggle-objctrl").click(function() {
+	var target = $("#advanced-objctrl");
+	if (target.hasClass("hide")) {
+		target.removeClass("hide");
+	} else {
+		target.addClass("hide");
+	}
 });
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
@@ -808,10 +859,6 @@ $(".block-thumbnail").each(function(i, item) {
 	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
 	let id, img, icon;
 
-	// First item is add template button
-	if (i === 0) {
-		return;
-	}
 	// Template id
 	id = item.id.split('-')[1];
 
@@ -893,11 +940,6 @@ $("#addText").click(function() {
 		canvas.setActiveObject(clonedObj);
 		History.add();
 	});
-
-	$(".btn-tool").removeClass("active");
-	$(this).addClass("active");
-
-	Toolbox.switchTo("text");
 });
 $('#imgLoader').on('change', function(e) {
 	var reader = new FileReader();
@@ -924,6 +966,9 @@ $('#clipLoader').on('change', function(e) {
 	if (e.target.files) {
 		[].forEach.call(e.target.files, readAndAdd);
 	}
+});
+$('#sampleLoader').click(function(e) {
+	set_background_image(SAMPLE_BACKGROUND_URL);
 });
 $("#stroke2-text").click(function(){
 	var newObjs = [];
@@ -966,11 +1011,16 @@ $("#addImage").click(function(){
 	Toolbox.switchTo("image")
 
 });
-
 $("#selectTemplate").click(function(){
 	$(".btn-tool").removeClass("active");
 	$(this).addClass("active");
 	Toolbox.switchTo("template")
+});
+$("#nextStep").click(function() {
+	Toolbox.nextBox();
+});
+$("#previousStep").click(function() {
+	Toolbox.previousBox();
 });
 
 
@@ -1036,8 +1086,9 @@ $(window).keydown(function(e){
 });
 
 // Initail text
+/*
 (function() {
-	var ubuntuText = new fabric.IText("썸네일을 선택하세요!", {
+	var ubuntuText = new fabric.IText("먼저 배경을 가져오세요!", {
 		//fontFamily: 'Cute Font',
 		fontSize: 50,
 		fill: 'white',
@@ -1050,8 +1101,8 @@ $(window).keydown(function(e){
 		left: canvas.width/2,
 		originX: 'center',
 		originY: 'center',
-		scaleX: 2,
-		scaleY: 2,
+		scaleX: 3,
+		scaleY: 3,
 	});
 	loadAndUse('Cute Font', ubuntuText).then(function(){
 		canvas.add(ubuntuText);
@@ -1059,4 +1110,9 @@ $(window).keydown(function(e){
 	canvas.backgroundColor="grey";
 	canvas.renderAll();
 })();
+*/
+(function() {
+	set_background_image(DEFAULT_BACKGROUND_URL);
+})();
+
 // END OF EDIT DOM ELEMENTS
