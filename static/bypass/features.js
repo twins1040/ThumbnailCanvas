@@ -843,6 +843,7 @@ $("#download-btn-a").click(function(ev) {
 		link.href=canvas.toDataURL();
 		link.download="mypainting.png";
 		link.click();
+		dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
 	} else {
 		alert("로그인이 필요합니다");
 		save_session(null, function() {
@@ -863,6 +864,7 @@ $("#add-my-template").click(function(ev) {
 			$('#input-data').attr('value', JSON.stringify(jdata));
 			$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
 			$('#upload-tmpl-form').submit();
+			dataLayer.push({'event': 'custom: 완료-템플릿생성', 'eventLabel': ''});
 		});
 	} else {
 		alert("로그인이 필요합니다");
@@ -964,6 +966,7 @@ $('#imgLoader').on('change', function(e) {
 
 	reader.onload = function (event){
 		set_background_image(event.target.result);
+		dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '배경 가져오기'});
 	}
 
 	reader.readAsDataURL(e.target.files[0]);
@@ -989,6 +992,8 @@ $('#clipLoader').on('change', function(e) {
 $('#sampleLoader').click(function(e) {
 	set_background_image(SAMPLE_BACKGROUND_URL);
 	Toolbox.nextBox();
+	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
+	console.log(ga.q);
 });
 $("#stroke2-text").click(function(){
 	var newObjs = [];
@@ -1042,8 +1047,6 @@ $(".js-next-step").click(function() {
 $(".js-previous-step").click(function() {
 	Toolbox.previousBox();
 });
-
-
 // END OF EVENT HANDLERS
 
 
