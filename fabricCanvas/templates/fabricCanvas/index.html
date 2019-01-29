@@ -37,242 +37,222 @@
 </head>
 
 <body class="noScroll gray900 white-text">
-	<div class="view-control">
-		<!-- Navbar -->
-		<nav class="navbar gray800 z-100">
-			<h1 class="m-0 h4 d-inline">썸네일 메이커</h1>
+	<!-- Navbar -->
+	<nav class="navbar gray800 z-100">
+		<h1 class="m-0 h4 d-inline">썸네일 메이커</h1>
 
-			<!-- Undo Redo -->
-			<div class="btn-group mx-auto">
-				<button id="btn-undo" class="btn btn-text-white btn-icon">
-					<i >reply</i>
-					<!-- <span>Undo</span> -->
-				</button>
-				<button id="btn-redo" class="btn btn-text-white btn-icon">
-					<i class="y-flip">reply</i>
-					<!-- <span>Redo</span> -->
-				</button>
+		<!-- Undo Redo -->
+		<div class="btn-group mx-auto">
+			<button id="btn-undo" class="btn btn-text-white btn-icon">
+				<i >reply</i>
+				<!-- <span>Undo</span> -->
+			</button>
+			<button id="btn-redo" class="btn btn-text-white btn-icon">
+				<i class="y-flip">reply</i>
+				<!-- <span>Redo</span> -->
+			</button>
+		</div>
+
+		<div class="btn-group mr-1">
+			{% if user.is_authenticated %}
+				<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
+					로그아웃
+				</a>
+			{% else %}
+				<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
+					로그인
+				</a>
+			{% endif %}
+	</nav>
+
+	<!-- Contents -->
+	<div class="container-fluid gray900">
+		<div class="row scroll-wraper">
+			<div class="col-md-6 p-0 order-md-2">
+				<canvas id="myCanvas" class="canvas-artboard sticky-header">
+					Your browser does not support the canvas element
+				</canvas>
 			</div>
 
-			<div class="btn-group">
-				<div class="mr-1">
-					{% if user.is_authenticated %}
-						<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
-							로그아웃
-						</a>
-					{% else %}
-						<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
-							로그인
-						</a>
-					{% endif %}
-				</div>
-		</nav>
-
-		<!-- Contents -->
-			<div class="container-fluid gray900">
-				<div class="row scroll-wraper">
-
-					<!-- Canvas -->
-					<div class="col-md-6 p-0 order-md-2">
-						<canvas id="myCanvas" class="canvas-artboard sticky-header">
-							Your browser does not support the canvas element
-						</canvas>
+			<!-- Tools -->
+			<div class="col-md-6 p-0 d-flex">
+				<div id="pannels" class="w-100 tool-options gray850 transition scroll-on px-3 py-4">
+					<div id="loadBackground" class="block-option-group">
+						<label for="imgLoader" class="btn btn-block btn-secondary mb-3">
+							 배경 가져오기
+							<input type="file" id="imgLoader" class="hide-input" multiple/>
+						</label>
+						<label id="sampleLoader" class="btn btn-block btn-secondary mb-3">
+							예제 이미지 사용
+						</label>
 					</div>
-
-					<!-- Tools -->
-					<div class="col-md-6 p-0 d-flex">
-						<!-- Tool Options -->
-						<div id="toolOptions" class="w-100 tool-options gray850 transition scroll-on">
-							<!-- pannels -->
-							<div id="pannels" class="pannels px-3 py-4">
-								<div id="loadBackground" class="block-option-group">
-									<label for="imgLoader" class="btn btn-block btn-secondary mb-3">
-										 배경 가져오기
-										<input type="file" id="imgLoader" class="hide-input" multiple/>
-									</label>
-									<label id="sampleLoader" class="btn btn-block btn-secondary mb-3">
-										예제 이미지 사용
-									</label>
-								</div>
-								<div id="templates" class="block-option-group row hide">
-									<div class="step-wrapper js-previous-step col-1">이전</div>
-									<div class="col-10">
-										<ul class="nav nav-tabs" id="tmplTab" role="tablist">
-											<li class="nav-item">
-												<a class="nav-link active" id="hot-tmpl-tab" data-toggle="tab" href="#hot-tmpl" role="tab" aria-controls="hot-tmpl" aria-selected="true">인기 템플릿</a>
-											</li>
-											<li class="nav-item">
-												<a class="nav-link" id="my-tmpl-tab" data-toggle="tab" href="#my-tmpl" role="tab" aria-controls="my-tmpl" aria-selected="false">내 템플릿</a>
-											</li>
-										</ul>
-										<div class="tab-content" id="tmplTabContent">
-											<div class="tab-pane fade show active" id="hot-tmpl" role="tabpanel" aria-labelledby="hot-tmpl-tab">
-												<div id="templateFeatured" class="d-flex flex-wrap">
-													{% for tmpl in templates reversed %}
-														<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
-															<img>
-															{% if user.is_superuser %}
-																<i >highlight_off</i>
-															{% endif %}
-														</div>
-													{% endfor %}
-												</div>
+					<div id="templates" class="block-option-group row hide">
+						<div class="step-wrapper js-previous-step col-1">이전</div>
+						<div class="col-10">
+							<ul class="nav nav-tabs" id="tmplTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="hot-tmpl-tab" data-toggle="tab" href="#hot-tmpl" role="tab" aria-controls="hot-tmpl" aria-selected="true">인기 템플릿</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="my-tmpl-tab" data-toggle="tab" href="#my-tmpl" role="tab" aria-controls="my-tmpl" aria-selected="false">내 템플릿</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="tmplTabContent">
+								<div class="tab-pane fade show active" id="hot-tmpl" role="tabpanel" aria-labelledby="hot-tmpl-tab">
+									<div id="templateFeatured" class="d-flex flex-wrap">
+										{% for tmpl in templates reversed %}
+											<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
+												<img>
+												{% if user.is_superuser %}
+													<i >highlight_off</i>
+												{% endif %}
 											</div>
-											<div class="tab-pane fade" id="my-tmpl" role="tabpanel" aria-labelledby="my-tmpl-tab">
-												<div id="templateMy" class="d-flex flex-wrap mb-3">
-													{% if user.is_authenticated %}
-														{% for tmpl in user_templates reversed %}
-															<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
-																<img>
-																{% if user.is_superuser %}
-																	<i >highlight_off</i>
-																{% endif %}
-															</div>
-														{% endfor %}
+										{% endfor %}
+									</div>
+								</div>
+								<div class="tab-pane fade" id="my-tmpl" role="tabpanel" aria-labelledby="my-tmpl-tab">
+									<div id="templateMy" class="d-flex flex-wrap mb-3">
+										{% if user.is_authenticated %}
+											{% for tmpl in user_templates reversed %}
+												<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
+													<img>
+													{% if user.is_superuser %}
+														<i >highlight_off</i>
 													{% endif %}
 												</div>
-											</div>
-										</div>
+											{% endfor %}
+										{% endif %}
 									</div>
-									<div class="step-wrapper js-next-step col-1" id="gotoObjectControl">이후</div>
-								</div>
-								<div id="objectControl" class="block-option-group row hide">
-									<div class="step-wrapper js-previous-step col-1">이전</div>
-									<div class="col-10">
-										<ul class="nav nav-tabs" id="objectTab" role="tablist">
-											<li class="nav-item">
-												<a class="nav-link active" id="text-control-tab" data-toggle="tab" href="#text-control" role="tab" aria-controls="text-control" aria-selected="true">글자</a>
-											</li>
-											<li class="nav-item">
-												<a class="nav-link" id="image-control-tab" data-toggle="tab" href="#image-control" role="tab" aria-controls="image-control" aria-selected="false">그림</a>
-											</li>
-										</ul>
-										<div class="tab-content" id="objectTabContent">
-											<div class="tab-pane fade show active" id="text-control" role="tabpanel" aria-labelledby="text-control-tab">
-												<div id="normal-objctrl">
-													<label id="addText" class="btn btn-block btn-secondary mb-3">
-														 새 글자
-													</label>
-													<label class="btn btn-block btn-secondary mb-3 js-btn-edit">
-														 내용 수정
-													</label>
-													<label class="btn btn-block btn-secondary mb-3 js-btn-copy">
-														복사
-													</label>
-													<label class="btn btn-block btn-secondary mb-3 js-btn-delete">
-														삭제
-													</label>
-													<div id="toggle-objctrl">
-														고급
-													</div>
-												</div>
-												<div id="advanced-objctrl" class="hide">
-													<div class="btn-group">
-														<button id="align-left" class="btn btn-text-white btn-icon">
-															<i >format_align_left</i>
-														</button>
-														<button id="align-vertical-center" class="btn btn-text-white btn-icon">
-															<i >format_align_center</i>
-														</button>
-														<button id="align-right" class="btn btn-text-white btn-icon">
-															<i >format_align_right</i>
-														</button>
-														<button id="align-top" class="btn btn-text-white btn-icon">
-															<i >vertical_align_top</i>
-														</button>
-														<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
-															<i >vertical_align_center</i>
-														</button>
-														<button id="align-bottom" class="btn btn-text-white btn-icon">
-															<i >vertical_align_bottom</i>
-														</button>
-													</div>
-													<!-- 글꼴 -->
-													<div class="block-option">
-														<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-															글꼴
-														</button>
-														<div class="dropdown-menu" id="font-dropdown-menu" aria-labelledby="btnGroupDrop1"></div>
-													</div>
-
-													<!-- 텍스트 -->
-													<div class="block-option d-flex btn-icon">
-														<button class="btn btn-text-white color-button" >
-															<input class="color-input" id="fill-hueb" data-huebee readonly>
-														</button>
-														<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
-													</div>
-
-													<!-- 외곽선 -->
-													<div class="block-option d-flex btn-icon">
-														<button class="btn btn-text-white color-button" >
-															<input class="color-input" id="stroke-hueb" data-huebee readonly>
-														</button>
-														<input id="sliderTextStroke" type="range" min="0" max="100" value="0" class="slider mr-2" >
-													</div>
-
-													<!-- 이중 외곽선 -->
-													<div class="block-option d-flex btn-icon" id="stroke2-console">
-														<button class="btn btn-text-white color-button" >
-															<input class="color-input" id="stroke2-hueb" data-huebee readonly>
-														</button>
-														<input id="sliderTextStroke2" type="range" min="0" max="100" value="0" class="slider mr-2" >
-													</div>
-													<div class="block-option d-flex btn-icon" id="stroke2-text">
-														<button class="btn btn-text-white btn-with-icon" >
-															<i>add</i>
-															외곽선 추가
-														</button>
-													</div>
-
-													<!-- 자간 -->
-													<div class="block-option d-flex btn-icon" id="stroke2-console">
-														<button class="btn btn-text-white btn-with-icon">
-															<i>format_line_spacing</i>
-														</button>
-														<input id="sliderCharSpace" type="range" min="-200" max="200" step="4" value="0" class="slider mr-2" >
-													</div>
-												</div>
-											</div>
-											<div class="tab-pane fade" id="image-control" role="tabpanel" aria-labelledby="image-control-tab">
-												<!-- add image-clip -->
-												<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
-													 삽입
-													<input type="file" id="clipLoader" class="hide-input" multiple/>
-												</label>
-											</div>
-										</div>
-									</div>
-									<div class="step-wrapper js-next-step col-1" id="gotoSave">이후</div>
-								</div>
-								<div id="saveAndDown" class="block-option-group row hide">
-									<div class="step-wrapper js-previous-step col-1">이전</div>
-									<div class="col-10">
-										<label id="add-my-template" class="btn btn-block btn-secondary mb-3">
-											내 템플릿에 저장
-										</label>
-										<label id="download-btn-a" class="btn btn-block btn-secondary mb-3">
-											다운로드
-										</label>
-									</div>
-									<div class="step-wrapper js-next-step col-1">이후</div>
 								</div>
 							</div>
 						</div>
+						<div class="step-wrapper js-next-step col-1" id="gotoObjectControl">이후</div>
 					</div>
+					<div id="objectControl" class="block-option-group row hide">
+						<div class="step-wrapper js-previous-step col-1">이전</div>
+						<div class="col-10">
+							<ul class="nav nav-tabs" id="objectTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="text-control-tab" data-toggle="tab" href="#text-control" role="tab" aria-controls="text-control" aria-selected="true">글자</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="image-control-tab" data-toggle="tab" href="#image-control" role="tab" aria-controls="image-control" aria-selected="false">그림</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="objectTabContent">
+								<div class="tab-pane fade show active" id="text-control" role="tabpanel" aria-labelledby="text-control-tab">
+									<div id="normal-objctrl">
+										<label id="addText" class="btn btn-block btn-secondary mb-3">
+											 새 글자
+										</label>
+										<label class="btn btn-block btn-secondary mb-3 js-btn-edit">
+											 내용 수정
+										</label>
+										<label class="btn btn-block btn-secondary mb-3 js-btn-copy">
+											복사
+										</label>
+										<label class="btn btn-block btn-secondary mb-3 js-btn-delete">
+											삭제
+										</label>
+										<div id="toggle-objctrl">
+											고급
+										</div>
+									</div>
+									<div id="advanced-objctrl" class="hide">
+										<div class="btn-group">
+											<button id="align-left" class="btn btn-text-white btn-icon">
+												<i >format_align_left</i>
+											</button>
+											<button id="align-vertical-center" class="btn btn-text-white btn-icon">
+												<i >format_align_center</i>
+											</button>
+											<button id="align-right" class="btn btn-text-white btn-icon">
+												<i >format_align_right</i>
+											</button>
+											<button id="align-top" class="btn btn-text-white btn-icon">
+												<i >vertical_align_top</i>
+											</button>
+											<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
+												<i >vertical_align_center</i>
+											</button>
+											<button id="align-bottom" class="btn btn-text-white btn-icon">
+												<i >vertical_align_bottom</i>
+											</button>
+										</div>
+										<!-- 글꼴 -->
+										<div class="block-option">
+											<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												글꼴
+											</button>
+											<div class="dropdown-menu" id="font-dropdown-menu" aria-labelledby="btnGroupDrop1"></div>
+										</div>
 
+										<!-- 텍스트 -->
+										<div class="block-option d-flex btn-icon">
+											<button class="btn btn-text-white color-button" >
+												<input class="color-input" id="fill-hueb" data-huebee readonly>
+											</button>
+											<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
+										</div>
 
+										<!-- 외곽선 -->
+										<div class="block-option d-flex btn-icon">
+											<button class="btn btn-text-white color-button" >
+												<input class="color-input" id="stroke-hueb" data-huebee readonly>
+											</button>
+											<input id="sliderTextStroke" type="range" min="0" max="100" value="0" class="slider mr-2" >
+										</div>
+
+										<!-- 이중 외곽선 -->
+										<div class="block-option d-flex btn-icon" id="stroke2-console">
+											<button class="btn btn-text-white color-button" >
+												<input class="color-input" id="stroke2-hueb" data-huebee readonly>
+											</button>
+											<input id="sliderTextStroke2" type="range" min="0" max="100" value="0" class="slider mr-2" >
+										</div>
+										<div class="block-option d-flex btn-icon" id="stroke2-text">
+											<button class="btn btn-text-white btn-with-icon" >
+												<i>add</i>
+												외곽선 추가
+											</button>
+										</div>
+
+										<!-- 자간 -->
+										<div class="block-option d-flex btn-icon" id="stroke2-console">
+											<button class="btn btn-text-white btn-with-icon">
+												<i>format_line_spacing</i>
+											</button>
+											<input id="sliderCharSpace" type="range" min="-200" max="200" step="4" value="0" class="slider mr-2" >
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade" id="image-control" role="tabpanel" aria-labelledby="image-control-tab">
+									<!-- add image-clip -->
+									<label for="clipLoader" class="btn btn-block btn-secondary mb-0">
+										 삽입
+										<input type="file" id="clipLoader" class="hide-input" multiple/>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="step-wrapper js-next-step col-1" id="gotoSave">이후</div>
+					</div>
+					<div id="saveAndDown" class="block-option-group row hide">
+						<div class="step-wrapper js-previous-step col-1">이전</div>
+						<div class="col-10">
+							<label id="add-my-template" class="btn btn-block btn-secondary mb-3">
+								내 템플릿에 저장
+							</label>
+							<label id="download-btn-a" class="btn btn-block btn-secondary mb-3">
+								다운로드
+							</label>
+						</div>
+						<div class="step-wrapper js-next-step col-1">이후</div>
+					</div>
 				</div>
 			</div>
+		</div>
 	</div>
-
-
-
-
-
-
-
-
 
 
 	<!-- It is not visible, for server -->
@@ -290,7 +270,6 @@
 	<script src="static/js/js.cookie.min.js"></script>
 	<script src="https://rawgit.com/bramstein/fontfaceobserver/master/fontfaceobserver.js" ></script>
 	<script src="static/bypass/features.js"></script>
-
 
 </body>
 </html>
