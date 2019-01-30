@@ -1,0 +1,35 @@
+.btn-block {
+	padding: 12px;
+    width: 100%;
+}
+.btn-text-white {
+	color: white;
+	background-color: transparent;
+}
+
+.btn-with-icon,
+.btn-icon {
+	display: flex;
+	align-items: center;
+}
+.btn-with-icon i {
+	margin-right: 0.5rem;
+}
+.btn-primary {
+	background-color: #ff0000;
+	border-color: #ff0000;
+}
+.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+	background-color: #cc0000;
+	border-color: #cc0000;
+}
+.btn-secondary {
+	background-color: #1E1E21;
+	border: none;
+}
+.btn-group {
+	margin-right: 1rem;
+}
+.btn-group:last-of-type {
+	margin-right: 0;
+}

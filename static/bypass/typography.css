@@ -1,0 +1,9 @@
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
+	font-weight: medium;
+	margin-bottom: 0;
+}
+h1, .h1 { font-size: 1.8rem; }
+h2, .h2 { font-size: 1.5rem; }
+h3, .h3 { font-size: 1.3rem; }
+h4, .h4 { font-size: 1.12rem; }
+h5, .h5 { font-size: 0.93rem; }

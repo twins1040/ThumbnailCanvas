@@ -1,0 +1,10 @@
+.mb-7 {
+    margin-bottom: 72px;
+}
+.flex-center {
+    align-items: center;
+    justify-content: center;
+}
+.flex {
+    display: flex;
+}

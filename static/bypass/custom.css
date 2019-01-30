@@ -1,4 +1,13 @@
+@import "typography.css";
+@import "button.css";
+@import "spacing.css";
 @import "../css/slider.css";
+
+/* front page */
+#front-page {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://assets.nflxext.com/ffe/siteui/vlv3/7b8d90ff-3cad-415c-bad5-b2d74ce4126c/95ccb750-51b0-4884-ac75-ed92afa7efe6/KR-ko-20190128-popsignuptwoweeks-perspective_alpha_website_small.jpg");
+}
 
 /* View contorl */
 .noScroll {
@@ -44,18 +53,6 @@
 
 .z-100 { z-index: 100; }
 
-/*================ Typography ================*/
-h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
-	font-weight: medium;
-	margin-bottom: 0;
-}
-h1, .h1 { font-size: 1.8rem; }
-h2, .h2 { font-size: 1.5rem; }
-h3, .h3 { font-size: 1.3rem; }
-h4, .h4 { font-size: 1.12rem; }
-h5, .h5 { font-size: 0.93rem; }
-
-
 /*================ Color ================*/
 
 .white-text { color : white; }
@@ -93,75 +90,6 @@ h5, .h5 { font-size: 0.93rem; }
 /*================ Border ================*/
 .border-bottom {
     border-bottom: 1px solid #3C3C42 !important;
-}
-
-
-/*================ Buttons ================*/
-.btn-block {
-	padding: 12px;
-}
-.btn-text-white {
-	color: white;
-	background-color: transparent;
-}
-
-.btn-with-icon,
-.btn-icon {
-	display: flex;
-	align-items: center;
-}
-.btn-with-icon i {
-	margin-right: 0.5rem;
-}
-.btn-primary {
-	background-color: #ff0000;
-	border-color: #ff0000;
-}
-.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
-	background-color: #cc0000;
-	border-color: #cc0000;
-}
-.btn-secondary {
-	background-color: #1E1E21;
-	border: none;
-}
-.btn-group {
-	margin-right: 1rem;
-}
-.btn-group:last-of-type {
-	margin-right: 0;
-}
-
-/* transition */
-.transition {
-	transition: all 0.5s ease ;
-}
-.y-flip {
-	-webkit-transform: scaleX(-1);
-	transform: scaleX(-1);
-}
-.btn-active {
-	background-color: rgba(0, 0, 0, 0.26);
-}
-.btn-tool {
-	display: flex;
-	align-items: center;
-	font-size: 13px;
-	min-width: 68px;
-	height: 68px;
-	padding: 8px;
-	margin-bottom: 4px;
-	opacity: 0.3;
-	cursor: pointer;
-}
-.btn-tool.active {
-	opacity: 1;
-	/* background-color: #303036; */
-}
-#download-btn-a.btn-tool {
-	opacity: 1;
-	background-color: red;
-	/* background-color: #303036; */
 }
 
 /*================ Canvas Control ================*/
@@ -242,18 +170,6 @@ h5, .h5 { font-size: 0.93rem; }
 }
 .step-wrapper {
 	width: 40px;
-}
-#front-page {
-	height: 100vh;
-}
-.Aligner {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.Aligner-item--fixed {
-	flex: none;
-	max-width: 50%
 }
 .overlay {
 	position: fixed; /* Sit on top of the page content */
