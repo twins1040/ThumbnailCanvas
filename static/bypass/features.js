@@ -755,7 +755,10 @@ function setFirstActive() {
 	var objs = canvas.getObjects();
 	if (objs.length) {
 		canvas.setActiveObject(objs[0]);
-		if (isIText() || isDoubleText()) setTextAttrBox();
+		if (isIText() || isDoubleText()) {
+			Toolbox.toggleDouble();
+			setTextAttrBox();
+		}
 		canvas.renderAll();
 	}
 }
