@@ -443,8 +443,7 @@ function save_session(e, callback) {
 
 	jdata = canvas.toJSON();
 	tmpl_data = JSON.stringify(jdata);
-	// Error code -1 will also be passed
-	box_num = Toolbox.currentBox();
+	box_num = Toolbox.now;
 
 	// Save session data
 	$.post({
@@ -796,6 +795,7 @@ $(".js-btn-copy").click(function() {Copy(); Paste()});
 $(".js-btn-delete").click(function(){
 	deleteActiveObject();
 });
+/* It will be used some day... do not erase
 $(".js-btn-edit").click(function() {
 	var obj = canvas.getActiveObject();
 	if (isIText(obj)) {
@@ -807,6 +807,7 @@ $(".js-btn-edit").click(function() {
 		editExtraStroke();
 	}
 });
+*/
 $("#toggle-objctrl").click(function() {
 	var target = $("#advanced-objctrl");
 	if (target.hasClass("hide")) {
@@ -948,8 +949,10 @@ $(".block-thumbnail").each(function(i, item) {
 				set_background_image(DEFAULT_BACKGROUND_URL);
 				History.add();
 			} else {
+				// If session exist, we don't need first page
+				Mainbox.stepForward();
 				pjson = JSON.parse(json);
-				Toolbox.jumpBoxTo(pjson['box_info']);
+				Toolbox.switchToNum(parseInt(pjson['box_info']));
 				// Todo: clean up session data format
 				restore_template(JSON.stringify(pjson['cdata']));
 				console.log("restore session");
@@ -1049,18 +1052,6 @@ $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();
 });
-$("#addImage").click(function(){
-
-	$(".btn-tool").removeClass("active");
-	$(this).addClass("active");
-	Toolbox.switchTo("image")
-
-});
-$("#selectTemplate").click(function(){
-	$(".btn-tool").removeClass("active");
-	$(this).addClass("active");
-	Toolbox.switchTo("template")
-});
 $("#before-templates").click(function() {
 	// 0->1->2->0
 	Mainbox.stepForward();
@@ -1081,7 +1072,20 @@ $("#complete-object-control").click(function() {
 	Toolbox.switchTo(".objectView");
 	canvas.discardActiveObject().renderAll();
 });
+$(".js-btn-edit").click(function() {
+	if (isIText() || isDoubleText()) {
+		$("#type-text").css("display", "block");
+	}
+});
 $("#complete-tpye-text").click(function() {
+	var inputBox = $("#typed-text");
+	var input = inputBox.val();
+	var obj = canvas.getActiveObject();
+	if (obj.setUpper) obj.setUpper('text', input);
+	if (obj.setLower) obj.setLower('text', input);
+	canvas.renderAll();
+	inputBox.val("");
+	$("#type-text").css("display", "none");
 });
 // END OF EVENT HANDLERS
 

@@ -43,7 +43,7 @@
 			<p>
 			<label for="imgLoader" class="btn btn-block btn-secondary mb-3">
 				 배경 가져오기
-				<input type="file" id="imgLoader" class="hide-input" multiple/>
+				<input type="file" id="imgLoader" class="hide-input"/>
 			</label>
 			<label id="sampleLoader" class="btn btn-block btn-secondary mb-3">
 				예제 이미지 사용
@@ -67,7 +67,7 @@
 			<div class="block-option-group saveAndDown hide">
 				<div class="btn-group mr-1" id="before-save">이전</div>
 			</div>
-			<!-- Undo Redo
+			<div class="btn-group mr-1 hide">
 				{% if user.is_authenticated %}
 					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
 						로그아웃
@@ -77,7 +77,7 @@
 						로그인
 					</a>
 				{% endif %}
-			-->
+			</div>
 		</nav>
 
 		<!-- Contents -->
@@ -138,10 +138,11 @@
 								<button id="btn-redo" class="btn btn-text-white btn-icon">
 									<i class="y-flip">reply</i>
 								</button>
-								<div id="addImage" class="btn btn-text-white btn-icon">
-									<div class="m-auto"><i>image</i></div>
-								</div>
-								<div id="addText"  class="btn btn-text-white btn-icon">
+								<label for="clipLoader" class="btn btn-text-white btn-icon">
+									<i>image</i>
+									<input type="file" id="clipLoader" class="hide-input" multiple/>
+								</label>
+								<div id="addText" class="btn btn-text-white btn-icon">
 									<div class="m-auto"><i>text_fields</i></div>
 								</div>
 							</div>
@@ -251,7 +252,7 @@
 		</nav>
 		<div class="Aligner">
 			<div class="Aligner-item Aligner-item--fixed">
-				<input type="text">
+				<input type="text" id="typed-text">
 			</div>
 		</div>
 	</div>
