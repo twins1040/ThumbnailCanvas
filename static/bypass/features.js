@@ -82,19 +82,93 @@ var History = new function() {
 	}
 }
 
+var Mainbox = new function() {
+	var order = ["front-page", "main-page"];
+
+	this.now = function() {
+		var n = -1;
+
+		if (order.length < 2) return -2;
+
+		order.forEach(function(e,i) {
+			// find page not hidden
+			if (!$("#"+e).hasClass('hide')) {
+				// This block should run once per execution
+				// Because open page should be single
+				if (n >= 0) {
+					n = -3;
+					return;
+				}
+				n = i;
+			}
+		});
+
+		return n;
+	}
+
+	this.stepForward = function() {
+		var now = this.now();
+
+		if (now < 0) {
+			console.log("bad state");
+			return false;
+		}
+
+		$("#"+order[now]).addClass('hide');
+		if (0 <= now && now < order.length - 1) {
+			$("#"+order[now+1]).removeClass('hide');
+		} else if (now == order.length - 1) {
+			$("#"+order[0]).removeClass('hide');
+		}
+
+		return true;
+	}
+}
+
 var Toolbox = new function() {
 	var wrapper = $("#pannels");
 	var og = $(".block-option-group");
-	var boxes = {
-		background: [$("#loadBackground"), null],
-		template: [$("#templates"), null],
-		object: [$("#objectControl"), function() {
-			setFirstActive();
-			Toolbox.toggleDouble();
-		}],
-		save: [$("#saveAndDown"), null],
-	};
-	var order = ["background", "template", "object", "save"];
+	var order = [".templates", ".objectView", ".saveAndDown", ".objectControl"];
+
+	this.now = 0;
+	this.nowSelector = function() {return order[this.now]};
+
+	this.switchTo = function(opt) {
+		var tmp = order.indexOf(opt);
+		if (tmp < 0) {
+			console.log("invalid class name");
+			return;
+		}
+		this.now = tmp;
+		og.addClass("hide");
+		$(opt).removeClass("hide");
+	}
+
+	this.switchToNum = function(n) {
+		if (n < 0 || n >= order.length) {
+			console.log("invalid index");
+			return;
+		}
+		this.switchTo(order[n]);
+	}
+
+	this.nextBox = function() {
+		var cnt = this.now;
+		if (0 <= cnt && cnt < order.length - 1) {
+			this.switchTo(order[cnt+1]);
+		} else if (cnt == order.length - 1) {
+			this.switchTo(order[0]);
+		}
+	}
+
+	this.previousBox = function() {
+		var cnt = this.now;
+		if (1 <= cnt && cnt < order.length) {
+			this.switchTo(order[cnt-1]);
+		} else if (cnt == 0) {
+			this.switchTo(order[order.length -1]);
+		}
+	}
 
 	this.toggleDouble = function() {
 		if (isDoubleText() || isAllDoubleText()) {
@@ -104,65 +178,6 @@ var Toolbox = new function() {
 			$("#stroke2-text").removeClass("hide");
 			$("#stroke2-console").addClass("hide");
 		}
-	}
-
-	this.add = function(opt) {
-		var target = boxes[opt][0];
-		var callback = boxes[opt][1];
-
-		target.removeClass("hide");
-		if (callback) callback();
-	}
-
-	this.switchTo = function(opt) {
-		og.addClass("hide");
-		this.add(opt);
-	}
-
-	// Send this value to session for restore
-	this.currentBox = function() {
-		var now = wrapper.children(":not(.hide)");
-		var i = 0;
-		var key = "";
-
-		if (Array.isArray(now)) {
-			console.log("wrong box");
-			return -1;
-		}
-
-		for (i; i<order.length; i++) {
-			key = order[i];
-			if (boxes[key][0].attr("id") === now.attr("id")) return i;
-		}
-
-		console.log("wrong box2");
-		return -1;
-	}
-
-	this.nextBox = function() {
-		var cnt = this.currentBox();
-		if (0 <= cnt && cnt < order.length - 1) {
-			this.switchTo(order[cnt+1]);
-		} else if (cnt == order.length - 1) {
-			this.switchTo(order[0]);
-		}
-	}
-
-	this.previousBox = function() {
-		var cnt = this.currentBox();
-		if (1 <= cnt && cnt < order.length) {
-			this.switchTo(order[cnt-1]);
-		} else if (cnt == 0) {
-			this.switchTo(order[order.length -1]);
-		}
-	}
-
-	this.jumpBoxTo = function(cnt) {
-		if (cnt < 0) {
-			console.log("wrong jump");
-			return;
-		}
-		this.switchTo(order[cnt]);
 	}
 }
 // END OF GLOBAL VARIABLES
@@ -183,11 +198,17 @@ canvas.on("mouse:up", function(){
 	var obj = canvas.getActiveObject();
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
-		setTextAttrBox(obj);
+		if (Toolbox.nowSelector() === ".objectView") {
+			setTextAttrBox(obj);
+			Toolbox.switchTo(".objectControl");
+		}
 	} else if (isMultipleSelected(obj)) {
+	} else {
+		if (Toolbox.nowSelector() === ".objectControl") {
+			Toolbox.switchTo(".objectView");
+		}
 	}
 	Toolbox.toggleDouble();
-	console.log("switch box");
 });
 canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
@@ -966,11 +987,11 @@ $('#imgLoader').on('change', function(e) {
 
 	reader.onload = function (event){
 		set_background_image(event.target.result);
+		Mainbox.stepForward();
 		dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '배경 가져오기'});
 	}
 
 	reader.readAsDataURL(e.target.files[0]);
-	Toolbox.nextBox();
 });
 $('#clipLoader').on('change', function(e) {
 	function readAndAdd(file) {
@@ -991,9 +1012,8 @@ $('#clipLoader').on('change', function(e) {
 });
 $('#sampleLoader').click(function(e) {
 	set_background_image(SAMPLE_BACKGROUND_URL);
-	Toolbox.nextBox();
+	Mainbox.stepForward();
 	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
-	console.log(ga.q);
 });
 $("#stroke2-text").click(function(){
 	var newObjs = [];
@@ -1041,11 +1061,27 @@ $("#selectTemplate").click(function(){
 	$(this).addClass("active");
 	Toolbox.switchTo("template")
 });
-$(".js-next-step").click(function() {
+$("#before-templates").click(function() {
+	// 0->1->2->0
+	Mainbox.stepForward();
+});
+$("#after-templates").click(function() {
 	Toolbox.nextBox();
 });
-$(".js-previous-step").click(function() {
+$("#before-object-view").click(function() {
 	Toolbox.previousBox();
+});
+$("#after-object-view").click(function() {
+	Toolbox.nextBox();
+});
+$("#before-save").click(function() {
+	Toolbox.previousBox();
+});
+$("#complete-object-control").click(function() {
+	Toolbox.switchTo(".objectView");
+	canvas.discardActiveObject().renderAll();
+});
+$("#complete-tpye-text").click(function() {
 });
 // END OF EVENT HANDLERS
 
