@@ -13,6 +13,7 @@ var FONTS = ["Noto Sans KR", "Nanum Gothic", "Nanum Myeongjo", "Hanna", "Poor St
 var GRADIENTS = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 				 {name: "blue darkblue", h:0, v:1, stops:{0:"blue", 1:"darkblue"}},
 				 {name: "red darkred", h:0, v:1, stops:{0:"red", 1:"darkred"}}];
+var SHORTCUT = true;
 
 var canvas = new fabric.Canvas('myCanvas');
 
@@ -1077,17 +1078,29 @@ $("#complete-object-control").click(function() {
 	canvas.discardActiveObject().renderAll();
 });
 $(".js-btn-edit").click(function() {
-	if (isIText() || isDoubleText()) {
+	var obj = canvas.getActiveObject();
+	// Turn off keyboard shortcut
+	SHORTCUT = false;
+	if (isIText(obj) || isDoubleText(obj)) {
+		$("#type-text-input").val(obj.getUpper('text'));
 		$("#type-text").css("display", "block");
 	}
 });
-$("#complete-tpye-text").click(function() {
-	var inputBox = $("#typed-text");
+$("#complete-type-text").click(function() {
+	var inputBox = $("#type-text-input");
 	var input = inputBox.val();
 	var obj = canvas.getActiveObject();
+	// Turn on keyboard shortcut
+	SHORTCUT = true;
+	if (input === "") {
+		console.log("no text");
+		$("#type-text").css("display", "none");
+		return;
+	}
 	if (obj.setUpper) obj.setUpper('text', input);
 	if (obj.setLower) obj.setLower('text', input);
 	canvas.renderAll();
+	History.add();
 	inputBox.val("");
 	$("#type-text").css("display", "none");
 });
@@ -1138,6 +1151,11 @@ $(window).keydown(function(e){
 			console.log("now editing");
 			return;
 		}
+	}
+
+	if (!SHORTCUT) {
+		console.log("shortcut is off");
+		return;
 	}
 
 	// Bind with key code
