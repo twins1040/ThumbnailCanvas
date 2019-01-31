@@ -950,7 +950,7 @@ $(".block-thumbnail").each(function(i, item) {
 	if (i === 1) {
 		$.get("session/", function(json) {
 			if (json === "") {
-				set_background_image(DEFAULT_BACKGROUND_URL);
+				//set_background_image(DEFAULT_BACKGROUND_URL);
 				History.add();
 			} else {
 				// If session exist, we don't need first page
