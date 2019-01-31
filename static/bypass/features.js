@@ -933,6 +933,7 @@ $(".block-thumbnail").each(function(i, item) {
 					url:'templates/'+id+'/',
 					type:'DELETE',
 					beforeSend: function(xhr) {
+						save_session();
 						xhr.setRequestHeader("X-CSRFToken", token);
 					},
 					success:function() {
