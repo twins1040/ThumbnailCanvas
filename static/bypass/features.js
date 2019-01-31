@@ -404,8 +404,8 @@ function loadFontFromPJSON(pjson) {
 
 	// Chaining All font loading sequences ex) p.then(f).then(f)....
 	prom = loadFont(result.shift());
-	for (var font in result) {
-		prom = prom.then(function() {loadFont(font)});
+	for (let i in result) {
+		prom = prom.then(function() {return loadFont(result[i])});
 	}
 
 	return prom;
