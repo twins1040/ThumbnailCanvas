@@ -820,6 +820,7 @@ $("#toggle-objctrl").click(function() {
 		target.addClass("hide");
 	}
 });
+/*
 $("#btnGroupDrop1").click(function() {
 	var target = $("#font-dropdown-menu");
 	if (target.hasClass("hide")) {
@@ -828,6 +829,7 @@ $("#btnGroupDrop1").click(function() {
 		target.addClass("hide");
 	}
 });
+*/
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
 });
