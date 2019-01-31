@@ -820,6 +820,14 @@ $("#toggle-objctrl").click(function() {
 		target.addClass("hide");
 	}
 });
+$("#btnGroupDrop1").click(function() {
+	var target = $("#font-dropdown-menu");
+	if (target.hasClass("hide")) {
+		target.removeClass("hide");
+	} else {
+		target.addClass("hide");
+	}
+});
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
 });
@@ -1114,9 +1122,9 @@ $("#complete-type-text").click(function() {
 //
 // Font selector
 FONTS.forEach(function(font) {
-	e = document.createElement('a');
-	$(e).addClass("dropdown-item");
-	$(e).addClass("dropdown-item-font");
+	e = document.createElement('div');
+	//$(e).addClass("dropdown-item");
+	//$(e).addClass("dropdown-item-font");
 	$(e).html(font);
 	$(e).click(function() {
 		activeObjectSet(function(obj) {

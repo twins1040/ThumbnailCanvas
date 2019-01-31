@@ -151,76 +151,74 @@
 						<div class="block-option-group objectControl hide">
 							<div id="normal-objctrl">
 								<label class="btn btn-block btn-secondary mb-3 js-btn-edit">
-									 내용 수정
+									내용 수정
 								</label>
-								<!-- 글꼴 -->
-								<div class="block-option">
-									<button id="btnGroupDrop1" type="button" class="btn btn-block btn-secondary mb-3 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										글꼴 변경
-									</button>
-									<div class="dropdown-menu" id="font-dropdown-menu" aria-labelledby="btnGroupDrop1"></div>
+								<label class="btn btn-block btn-secondary mb-3" id="btnGroupDrop1">
+									글꼴 변경
+								</label>
+								<div class="hide" id="font-dropdown-menu">
 								</div>
 								<label class="btn btn-block btn-secondary mb-3" id="toggle-objctrl">
 									옵션 펼치기
 								</label>
-							</div>
-							<div id="advanced-objctrl" class="hide">
-								<div class="btn-group">
-									<button id="align-left" class="btn btn-text-white btn-icon">
-										<i >format_align_left</i>
-									</button>
-									<button id="align-vertical-center" class="btn btn-text-white btn-icon">
-										<i >format_align_center</i>
-									</button>
-									<button id="align-right" class="btn btn-text-white btn-icon">
-										<i >format_align_right</i>
-									</button>
-									<button id="align-top" class="btn btn-text-white btn-icon">
-										<i >vertical_align_top</i>
-									</button>
-									<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
-										<i >vertical_align_center</i>
-									</button>
-									<button id="align-bottom" class="btn btn-text-white btn-icon">
-										<i >vertical_align_bottom</i>
-									</button>
-								</div>
-								<!-- 텍스트 -->
-								<div class="block-option d-flex btn-icon">
-									<button class="btn btn-text-white color-button" >
-										<input class="color-input" id="fill-hueb" data-huebee readonly>
-									</button>
-									<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
-								</div>
+								<div id="advanced-objctrl" class="hide">
+									<div class="btn-group">
+										<button id="align-left" class="btn btn-text-white btn-icon">
+											<i >format_align_left</i>
+										</button>
+										<button id="align-vertical-center" class="btn btn-text-white btn-icon">
+											<i >format_align_center</i>
+										</button>
+										<button id="align-right" class="btn btn-text-white btn-icon">
+											<i >format_align_right</i>
+										</button>
+										<button id="align-top" class="btn btn-text-white btn-icon">
+											<i >vertical_align_top</i>
+										</button>
+										<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
+											<i >vertical_align_center</i>
+										</button>
+										<button id="align-bottom" class="btn btn-text-white btn-icon">
+											<i >vertical_align_bottom</i>
+										</button>
+									</div>
+									<!-- 텍스트 -->
+									<div class="block-option d-flex btn-icon">
+										<button class="btn btn-text-white color-button" >
+											<input class="color-input" id="fill-hueb" data-huebee readonly>
+										</button>
+										<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
+									</div>
 
-								<!-- 외곽선 -->
-								<div class="block-option d-flex btn-icon">
-									<button class="btn btn-text-white color-button" >
-										<input class="color-input" id="stroke-hueb" data-huebee readonly>
-									</button>
-									<input id="sliderTextStroke" type="range" min="0" max="100" value="0" class="slider mr-2" >
-								</div>
+									<!-- 외곽선 -->
+									<div class="block-option d-flex btn-icon">
+										<button class="btn btn-text-white color-button" >
+											<input class="color-input" id="stroke-hueb" data-huebee readonly>
+										</button>
+										<input id="sliderTextStroke" type="range" min="0" max="100" value="0" class="slider mr-2" >
+									</div>
 
-								<!-- 이중 외곽선 -->
-								<div class="block-option d-flex btn-icon" id="stroke2-console">
-									<button class="btn btn-text-white color-button" >
-										<input class="color-input" id="stroke2-hueb" data-huebee readonly>
-									</button>
-									<input id="sliderTextStroke2" type="range" min="0" max="100" value="0" class="slider mr-2" >
-								</div>
-								<div class="block-option d-flex btn-icon" id="stroke2-text">
-									<button class="btn btn-text-white btn-with-icon" >
-										<i>add</i>
-										외곽선 추가
-									</button>
-								</div>
+									<!-- 이중 외곽선 -->
+									<div class="block-option d-flex btn-icon" id="stroke2-console">
+										<button class="btn btn-text-white color-button" >
+											<input class="color-input" id="stroke2-hueb" data-huebee readonly>
+										</button>
+										<input id="sliderTextStroke2" type="range" min="0" max="100" value="0" class="slider mr-2" >
+									</div>
+									<div class="block-option d-flex btn-icon" id="stroke2-text">
+										<button class="btn btn-text-white btn-with-icon" >
+											<i>add</i>
+											외곽선 추가
+										</button>
+									</div>
 
-								<!-- 자간 -->
-								<div class="block-option d-flex btn-icon" id="stroke2-console">
-									<button class="btn btn-text-white btn-with-icon">
-										<i>format_line_spacing</i>
-									</button>
-									<input id="sliderCharSpace" type="range" min="-200" max="200" step="4" value="0" class="slider mr-2" >
+									<!-- 자간 -->
+									<div class="block-option d-flex btn-icon" id="stroke2-console">
+										<button class="btn btn-text-white btn-with-icon">
+											<i>format_line_spacing</i>
+										</button>
+										<input id="sliderCharSpace" type="range" min="-200" max="200" step="4" value="0" class="slider mr-2" >
+									</div>
 								</div>
 							</div>
 							<div>
