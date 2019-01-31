@@ -373,6 +373,25 @@ function activeObjectSet(callback) {
 	}
 }
 
+function loadFont(font) {
+	var myfont = new FontFaceObserver(font);
+	toggleLoadingPage();
+	return myfont.load().then(toggleLoadingPage);
+}
+
+function loadAndUse(font, obj) {
+	return loadFont(font)
+		.then(function() {
+			console.log(font + ' loaded');
+			// when font is loaded, use it.
+			obj.setAllText("fontFamily", font);
+			canvas.requestRenderAll();
+		}).catch(function(e) {
+			console.log(e)
+			alert('폰트 로딩이 느려 기본으로 대체합니다 :' + font);
+		});
+}
+
 function loadFontFromPJSON(pjson) {
 	var result = [];
 	var prom;
@@ -388,11 +407,6 @@ function loadFontFromPJSON(pjson) {
 			}
 		}
 	}
-	var loadFont = function(font) {
-		var myfont = new FontFaceObserver(font);
-		return myfont.load();
-	}
-
 	recurse(pjson);
 	console.log(result);
 
@@ -719,20 +733,6 @@ function editExtraStroke() {
 	});
 }
 
-function loadAndUse(font, obj) {
-	var myfont = new FontFaceObserver(font);
-	return myfont.load()
-		.then(function() {
-			console.log(font + ' loaded');
-			// when font is loaded, use it.
-			obj.setAllText("fontFamily", font);
-			canvas.requestRenderAll();
-		}).catch(function(e) {
-			console.log(e)
-			alert('폰트 로딩이 느려 기본으로 대체합니다 :' + font);
-		});
-}
-
 function centeralize(obj) {
 	var crd = obj.aCoords;
 	if (!obj) return;
@@ -761,6 +761,14 @@ function setFirstActive() {
 			setTextAttrBox();
 		}
 		canvas.renderAll();
+	}
+}
+function toggleLoadingPage() {
+	var target = $("#loading-page");
+	if (target.css("display") === "none") {
+		target.css("display", "block");
+	} else {
+		target.css("display", "none");
 	}
 }
 
