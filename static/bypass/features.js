@@ -1122,6 +1122,11 @@ $("#complete-type-text").click(function() {
 	inputBox.val("");
 	$("#type-text").css("display", "none");
 });
+$("#feedback-link").click(function() {
+	if (confirm("저장하지 않은 내용을 잃게됩니다. 계속하시겠습니까?")) {
+		$(this).attr('href', 'https://goo.gl/forms/iu1jmmQXXGoPz6If2');
+	}
+});
 // END OF EVENT HANDLERS
 
 
