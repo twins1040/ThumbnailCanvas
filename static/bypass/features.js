@@ -803,7 +803,7 @@ strokeHue2.on('change', function(color) {
 // DOM events
 $("#btn-undo").click(History.undo);
 $("#btn-redo").click(History.redo);
-$(".js-btn-copy").click(function() {Copy(); Paste()});
+$("#js-btn-copy").click(function() {Copy(); Paste()});
 $(".js-btn-delete").click(function(){
 	deleteActiveObject();
 });
