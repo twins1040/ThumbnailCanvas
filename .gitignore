@@ -1,6 +1,7 @@
 myenv
 *.pyc
 *.swp
+intro.gif
 db.sqlite3
 __pycache__
 uwsgi_params
