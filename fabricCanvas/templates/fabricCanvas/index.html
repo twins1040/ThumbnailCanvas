@@ -36,13 +36,10 @@
 	<![endif]-->
 </head>
 
-<body>
-	<div id="front-page" class="p-4 text-center flex flex-center">
-		<div class="">
+<body class="gray850">
+	<!-- <div id="front-page" class="p-4 text-center flex flex-center">
+		<div class="w-100">
 			<h1 class="h1 bold mb-7 white-text">썸네일 메이커</h1>
-			<div class="mb-4">
-				<img src="static/img/intro.gif" class="max-100">
-			</div>
 			<label for="imgLoader" class="btn btn-block btn-primary mb-2">
 				 배경 가져오기
 				<input type="file" id="imgLoader" class="hide-input"/>
@@ -51,36 +48,41 @@
 				예제 이미지 사용
 			</label>
 		</div>
-	</div>
-	<div id="main-page" class="noScroll gray900 white-text hide">
+	</div> -->
+	<div id="main-page" class="noScroll gray900 white-text">
 
 		<!-- Navbar -->
-		<nav class="navbar gray800 z-100">
-			<div class="block-option-group templates">
-				<div class="btn-group mr-1" id="before-templates">이전</div>
-				<div class="btn-group mr-1" id="after-templates">다음</div>
+		<nav class="block-option-group navbar templates">
+			<div class="navbar__tab" id="before-templates">
+				<i>keyboard_arrow_left</i>이전
 			</div>
-			<div class="block-option-group objectView hide">
-				<div class="btn-group mr-1" id="before-object-view">이전</div>
-				<div class="btn-group mr-1" id="after-object-view">저장</div>
+			<div class="navbar__tab" id="after-templates">
+				다음<i>keyboard_arrow_right</i>
 			</div>
-			<div class="block-option-group objectControl hide">
-				<div class="btn-group mr-1" id="complete-object-control">완료</div>
+		</nav>
+		<nav class="block-option-group navbar objectView hide">
+			<div class="navbar__tab mr-1" id="before-object-view">
+				<i>keyboard_arrow_left</i>이전</div>
+			<div class="navbar__tab mr-1" id="after-object-view">
+				저장<i>keyboard_arrow_right</i>
 			</div>
-			<div class="block-option-group saveAndDown hide">
-				<div class="btn-group mr-1" id="before-save">이전</div>
-			</div>
-			<div class="btn-group mr-1 hide">
-				{% if user.is_authenticated %}
-					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
-						로그아웃
-					</a>
-				{% else %}
-					<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
-						로그인
-					</a>
-				{% endif %}
-			</div>
+		</nav>
+		<nav class="block-option-group navbar objectControl hide">
+			<div class="navbar__tab mr-1" id="complete-object-control">완료</div>
+		</nav>
+		<nav class="block-option-group navbar saveAndDown hide">
+			<div class="navbar__tab mr-1" id="before-save"><i>keyboard_arrow_left</i>이전</div>
+		</nav>
+		<nav class="btn-group mr-1 hide">
+			{% if user.is_authenticated %}
+				<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="true">
+					로그아웃
+				</a>
+			{% else %}
+				<a class="btn btn-with-icon btn-text-white color-white mb-0" id="switch-user" data-user="false">
+					로그인
+				</a>
+			{% endif %}
 		</nav>
 
 		<!-- Contents -->

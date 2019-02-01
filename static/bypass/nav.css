@@ -1,0 +1,48 @@
+/*================ Navigation ================*/
+.tool-options {
+	position: relative;
+	padding: 0 0 1.5rem;
+	border-right: 1px solid rgba(0,0,0,.1);
+	height: 100%;
+}
+.navbar {
+	display: flex;
+	width: 100%;
+	z-index: 100;
+	padding: 0;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	background-color: #303036;
+}
+	.navbar__tab {
+		display: flex;
+		align-items: center;
+		padding: 0.8rem 1.5rem;
+		cursor: pointer;
+
+		/* height: 42px; */
+	}
+
+
+
+
+
+
+.nav-toolbar {
+	width: 68px;
+}
+.step-wrapper {
+	width: 40px;
+}
+.overlay {
+	position: fixed; /* Sit on top of the page content */
+	display: none; /* Hidden by default */
+	width: 100%; /* Full width (cover the whole page) */
+	height: 100%; /* Full height (cover the whole page) */
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.8); /* Black background with opacity */
+	z-index: 200; /* Specify a stack order in case you're using a different order for other elements */
+	cursor: pointer; /* Add a pointer on hover */
+}

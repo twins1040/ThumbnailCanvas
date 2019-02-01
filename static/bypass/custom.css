@@ -1,12 +1,18 @@
 @import "typography.css";
 @import "button.css";
 @import "spacing.css";
+@import "nav.css";
 @import "../css/slider.css";
 
 /* front page */
 #front-page {
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://assets.nflxext.com/ffe/siteui/vlv3/7b8d90ff-3cad-415c-bad5-b2d74ce4126c/95ccb750-51b0-4884-ac75-ed92afa7efe6/KR-ko-20190128-popsignuptwoweeks-perspective_alpha_website_small.jpg");
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://media.giphy.com/media/fwWuSgjz2AP6pjHy24/giphy.gif");
+	 background-repeat: no-repeat;
+	 background-size: cover;
+}
+.gif-title {
+	max-width: 320px;
 }
 
 /* View contorl */
@@ -127,9 +133,6 @@
 	border: 2px solid #3C3C42;
 	background-color: #1e1e215e;
 }
-.block-option-group {
-	margin-bottom: 1.5rem;
-}
 /*================ Show & Hide ================*/
 .hide {
 	opacity: 0 !important;
@@ -149,40 +152,6 @@
 .color-input {
 	width: 30px;
 	height: 30px;
-}
-
-/*================ Navigation ================*/
-.tool-options {
-	position: relative;
-	padding: 0 0 1.5rem;
-	border-right: 1px solid rgba(0,0,0,.1);
-	height: 100%;
-}
-.navbar {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	padding: 0.6rem 1rem;
-	border-bottom: 1px solid rgba(0,0,0,.1);
-}
-.nav-toolbar {
-	width: 68px;
-}
-.step-wrapper {
-	width: 40px;
-}
-.overlay {
-	position: fixed; /* Sit on top of the page content */
-	display: none; /* Hidden by default */
-	width: 100%; /* Full width (cover the whole page) */
-	height: 100%; /* Full height (cover the whole page) */
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0,0,0,0.8); /* Black background with opacity */
-	z-index: 200; /* Specify a stack order in case you're using a different order for other elements */
-	cursor: pointer; /* Add a pointer on hover */
 }
 
 /*================ setting ================*/
