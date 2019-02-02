@@ -118,11 +118,12 @@
 }
 .block-thumbnail {
 	width: 50%;
+	border: 2px solid #303036;
 }
 .block-thumbnail img {
 	width: 100%;
 	height: auto;
-	border: 2px solid #3C3C42;
+	/* border: 2px solid #3C3C42; */
 	background-color: #1e1e215e;
 }
 .block-thumbnail-empty {
@@ -183,5 +184,6 @@
 } */
 
 select {
-    text-align-last: center;
+   height: 48px;
+   text-align-last: center;
 }
