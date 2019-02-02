@@ -200,9 +200,9 @@ canvas.on("mouse:up", function(){
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
 		if (Toolbox.nowSelector() === ".objectView") {
-			setTextAttrBox(obj);
 			Toolbox.switchTo(".objectControl");
 		}
+		setTextAttrBox(obj);
 	} else if (isMultipleSelected(obj)) {
 	} else {
 		if (Toolbox.nowSelector() === ".objectControl") {
@@ -296,7 +296,7 @@ fabric.Group.prototype.on("scaled", function(opt){
 fabric.Group.prototype.on("moved", function(opt){
 	opt.target._lastSelected = false;
 });
-fabric.Group.prototype.on("mouseup", editExtraStroke);
+//fabric.Group.prototype.on("mouseup", editExtraStroke);
 // END OF PROTOTYPE WRAPPER
 
 
@@ -1005,6 +1005,9 @@ $("#addText").click(function() {
 	sampleText.clone(function(clonedObj) {
 		canvas.add(clonedObj);
 		canvas.setActiveObject(clonedObj);
+		if (Toolbox.nowSelector() === ".objectView") {
+			Toolbox.switchTo(".objectControl");
+		}
 		History.add();
 	});
 });
@@ -1102,6 +1105,7 @@ $(".js-btn-edit").click(function() {
 	if (isIText(obj) || isDoubleText(obj)) {
 		$("#type-text-input").val(obj.getUpper('text'));
 		$("#type-text").css("display", "block");
+		$("#type-text-input").select();
 	}
 });
 $("#complete-type-text").click(function() {
