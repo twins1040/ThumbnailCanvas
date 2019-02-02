@@ -296,7 +296,7 @@ fabric.Group.prototype.on("scaled", function(opt){
 fabric.Group.prototype.on("moved", function(opt){
 	opt.target._lastSelected = false;
 });
-fabric.Group.prototype.on("mouseup", editExtraStroke);
+//fabric.Group.prototype.on("mouseup", editExtraStroke);
 // END OF PROTOTYPE WRAPPER
 
 
@@ -1005,6 +1005,9 @@ $("#addText").click(function() {
 	sampleText.clone(function(clonedObj) {
 		canvas.add(clonedObj);
 		canvas.setActiveObject(clonedObj);
+		if (Toolbox.nowSelector() === ".objectView") {
+			Toolbox.switchTo(".objectControl");
+		}
 		History.add();
 	});
 });
