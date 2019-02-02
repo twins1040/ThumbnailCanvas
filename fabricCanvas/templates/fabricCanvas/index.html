@@ -53,25 +53,25 @@
 
 		<!-- Navbar -->
 		<nav class="block-option-group navbar templates">
-			<div class="navbar__tab" id="before-templates">
+			<div class="navbar__tab-icon" id="before-templates">
 				<i>keyboard_arrow_left</i>이전
 			</div>
-			<div class="navbar__tab" id="after-templates">
+			<div class="navbar__tab-icon" id="after-templates">
 				다음<i>keyboard_arrow_right</i>
 			</div>
 		</nav>
 		<nav class="block-option-group navbar objectView hide">
-			<div class="navbar__tab mr-1" id="before-object-view">
+			<div class="navbar__tab-icon" id="before-object-view">
 				<i>keyboard_arrow_left</i>이전</div>
-			<div class="navbar__tab mr-1" id="after-object-view">
+			<div class="navbar__tab-icon" id="after-object-view">
 				저장<i>keyboard_arrow_right</i>
 			</div>
 		</nav>
-		<nav class="block-option-group navbar objectControl hide">
-			<div class="navbar__tab mr-1" id="complete-object-control">완료</div>
+		<nav class="block-option-group navbar justify-content-end objectControl hide">
+			<div class="navbar__tab" id="complete-object-control">완료</div>
 		</nav>
 		<nav class="block-option-group navbar saveAndDown hide">
-			<div class="navbar__tab mr-1" id="before-save"><i>keyboard_arrow_left</i>이전</div>
+			<div class="navbar__tab-icon" id="before-save"><i>keyboard_arrow_left</i>이전</div>
 		</nav>
 		<nav class="btn-group mr-1 hide">
 			{% if user.is_authenticated %}
@@ -135,7 +135,7 @@
 									</div>
 								</div>
 						</div>
-						<div class="block-option-group objectView">
+						<div class="block-option-group objectView hide">
 							<div class="btn-group mx-auto">
 								<button id="btn-undo" class="btn btn-text-white btn-icon">
 									<i >reply</i>
@@ -157,11 +157,8 @@
 								<label class="btn btn-block btn-secondary mb-3 js-btn-edit">
 									내용 수정
 								</label>
-								<label class="btn btn-block btn-secondary mb-3" id="btnGroupDrop1">
-									글꼴 변경
-								</label>
-								<div id="font-dropdown-menu">
-								</div>
+								<select class="btn btn-block btn-secondary mb-3" id="font-dropdown-menu">
+								</select>
 								<label class="btn btn-block btn-secondary mb-3" id="toggle-objctrl">
 									옵션 펼치기
 								</label>
@@ -251,8 +248,8 @@
 
 	<!-- Type text -->
 	<div class="container-fluid overlay white-text none" id="type-text">
-		<nav class="navbar">
-			<div class="btn-group mr-1" id="complete-type-text">완료</div>
+		<nav class="block-option-group navbar objectControl hide">
+			<div class="navbar__tab-icon" id="complete-type-text">완료</div>
 		</nav>
 		<div class="Aligner">
 			<div class="Aligner-item Aligner-item--fixed">

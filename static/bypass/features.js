@@ -1137,7 +1137,7 @@ $("#feedback-link").click(function() {
 //
 // Font selector
 FONTS.forEach(function(font) {
-	e = document.createElement('div');
+	e = document.createElement('option');
 	//$(e).addClass("dropdown-item");
 	//$(e).addClass("dropdown-item-font");
 	$(e).html(font);
