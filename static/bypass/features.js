@@ -1102,6 +1102,7 @@ $(".js-btn-edit").click(function() {
 	if (isIText(obj) || isDoubleText(obj)) {
 		$("#type-text-input").val(obj.getUpper('text'));
 		$("#type-text").css("display", "block");
+		$("#type-text-input").select();
 	}
 });
 $("#complete-type-text").click(function() {
