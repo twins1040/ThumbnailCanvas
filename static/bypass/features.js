@@ -200,9 +200,9 @@ canvas.on("mouse:up", function(){
 	// If text has extra stroke, it is 'group' not 'i-text'
 	if (isIText(obj) || isDoubleText(obj)) {
 		if (Toolbox.nowSelector() === ".objectView") {
-			setTextAttrBox(obj);
 			Toolbox.switchTo(".objectControl");
 		}
+		setTextAttrBox(obj);
 	} else if (isMultipleSelected(obj)) {
 	} else {
 		if (Toolbox.nowSelector() === ".objectControl") {
