@@ -1142,17 +1142,17 @@ $("#feedback-link").click(function() {
 // Font selector
 FONTS.forEach(function(font) {
 	e = document.createElement('option');
-	//$(e).addClass("dropdown-item");
-	//$(e).addClass("dropdown-item-font");
 	$(e).html(font);
-	$(e).click(function() {
-		activeObjectSet(function(obj) {
-			loadAndUse(font, obj).then(function() {
-				History.add();
-			});
+	$(e).val(font);
+	$("#font-dropdown-menu").append(e);
+});
+$("#font-dropdown-menu").on('change', function() {
+	var font = $(this).val();
+	activeObjectSet(function(obj) {
+		loadAndUse(font, obj).then(function() {
+			History.add();
 		});
 	});
-	$("#font-dropdown-menu").append(e);
 });
 
 // Key Binding
