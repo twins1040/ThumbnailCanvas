@@ -752,6 +752,7 @@ function deleteActiveObject() {
 	canvas.discardActiveObject();
 	canvas.renderAll();
 }
+
 function setFirstActive() {
 	var objs = canvas.getObjects();
 	if (objs.length) {
@@ -763,6 +764,7 @@ function setFirstActive() {
 		canvas.renderAll();
 	}
 }
+
 function toggleLoadingPage() {
 	var target = $("#loading-page");
 	if (target.css("display") === "none") {
@@ -772,6 +774,12 @@ function toggleLoadingPage() {
 	}
 }
 
+function initTemplate() {
+	Mainbox.stepForward();
+	if (canvas._objects.length === 0) {
+		$(".block-thumbnail img").first().click();
+	}
+}
 // END OF FUNCTIONS
 
 
@@ -969,7 +977,7 @@ $(".block-thumbnail").each(function(i, item) {
 	if (i === 1) {
 		$.get("session/", function(json) {
 			if (json === "") {
-				//set_background_image(DEFAULT_BACKGROUND_URL);
+				set_background_image(SAMPLE_BACKGROUND_URL);
 				History.add();
 			} else {
 				// If session exist, we don't need first page
@@ -1016,7 +1024,7 @@ $('#imgLoader').on('change', function(e) {
 
 	reader.onload = function (event){
 		set_background_image(event.target.result);
-		Mainbox.stepForward();
+		initTemplate();
 		dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '배경 가져오기'});
 	}
 
@@ -1040,8 +1048,7 @@ $('#clipLoader').on('change', function(e) {
 	}
 });
 $('#sampleLoader').click(function(e) {
-	set_background_image(SAMPLE_BACKGROUND_URL);
-	Mainbox.stepForward();
+	initTemplate();
 	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
 });
 $("#stroke2-text").click(function(){
