@@ -134,15 +134,26 @@ var Toolbox = new function() {
 	this.now = 0;
 	this.nowSelector = function() {return order[this.now]};
 
+	// Toolbox controlled ONLY with this function
 	this.switchTo = function(opt) {
 		var tmp = order.indexOf(opt);
+
 		if (tmp < 0) {
 			console.log("invalid class name");
 			return;
 		}
+
 		this.now = tmp;
 		og.addClass("hide");
 		$(opt).removeClass("hide");
+
+		// Toggle canvas enable/disable edit
+		// use tmp, because class name can be changed
+		if (tmp === 1 || tmp === 3) {
+			melt();
+		} else {
+			freeze();
+		}
 	}
 
 	this.switchToNum = function(n) {
@@ -233,6 +244,11 @@ fabric.Object.prototype.set({
 	isDoubleText: false,
 	originX: 'center',
 	originY: 'center',
+	selectable: false,
+});
+
+fabric.IText.prototype.set({
+	editable: false,
 });
 
 // Remove middle point of controller
@@ -780,6 +796,21 @@ function initTemplate() {
 		$(".block-thumbnail img").first().click();
 	}
 }
+
+function freeze() {
+	canvas.forEachObject(function(object){
+		object.selectable = false;
+		if (object.type = 'i-text') object.editable = false;
+	}).renderAll();
+	// TODO : remove hovering event to do not change cursor
+};
+
+function melt() {
+	canvas.forEachObject(function(object){
+		object.selectable = true;
+		if (object.type = 'i-text') object.editable = true;
+	}).renderAll();
+};
 // END OF FUNCTIONS
 
 
