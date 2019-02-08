@@ -801,7 +801,7 @@ function freeze() {
 	canvas.discardActiveObject();
 	canvas.forEachObject(function(object){
 		object.selectable = false;
-		if (object.type = 'i-text') object.editable = false;
+		if (object.type === 'i-text') object.editable = false;
 	}).renderAll();
 	// TODO : remove hovering event to do not change cursor
 };
@@ -809,7 +809,7 @@ function freeze() {
 function melt() {
 	canvas.forEachObject(function(object){
 		object.selectable = true;
-		if (object.type = 'i-text') object.editable = true;
+		if (object.type === 'i-text') object.editable = true;
 	}).renderAll();
 };
 // END OF FUNCTIONS
