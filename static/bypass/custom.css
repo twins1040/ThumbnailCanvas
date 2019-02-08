@@ -187,3 +187,6 @@ select {
    height: 48px;
    text-align-last: center;
 }
+#imgForDownload {
+	width: 80%;
+}

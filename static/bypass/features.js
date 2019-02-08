@@ -922,10 +922,23 @@ $("#sliderCharSpace").on("input", function() {
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
 		// Download Image
-		var link=document.createElement('a');
-		link.href=canvas.toDataURL();
-		link.download="mypainting.png";
+		var link = document.createElement('a');
+		var imgId = 'imgForDownload';
+		var img;
+
+		// Download Directly
+		link.href = canvas.toDataURL();
+		link.download = "mypainting.png";
 		link.click();
+
+		// IOS Chrome, Desktop Safari don't support direct download
+		// So, show image, then user do download
+		if ($(this).siblings('#'+imgId).length === 0) {
+			img = document.createElement('img');
+			$(img).attr('id', imgId);
+			$(this).after(img);
+		}
+		$('#'+imgId).attr('src', canvas.toDataURL());
 		dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
 	} else {
 		alert("로그인이 필요합니다");
