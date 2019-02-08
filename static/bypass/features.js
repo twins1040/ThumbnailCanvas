@@ -798,6 +798,7 @@ function initTemplate() {
 }
 
 function freeze() {
+	canvas.discardActiveObject();
 	canvas.forEachObject(function(object){
 		object.selectable = false;
 		if (object.type = 'i-text') object.editable = false;
@@ -1134,7 +1135,8 @@ $("#before-templates").click(function() {
 	Mainbox.stepForward();
 });
 $("#after-templates").click(function() {
-	Toolbox.nextBox();
+	Toolbox.switchTo('.objectControl');
+	setFirstActive();
 });
 $("#before-object-view").click(function() {
 	Toolbox.previousBox();
@@ -1143,7 +1145,8 @@ $("#after-object-view").click(function() {
 	Toolbox.nextBox();
 });
 $("#before-save").click(function() {
-	Toolbox.previousBox();
+	Toolbox.switchTo('.objectControl');
+	setFirstActive();
 });
 $("#complete-object-control").click(function() {
 	Toolbox.switchTo(".objectView");
