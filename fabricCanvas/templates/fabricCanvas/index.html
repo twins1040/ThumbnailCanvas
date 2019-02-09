@@ -27,7 +27,6 @@
 	<link rel="stylesheet" href="static/font/text_font/stylesheet.css?version=20180115">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/hanna.css?version=20180115">
 
-
 	<!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
 	<!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
 	<!--[if lt IE 9]>
@@ -37,7 +36,7 @@
 </head>
 
 <body class="gray850">
-	<div id="front-page" class="p-4 text-center flex flex-center">
+	<div id="front-page" class="p-4 text-center flex flex-center hide">
 		<div class="w-100">
 			<h1 class="h1 bold mb-7 white-text">썸네일 메이커</h1>
 			<label for="imgLoader" class="btn btn-block btn-primary mb-2">
@@ -49,16 +48,17 @@
 			</label>
 		</div>
 	</div>
-	<div id="main-page" class="noScroll gray900 white-text hide">
+	<div id="main-page" class="noScroll gray900 white-text">
 
+		<!-- <div class="navbar__tab-icon" id="before-templates">
+			<i>keyboard_arrow_left</i>이전
+		</div>
+		<div class="navbar__tab-icon" id="after-templates">
+			다음<i>keyboard_arrow_right</i>
+		</div> -->
 		<!-- Navbar -->
 		<nav class="block-option-group navbar templates">
-			<div class="navbar__tab-icon" id="before-templates">
-				<i>keyboard_arrow_left</i>이전
-			</div>
-			<div class="navbar__tab-icon" id="after-templates">
-				다음<i>keyboard_arrow_right</i>
-			</div>
+			<div class="navbar__title">썸네일 메이커</div>
 		</nav>
 		<nav class="block-option-group navbar objectView hide">
 			<div class="navbar__tab-icon" id="before-object-view">
@@ -89,6 +89,12 @@
 		<div class="container-fluid gray900">
 			<div class="row scroll-wraper">
 				<div class="col-md-6 p-0 order-md-2">
+					<div class="p-absolute strech p-3">
+						<div class="strech flex-center border-dashed">
+							<i class="add_photo_alternate mb-3"></i>
+							<p class="mb-0">여기를 눌러<br>배경이미지를 불러오세요</p>
+						</div>
+					</div>
 					<canvas id="myCanvas" class="canvas-artboard sticky-header">
 						Your browser does not support the canvas element
 					</canvas>
@@ -96,7 +102,7 @@
 
 				<!-- Tools -->
 				<div class="col-md-6 p-0 d-flex">
-					<div id="pannels" class="w-100 tool-options gray850 transition scroll-on px-3 py-4">
+					<div id="pannels" class="w-100 tool-options gray850 transition scroll-on py-2 px-3">
 						<div class="block-option-group templates">
 								<ul class="nav nav-tabs" id="tmplTab" role="tablist">
 									<li class="nav-item">
