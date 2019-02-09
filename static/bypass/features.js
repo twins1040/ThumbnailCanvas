@@ -970,6 +970,12 @@ $("#add-my-template").click(function(ev) {
 		});
 	}
 });
+$("#btnGoogleLogin").click(function(ev) {
+	save_session(null, function() {
+		location.href = LOGIN_URL;
+	});
+});
+
 // Thumbnail image loading and hook event
 $(".block-thumbnail").each(function(i, item) {
 	var token = $("input[name='csrfmiddlewaretoken']").attr("value");

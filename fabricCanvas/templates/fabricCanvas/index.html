@@ -28,6 +28,7 @@
 	<link rel="stylesheet" href="static/font/text_font/stylesheet.css?version=20180115">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/hanna.css?version=20180115">
 
+
 	<!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
 	<!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
 	<!--[if lt IE 9]>
@@ -37,7 +38,7 @@
 </head>
 
 <body class="gray850">
-	<div id="front-page" class="p-4 text-center flex flex-center hide">
+	<!-- <div id="front-page" class="p-4 text-center flex flex-center hide">
 		<div class="w-100">
 			<h1 class="h1 bold mb-7 white-text">썸네일 메이커</h1>
 			<label for="imgLoader" class="btn btn-block btn-primary mb-2">
@@ -48,7 +49,7 @@
 				예제 이미지 사용
 			</label>
 		</div>
-	</div>
+	</div> -->
 	<div id="main-page" class="noScroll gray900 white-text">
 
 		<!-- <div class="navbar__tab-icon" id="before-templates">
@@ -127,16 +128,26 @@
 										</div>
 									</div>
 									<div class="tab-pane fade" id="my-tmpl" role="tabpanel" aria-labelledby="my-tmpl-tab">
-										<div id="templateMy" class="d-flex flex-wrap mb-3">
+										<div id="templateMy">
 											{% if user.is_authenticated %}
-												{% for tmpl in user_templates reversed %}
-													<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
-														<img>
-														{% if user.is_superuser %}
-															<i >highlight_off</i>
-														{% endif %}
+												<div class="d-flex flex-wrap mb-3">
+													{% for tmpl in user_templates reversed %}
+														<div class="block-thumbnail" id="tmpl-{{tmpl.id}}">
+															<img>
+															{% if user.is_superuser %}
+																<i >highlight_off</i>
+															{% endif %}
+														</div>
+													{% endfor %}
+												</div>
+											{% else %}
+												<div class="text-center py-5">
+													<p class="pb-2">내 템플릿을 불러오려면<br> 로그인이 필요합니다</p>
+													<div id="btnGoogleLogin" class="btn-google-login">
+														<span class="icon"></span>
+														<span class="buttonText">구글로 로그인</span>
 													</div>
-												{% endfor %}
+												</div>
 											{% endif %}
 										</div>
 									</div>
@@ -287,6 +298,7 @@
 	<script src="static/js/js.cookie.min.js"></script>
 	<script src="https://rawgit.com/bramstein/fontfaceobserver/master/fontfaceobserver.js" ></script>
 	<script src="static/bypass/features.js"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 
 </body>
 </html>
