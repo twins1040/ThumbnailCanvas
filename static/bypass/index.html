@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-575KJPX');</script>
+	<!-- End Google Tag Manager -->
+
+	<title>썸네일 메이커</title>
+
+	<meta name="google-site-verification" content="GW-Rjgx-B9CuFgRS6onUEphIJp5qpOioQGgGEYDoLh0" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, shrink-to-fit=no">
+	<meta name="description" content="더 이상 직접 썸네일을 만들지 마세요. 이미 성공한 썸네일을 고르고, 원하는 문구를 넣으면 끝!">
+
+	<!-- 합쳐지고 최소화된 최신 CSS -->
+	<link rel="stylesheet" href="static/bootstrap-4.1.3-dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="static/css/huebee.min.css">
+	<link rel="stylesheet" href="static/css/material-icons.css">
+	<link rel="stylesheet" href="static/bypass/custom.css">
+
+	<!-- 폰트 목록 -->
+	<link rel="stylesheet" href="static/font/text_font/stylesheet.css?version=20180115">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/hanna.css?version=20180115">
+
+
+	<!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
+	<!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body ng-app="myApp" ng-controller="myController" class="gray850">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+
+<div class="noScroll gray900 white-text" ng-cloak>
+	<div>
+		<nav class="navbar" ng-show="page === 'selectTemplate'">
+			<div class="navbar__title">썸네일 메이커</div>
+		</nav>
+		<nav class="navbar" ng-show="page === 'initEdit'">
+			<div class="navbar__tab-icon" ng-click="page='selectTemplate'">
+				<i>keyboard_arrow_left</i>이전
+			</div>
+			<div class="navbar__tab-icon" ng-click="page='saveTemplate'">
+				저장<i>keyboard_arrow_right</i>
+			</div>
+		</nav>
+		<nav class="navbar" ng-show="page === 'editTemplate'">
+			<div class="navbar__tab" ng-click="page='initEdit'">완료</div>
+		</nav>
+		<nav class="navbar" ng-show="page === 'saveTemplate'">
+			<div class="navbar__tab-icon" ng-click="page='initEdit'">
+				<i>keyboard_arrow_left</i>이전
+			</div>
+			<div class="navbar__tab-icon" ng-click="page='saveTemplate'">
+				^-^
+			</div>
+		</nav>
+	</div>
+	<div class="container-fluid gray900">
+		<div class="row scroll-wraper">
+			<!-- Canvas -->
+			<div class="col-md-6 p-0 order-md-2">
+				<div class="p-absolute strech p-3">
+					<div class="strech flex-center border-dashed">
+						<i class="add_photo_alternate mb-3"></i>
+						<p class="mb-0">여기를 눌러<br>배경이미지를 불러오세요</p>
+					</div>
+				</div>
+				<canvas id="myCanvas" class="canvas-artboard sticky-header">
+					Your browser does not support the canvas element
+				</canvas>
+			</div>
+			<!-- Tools -->
+			<div class="col-md-6 p-0 d-flex w-100 tool-options gray850 transition scroll-on py-2 px-3">
+				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'selectTemplate'">
+					<ul class="nav nav-tabs" id="tmplTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="hot-tmpl-tab" data-toggle="tab" href="#hot-tmpl" role="tab" aria-controls="hot-tmpl" aria-selected="true">인기 템플릿</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="my-tmpl-tab" data-toggle="tab" href="#my-tmpl" role="tab" aria-controls="my-tmpl" aria-selected="false">내 템플릿</a>
+						</li>
+					</ul>
+					<div class="tab-content" id="tmplTabContent">
+						<div class="tab-pane fade show active" id="hot-tmpl" role="tabpanel" aria-labelledby="hot-tmpl-tab">
+							<div class="d-flex flex-wrap">
+								<div ng-click="page='editTemplate'">Click</div>
+								<div>
+									<div class="block-thumbnail">
+										<img>
+										<i>highlight_off</i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="my-tmpl" role="tabpanel" aria-labelledby="my-tmpl-tab">
+							<div class="d-flex flex-wrap">
+								<div>
+									<div class="block-thumbnail">
+										<img>
+										<i>highlight_off</i>
+									</div>
+								</div>
+								<div class="text-center py-5">
+									<p class="pb-2">내 템플릿을 불러오려면<br> 로그인이 필요합니다</p>
+									<div id="btnGoogleLogin" class="btn-google-login">
+										<span class="icon"></span>
+										<span class="buttonText">구글로 로그인</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'initEdit'">
+					<div class="btn-group mx-auto">
+						<button id="btn-undo" class="btn btn-text-white btn-icon">
+							<i>reply</i>
+						</button>
+						<button id="btn-redo" class="btn btn-text-white btn-icon">
+							<i class="y-flip">reply</i>
+						</button>
+						<label for="clipLoader" class="btn btn-text-white btn-icon">
+							<i>image</i>
+							<input type="file" id="clipLoader" class="hide-input" multiple/>
+						</label>
+						<div id="addText" class="btn btn-text-white btn-icon">
+							<div class="m-auto"><i>text_fields</i></div>
+						</div>
+					</div>
+				</div>
+				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'editTemplate'">
+					<label class="btn btn-block btn-secondary mb-3 js-btn-edit">내용 수정</label>
+					<select class="btn btn-block btn-secondary mb-3" id="font-dropdown-menu">
+					</select>
+					<label class="btn btn-block btn-secondary mb-3" ng-click="advancedOption=!advancedOption">옵션 펼치기</label>
+					<div ng-show="advancedOption === true">
+						<div class="btn-group">
+							<button id="align-left" class="btn btn-text-white btn-icon">
+								<i >format_align_left</i>
+							</button>
+							<button id="align-vertical-center" class="btn btn-text-white btn-icon">
+								<i >format_align_center</i>
+							</button>
+							<button id="align-right" class="btn btn-text-white btn-icon">
+								<i >format_align_right</i>
+							</button>
+							<button id="align-top" class="btn btn-text-white btn-icon">
+								<i >vertical_align_top</i>
+							</button>
+							<button id="align-horizontal-center" class="btn btn-text-white btn-icon">
+								<i >vertical_align_center</i>
+							</button>
+							<button id="align-bottom" class="btn btn-text-white btn-icon">
+								<i >vertical_align_bottom</i>
+							</button>
+						</div>
+						<!-- 텍스트 -->
+						<div class="block-option d-flex btn-icon">
+							<button class="btn btn-text-white color-button" >
+								<input class="color-input" id="fill-hueb" data-huebee readonly>
+							</button>
+							<input id="sliderFontSize" type="range" min="1" max="200" value="0" class="slider mr-2" >
+						</div>
+
+						<!-- 외곽선 -->
+						<div class="block-option d-flex btn-icon">
+							<button class="btn btn-text-white color-button" >
+								<input class="color-input" id="stroke-hueb" data-huebee readonly>
+							</button>
+							<input id="sliderTextStroke" type="range" min="0" max="100" value="0" class="slider mr-2" >
+						</div>
+
+						<!-- 이중 외곽선 -->
+						<div class="block-option d-flex btn-icon" id="stroke2-console">
+							<button class="btn btn-text-white color-button" >
+								<input class="color-input" id="stroke2-hueb" data-huebee readonly>
+							</button>
+							<input id="sliderTextStroke2" type="range" min="0" max="100" value="0" class="slider mr-2" >
+						</div>
+						<div class="block-option d-flex btn-icon" id="stroke2-text">
+							<button class="btn btn-text-white btn-with-icon" >
+								<i>add</i>
+								외곽선 추가
+							</button>
+						</div>
+
+						<!-- 자간 -->
+						<div class="block-option d-flex btn-icon" id="stroke2-console">
+							<button class="btn btn-text-white btn-with-icon">
+								<i>format_line_spacing</i>
+							</button>
+							<input id="sliderCharSpace" type="range" min="-200" max="200" step="4" value="0" class="slider mr-2" >
+						</div>
+					</div>
+					<div>
+						<button class="btn btn-text-white btn-with-icon" id="js-btn-copy" alt="ctr+c">
+							<i>content_copy</i>복사
+						</button>
+						<button class="btn btn-text-white btn-with-icon" id="js-btn-delete">
+							<i>delete</i>삭제
+						</button>
+					</div>
+				</div>
+				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'saveTemplate'">
+					<label id="add-my-template" class="btn btn-block btn-secondary mb-3">
+						내 템플릿에 저장
+					</label>
+					<label id="download-btn-a" class="btn btn-block btn-secondary mb-3">
+						다운로드
+					</label>
+					<div>
+						<a id="feedback-link"> 문의하기</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="static/js/jquery-3.3.1.min.js"></script>
+<script src="static/js/popper.min.js"></script>
+<script src="static/bootstrap-4.1.3-dist/js/bootstrap.min.js"></script>
+<script src="static/js/huebee.pkgd.min.js"></script>
+<script src="static/js/fabric.min.js"></script>
+<script src="static/js/js.cookie.min.js"></script>
+<script src="https://rawgit.com/bramstein/fontfaceobserver/master/fontfaceobserver.js" ></script>
+<script src="static/bypass/features.js"></script>
+<script src="static/bypass/angular/app.js"></script>
+<script src="static/bypass/angular/layout/boxController.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+
+</body>
+</html>
