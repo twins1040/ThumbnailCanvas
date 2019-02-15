@@ -244,11 +244,11 @@ fabric.Object.prototype.set({
 	isDoubleText: false,
 	originX: 'center',
 	originY: 'center',
-	selectable: false,
+	selectable: true,
 });
 
 fabric.IText.prototype.set({
-	editable: false,
+	editable: true,
 });
 
 // Remove middle point of controller

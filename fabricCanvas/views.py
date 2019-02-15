@@ -87,7 +87,6 @@ def tmpl(request, template_id):
 
 def template_data(request, template_id):
     tmpl = get_object_or_404(Template, pk=template_id)
-
     return HttpResponse(tmpl.data)
 
 def template_thumbnail(request, template_id):
@@ -103,3 +102,12 @@ def template_thumbnail(request, template_id):
         pass
 
     return HttpResponse(tmpl.thumbnail.url)
+
+def my_user(request):
+    if request.method == 'GET':
+        return JsonResponse({
+            'login' : request.user.is_authenticated,
+            'super' : request.user.is_superuser,
+        })
+    else:
+        return HttpResponse(status=400)
