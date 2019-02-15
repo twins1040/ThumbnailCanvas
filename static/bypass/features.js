@@ -976,6 +976,7 @@ $("#btnGoogleLogin").click(function(ev) {
 	});
 });
 
+/*
 // Thumbnail image loading and hook event
 $(".block-thumbnail").each(function(i, item) {
 	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
@@ -1042,6 +1043,7 @@ $(".block-thumbnail").each(function(i, item) {
 		});
 	}
 });
+*/
 $("#switch-user").click(function() {
 	var href, txt;
 	if (isLogin()) {
