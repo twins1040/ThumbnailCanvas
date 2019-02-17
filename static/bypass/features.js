@@ -134,15 +134,26 @@ var Toolbox = new function() {
 	this.now = 0;
 	this.nowSelector = function() {return order[this.now]};
 
+	// Toolbox controlled ONLY with this function
 	this.switchTo = function(opt) {
 		var tmp = order.indexOf(opt);
+
 		if (tmp < 0) {
 			console.log("invalid class name");
 			return;
 		}
+
 		this.now = tmp;
 		og.addClass("hide");
 		$(opt).removeClass("hide");
+
+		// Toggle canvas enable/disable edit
+		// use tmp, because class name can be changed
+		if (tmp === 1 || tmp === 3) {
+			melt();
+		} else {
+			freeze();
+		}
 	}
 
 	this.switchToNum = function(n) {
@@ -233,6 +244,11 @@ fabric.Object.prototype.set({
 	isDoubleText: false,
 	originX: 'center',
 	originY: 'center',
+	selectable: false,
+});
+
+fabric.IText.prototype.set({
+	editable: false,
 });
 
 // Remove middle point of controller
@@ -752,6 +768,7 @@ function deleteActiveObject() {
 	canvas.discardActiveObject();
 	canvas.renderAll();
 }
+
 function setFirstActive() {
 	var objs = canvas.getObjects();
 	if (objs.length) {
@@ -763,6 +780,7 @@ function setFirstActive() {
 		canvas.renderAll();
 	}
 }
+
 function toggleLoadingPage() {
 	var target = $("#loading-page");
 	if (target.css("display") === "none") {
@@ -772,6 +790,28 @@ function toggleLoadingPage() {
 	}
 }
 
+function initTemplate() {
+	Mainbox.stepForward();
+	if (canvas._objects.length === 0) {
+		$(".block-thumbnail img").first().click();
+	}
+}
+
+function freeze() {
+	canvas.discardActiveObject();
+	canvas.forEachObject(function(object){
+		object.selectable = false;
+		if (object.type === 'i-text') object.editable = false;
+	}).renderAll();
+	// TODO : remove hovering event to do not change cursor
+};
+
+function melt() {
+	canvas.forEachObject(function(object){
+		object.selectable = true;
+		if (object.type === 'i-text') object.editable = true;
+	}).renderAll();
+};
 // END OF FUNCTIONS
 
 
@@ -883,10 +923,23 @@ $("#sliderCharSpace").on("input", function() {
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
 		// Download Image
-		var link=document.createElement('a');
-		link.href=canvas.toDataURL();
-		link.download="mypainting.png";
+		var link = document.createElement('a');
+		var imgId = 'imgForDownload';
+		var img;
+
+		// Download Directly
+		link.href = canvas.toDataURL();
+		link.download = "mypainting.png";
 		link.click();
+
+		// IOS Chrome, Desktop Safari don't support direct download
+		// So, show image, then user do download
+		if ($(this).siblings('#'+imgId).length === 0) {
+			img = document.createElement('img');
+			$(img).attr('id', imgId);
+			$(this).after(img);
+		}
+		$('#'+imgId).attr('src', canvas.toDataURL());
 		dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
 	} else {
 		alert("로그인이 필요합니다");
@@ -969,7 +1022,7 @@ $(".block-thumbnail").each(function(i, item) {
 	if (i === 1) {
 		$.get("session/", function(json) {
 			if (json === "") {
-				//set_background_image(DEFAULT_BACKGROUND_URL);
+				set_background_image(SAMPLE_BACKGROUND_URL);
 				History.add();
 			} else {
 				// If session exist, we don't need first page
@@ -1016,7 +1069,7 @@ $('#imgLoader').on('change', function(e) {
 
 	reader.onload = function (event){
 		set_background_image(event.target.result);
-		Mainbox.stepForward();
+		initTemplate();
 		dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '배경 가져오기'});
 	}
 
@@ -1040,8 +1093,7 @@ $('#clipLoader').on('change', function(e) {
 	}
 });
 $('#sampleLoader').click(function(e) {
-	set_background_image(SAMPLE_BACKGROUND_URL);
-	Mainbox.stepForward();
+	initTemplate();
 	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
 });
 $("#stroke2-text").click(function(){
@@ -1083,7 +1135,8 @@ $("#before-templates").click(function() {
 	Mainbox.stepForward();
 });
 $("#after-templates").click(function() {
-	Toolbox.nextBox();
+	Toolbox.switchTo('.objectControl');
+	setFirstActive();
 });
 $("#before-object-view").click(function() {
 	Toolbox.previousBox();
@@ -1092,7 +1145,8 @@ $("#after-object-view").click(function() {
 	Toolbox.nextBox();
 });
 $("#before-save").click(function() {
-	Toolbox.previousBox();
+	Toolbox.switchTo('.objectControl');
+	setFirstActive();
 });
 $("#complete-object-control").click(function() {
 	Toolbox.switchTo(".objectView");
