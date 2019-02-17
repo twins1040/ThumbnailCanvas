@@ -28,20 +28,20 @@ def save_tmpl(_tnail, data, user):
 @never_cache
 def session(request):
     if request.method == 'POST':
-        print(request.POST['box_info'])
         request.session['canvas_data'] = request.POST['data']
-        request.session['box_info'] = request.POST['box_info']
+        request.session['page'] = request.POST['page']
         request.session.set_expiry(300)
         return HttpResponse('session saved')
 
     if request.method == 'GET':
-        data = "";
         try:
-            data += '{"cdata":'+request.session['canvas_data']+','
-            data += '"box_info":'+request.session['box_info']+'}'
+            data = {
+                "data" : request.session['canvas_data'],
+                "page" : request.session['page'],
+            }
         except KeyError:
             pass
-        return HttpResponse(data)
+        return JsonResponse(data)
 
 @cache_control(no_cache=True)
 def templates(request):

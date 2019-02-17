@@ -321,6 +321,7 @@ fabric.Group.prototype.on("moved", function(opt){
 // FUNCTIONS
 //
 
+// MOVED
 function isLogin() {
 	var b = $("#switch-user").attr("data-user");
 
@@ -462,6 +463,7 @@ function load_template(json) {
 	});
 }
 
+// MOVED
 function save_session(e, callback) {
 	var obj = $("input[name='csrfmiddlewaretoken']");
 	var token = obj && obj.attr('value');
@@ -920,6 +922,7 @@ $("#sliderCharSpace").on("input", function() {
 		obj.setAllText('charSpacing', value);
 	});
 });
+// MOVED
 $("#download-btn-a").click(function(ev) {
 	if (isLogin()) {
 		// Download Image
@@ -948,6 +951,7 @@ $("#download-btn-a").click(function(ev) {
 		});
 	}
 });
+//This Function is copyed to app.js
 $("#add-my-template").click(function(ev) {
 	if (isLogin()) {
 		// Upload template

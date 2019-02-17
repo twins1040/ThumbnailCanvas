@@ -140,7 +140,9 @@
 					</div>
 				</div>
 				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'editTemplate'">
-					<label class="btn btn-block btn-secondary mb-3 js-btn-edit">내용 수정</label>
+					<label class="btn btn-block btn-secondary mb-3 js-btn-edit">
+						<input type="text" ng-model="editText">
+					</label>
 					<select class="btn btn-block btn-secondary mb-3" id="font-dropdown-menu">
 					</select>
 					<label class="btn btn-block btn-secondary mb-3" ng-click="advancedOption=!advancedOption">옵션 펼치기</label>
@@ -213,10 +215,10 @@
 					</div>
 				</div>
 				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="page === 'saveTemplate'">
-					<label id="add-my-template" class="btn btn-block btn-secondary mb-3">
+					<label class="btn btn-block btn-secondary mb-3" ng-click="addMyTemplate()">
 						내 템플릿에 저장
 					</label>
-					<label id="download-btn-a" class="btn btn-block btn-secondary mb-3">
+					<label class="btn btn-block btn-secondary mb-3" ng-click="downloadCanvas($event)">
 						다운로드
 					</label>
 					<div>
@@ -227,6 +229,8 @@
 		</div>
 	</div>
 </div>
+
+
 
 <script src="static/js/jquery-3.3.1.min.js"></script>
 <script src="static/js/popper.min.js"></script>
