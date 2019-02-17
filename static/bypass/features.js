@@ -154,6 +154,18 @@ var Toolbox = new function() {
 		} else {
 			freeze();
 		}
+		if (tmp === 0) {
+			$("#toolBox").removeClass("col-md-4");
+			$("#canvasBox").removeClass("col-md-8");
+			$("#toolBox").addClass("col-md-6");
+			$("#canvasBox").addClass("col-md-6");
+		} else {
+			$("#toolBox").removeClass("col-md-6");
+			$("#canvasBox").removeClass("col-md-6");
+			$("#toolBox").addClass("col-md-4");
+			$("#canvasBox").addClass("col-md-8");
+
+		}
 	}
 
 	this.switchToNum = function(n) {

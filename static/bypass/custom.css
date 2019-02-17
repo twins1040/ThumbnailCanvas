@@ -191,3 +191,8 @@ select {
 #imgForDownload {
 	width: 80%;
 }
+
+.transition {
+	-webkit-transition: all 0.5s; /* Safari */
+  transition: All 0.5s ;
+}
