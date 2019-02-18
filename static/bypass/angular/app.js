@@ -1,28 +1,29 @@
 var app = angular.module('myApp', []);
 
 app.controller('globalCtrl', function($scope, $http) {
-	$scope.page = 'selectTemplate';
-	$scope.advancedOption = false;
-	$scope.canvasCover = true;
-	$scope.tmplFocused = 0;
-	$scope.LOGIN_URL = '/login/google-oauth2/';
-	$scope.login = function() {
-		location.href = $scope.LOGIN_URL;
+	$scope.gval = {
+		page : 'selectTemplate',
+		advancedOption : false,
+		canvasCover : false,
+		tmplFocused : 0,
+		LOGIN_URL : '/login/google-oauth2/',
 	}
-	$scope.loadTemplate =  function(id) {
-		$.ajax({
-			url:'templates/'+id+'/data/',
-			success: function(response) {
-				restore_template(response);
-			},
+	// Login, Session
+	$scope.getUser = function() {
+		$http.get("user/").then(function(response) {
+			$scope.gval.user = response.data;
 		});
-		$scope.canvasCover = false;
 	}
-	$scope.focusTemplate =  function(id) {
-		$scope.tmplFocused = id;
-		console.log(id);
+	$scope.getHotTmpls = function() {
+		$http.get("templates/hot/").then(function(response) {
+			$scope.gval.hotTemplates = response.data;
+		});
 	}
-	$scope.jump = function() { $scope.page='editTemplate' };
+	$scope.getUserTmpls = function() {
+		$http.get("user/templates/").then(function(response) {
+			$scope.gval.userTemplates = response.data;
+		});
+	}
 	$scope.getCookie = function(name) {
 		var cookieValue = null;
 		if (document.cookie && document.cookie !== '') {
@@ -54,7 +55,7 @@ app.controller('globalCtrl', function($scope, $http) {
 		$.post({
 			url:'session/',
 			data: {
-				page: $scope.page,
+				page: $scope.gval.page,
 				data: tmpl_data,
 				csrfmiddlewaretoken: token,
 			},
@@ -63,46 +64,73 @@ app.controller('globalCtrl', function($scope, $http) {
 			},
 		});
 	}
-	$scope.addMyTemplate = function() {
-		if ($scope.isLogin()) {
-			// Upload template
-			var jdata = canvas.toJSON();
-
-			// Delete bg for data reduce
-			jdata["backgroundImage"] = undefined;
-
-			// Fill form, submit
-			save_session(null, function() {
-				$('#input-data').attr('value', JSON.stringify(jdata));
-				$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-				$('#upload-tmpl-form').submit();
-				dataLayer.push({'event': 'custom: 완료-템플릿생성', 'eventLabel': ''});
-			});
-		} else {
-			alert("로그인이 필요합니다");
-			$scope.saveSession(null, function() {
-				location.href = $scope.LOGIN_URL;
-			});
-		}
-	}
-	$scope.updateUser = function() {
-		$http.get("user/").then(function(response) {
-			$scope.user = response.data;
+	$scope.login = function() {
+		$scope.saveSession(null, function() {
+			location.href = $scope.gval.LOGIN_URL;
 		});
 	}
 	$scope.isLogin = function() {
-		$scope.updateUser();
-		if ($scope.user.login === undefined) {
+		$scope.getUser();
+		if ($scope.gval.user.login === undefined) {
 			alert("user.login is undefined");
 			return false;
-		} else if ($scope.user.login === true) {
+		} else if ($scope.gval.user.login === true) {
 			return true;
-		} else if ($scope.user.login === false) {
+		} else if ($scope.gval.user.login === false) {
 			return false;
 		}
 		alert("user.login is neither true or false");
 		return false;
 	}
+	// Template
+	$scope.focusTemplate =  function(id) {
+		$scope.gval.tmplFocused = id;
+	}
+	$scope.loadTemplate =  function(id) {
+		$.ajax({
+			url:'templates/'+id+'/data/',
+			success: function(response) {
+				restore_template(response);
+			},
+		});
+		$scope.gval.canvasCover = false;
+	}
+	$scope.addMyTemplate = function() {
+		if ($scope.isLogin()) {
+			var token = $scope.getCookie('csrftoken');
+			var jdata = canvas.toJSON();
+
+			if (!token) {
+				console.log("no token data");
+				return;
+			}
+			// Remove Background
+			jdata["backgroundImage"] = undefined;
+			// Save session and upload template
+			$scope.saveSession(null, function() {
+				$.post({
+					url:'user/templates/',
+					data: {
+						data: JSON.stringify(jdata),
+						thumbnail: canvas.toDataURL({multiplier:0.25}),
+						csrfmiddlewaretoken: token,
+					},
+					success: function() {
+						$scope.getUserTmpls(); //Update user tmpls
+						$scope.getHotTmpls(); //Update user tmpls
+						alert("템플릿이 저장되었습니다. 이전으로 돌아가 템플릿을 확인 해 보세요");
+						dataLayer.push({'event': 'custom: 완료-템플릿생성', 'eventLabel': ''});
+					},
+				});
+			});
+		} else {
+			alert("로그인이 필요합니다");
+			$scope.saveSession(null, function() {
+				location.href = $scope.gval.LOGIN_URL;
+			});
+		}
+	}
+	// Canvas
 	$scope.downloadCanvas = function($event) {
 		var imgId = "imgForDownload";
 		var _this = $event.currentTarget;
@@ -132,24 +160,29 @@ app.controller('globalCtrl', function($scope, $http) {
 			});
 		}
 	};
+	$scope.loadBackground = function() {
 
-	$scope.updateUser();
+	}
+	// Etc
+	$scope.jump = function() { $scope.gval.page = 'editTemplate' };
+
+	// Inital setting
+	$scope.getUser();
 	$.get("session/", function(response) {
 		var json = response;
 		console.log(response);
-		window.resres = response
-		if (json === {}) {
+		window.resres = response;
+		if ($.isEmptyObject(json)) {
+			$scope.gval.canvasCover = true;
 			//History.add();
 		} else {
-			$scope.page = json['page'];
-			$scope.canvasCover = false;
+			$scope.gval.page = json['page'];
+			$scope.gval.canvasCover = false;
 			// Todo: clean up session data format
 			restore_template(json['data']);
 			console.log("restore session");
 		}
 	});
-	$http.get("templates/").then(function(response) {
-		$scope.hotTemplates = response.data['hot_templates'];
-		$scope.userTemplates = response.data['user_templates'];
-	});
+	$scope.getHotTmpls();
+	$scope.getUserTmpls();
 });

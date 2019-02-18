@@ -34,6 +34,7 @@ def session(request):
         return HttpResponse('session saved')
 
     if request.method == 'GET':
+        data = {}
         try:
             data = {
                 "data" : request.session['canvas_data'],
@@ -44,35 +45,41 @@ def session(request):
         return JsonResponse(data)
 
 @cache_control(no_cache=True)
-def templates(request):
-    if request.method == 'POST':
-        if not request.user.is_authenticated:
-            request.session['canvas_data'] = request.POST['data']
-            request.session.set_expiry(300)
-            return HttpResponseRedirect(reverse('social:begin', args=['google-oauth2']))
-        else:
-            _tnail = request.POST['thumbnail']
-            data = request.POST['data']
-            save_tmpl(_tnail, data, request.user)
-            return HttpResponseRedirect(reverse('fabric_canvas:index'))
-
-    elif request.method == 'GET':
+def hot_templates(request):
+    if request.method == 'GET':
         hot_tmpls = []
-        user_tmpls = []
         # Collect id, url. Can't find how to do not use forloop
         # Loop is essential for using property like .url
         hot_tmpls_query = Template.objects.only('id', 'thumbnail')
         for q in hot_tmpls_query:
             hot_tmpls.append({'id' : q.id, 'url' : q.thumbnail.url})
-        # Append user's templates if logged in
+        return JsonResponse(hot_tmpls, safe=False)
+    return HttpResponse(status=405)
+
+@cache_control(no_cache=True)
+def user_templates(request):
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+
+    if request.method == 'POST':
+        _tnail = request.POST['thumbnail']
+        data = request.POST['data']
+        save_tmpl(_tnail, data, request.user)
+        return HttpResponseRedirect(reverse('index'))
+
+    elif request.method == 'GET':
+        user_tmpls = []
+        # Collect id, url. Can't find how to do not use forloop
+        # Loop is essential for using property like .url
         if request.user.is_authenticated:
             user = User.objects.get(pk=request.user.id)
             user_tmpls_query = user.template_set.only('id', 'thumbnail')
             for q in user_tmpls_query:
                 user_tmpls.append({'id' : q.id, 'url' : q.thumbnail.url})
         # Integrate both hot, user templates
-        response_tmpls = {'hot_templates':hot_tmpls, 'user_templates':user_tmpls}
-        return JsonResponse(response_tmpls)
+        return JsonResponse(user_tmpls, safe=False)
+
+    return HttpResponse(status=405)
 
 @never_cache
 def tmpl(request, template_id):

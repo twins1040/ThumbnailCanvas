@@ -17,13 +17,6 @@ var SHORTCUT = true;
 
 var canvas = new fabric.Canvas('myCanvas');
 
-// Color picker
-var fillElem = $("#fill-hueb")[0];
-var strokeElem = $("#stroke-hueb")[0];
-var strokeElem2 = $("#stroke2-hueb")[0];
-var fillHue = new Huebee(fillElem, {setText:false});
-var strokeHue = new Huebee(strokeElem, {setText:false});
-var strokeHue2 = new Huebee(strokeElem2, {setText:false});
 
 // For Add text
 var sampleText = new fabric.IText("Double Click to edit!", {
@@ -80,49 +73,6 @@ var History = new function() {
 		}
 		load_template(_work_history[_history_head]);
 		console.log('redo');
-	}
-}
-
-var Mainbox = new function() {
-	var order = ["front-page", "main-page"];
-
-	this.now = function() {
-		var n = -1;
-
-		if (order.length < 2) return -2;
-
-		order.forEach(function(e,i) {
-			// find page not hidden
-			if (!$("#"+e).hasClass('hide')) {
-				// This block should run once per execution
-				// Because open page should be single
-				if (n >= 0) {
-					n = -3;
-					return;
-				}
-				n = i;
-			}
-		});
-
-		return n;
-	}
-
-	this.stepForward = function() {
-		var now = this.now();
-
-		if (now < 0) {
-			console.log("bad state");
-			return false;
-		}
-
-		$("#"+order[now]).addClass('hide');
-		if (0 <= now && now < order.length - 1) {
-			$("#"+order[now+1]).removeClass('hide');
-		} else if (now == order.length - 1) {
-			$("#"+order[0]).removeClass('hide');
-		}
-
-		return true;
 	}
 }
 
@@ -199,28 +149,12 @@ var Toolbox = new function() {
 //
 // CANVAS SETTINGS
 //
+
 canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
 canvas.selection = true;
 
 canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
-});
-// Attribute box control
-canvas.on("mouse:up", function(){
-	var obj = canvas.getActiveObject();
-	// If text has extra stroke, it is 'group' not 'i-text'
-	if (isIText(obj) || isDoubleText(obj)) {
-		if (Toolbox.nowSelector() === ".objectView") {
-			Toolbox.switchTo(".objectControl");
-		}
-		setTextAttrBox(obj);
-	} else if (isMultipleSelected(obj)) {
-	} else {
-		if (Toolbox.nowSelector() === ".objectControl") {
-			Toolbox.switchTo(".objectView");
-		}
-	}
-	Toolbox.toggleDouble();
 });
 canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
@@ -321,20 +255,6 @@ fabric.Group.prototype.on("moved", function(opt){
 // FUNCTIONS
 //
 
-// MOVED
-function isLogin() {
-	var b = $("#switch-user").attr("data-user");
-
-	if (b === "false") {
-		return false;
-	} else if (b === "true") {
-		return true;
-	} else {
-		alert("잘못된 접근입니다");
-		return false;
-	}
-}
-
 function Copy() {
 	// clone what are you copying since you
 	// may want copy and paste on different moment.
@@ -344,7 +264,6 @@ function Copy() {
 		_clipboard = cloned;
 	}, ['isDoubleText']);
 }
-
 function Paste() {
 	// clone again, so you can do multiple copies.
 	_clipboard.clone(function(clonedObj) {
@@ -371,7 +290,6 @@ function Paste() {
 		canvas.requestRenderAll();
 	}, ['isDoubleText']);
 }
-
 function activeObjectSet(callback) {
 	var actobj = canvas.getActiveObject();
 
@@ -389,13 +307,11 @@ function activeObjectSet(callback) {
 		History.add();
 	}
 }
-
 function loadFont(font) {
 	var myfont = new FontFaceObserver(font);
 	toggleLoadingPage();
 	return myfont.load().then(toggleLoadingPage);
 }
-
 function loadAndUse(font, obj) {
 	return loadFont(font)
 		.then(function() {
@@ -408,7 +324,6 @@ function loadAndUse(font, obj) {
 			alert('폰트 로딩이 느려 기본으로 대체합니다 :' + font);
 		});
 }
-
 function loadFontFromPJSON(pjson) {
 	var result = [];
 	var prom;
@@ -441,7 +356,6 @@ function loadFontFromPJSON(pjson) {
 
 	return prom;
 }
-
 function load_template(json) {
 	var pjson = JSON.parse(json);
 	var items = pjson["objects"];
@@ -462,32 +376,6 @@ function load_template(json) {
 		});
 	});
 }
-
-// MOVED
-function save_session(e, callback) {
-	var obj = $("input[name='csrfmiddlewaretoken']");
-	var token = obj && obj.attr('value');
-	var jdata, tmpl_data, box_num;
-
-	if (!token) {
-		console.log("no token data");
-		return;
-	}
-
-	jdata = canvas.toJSON();
-	tmpl_data = JSON.stringify(jdata);
-	box_num = Toolbox.now;
-
-	// Save session data
-	$.post({
-		url:'session/',
-		data: {data: tmpl_data, csrfmiddlewaretoken: token, box_info: box_num},
-		success: function() {
-			if (callback) {callback()}
-		}
-	});
-}
-
 function restore_template(json) {
 	var pjson = JSON.parse(json);
 	var bg = pjson['backgroundImage'];
@@ -496,17 +384,6 @@ function restore_template(json) {
 		History.add();
 	});
 }
-
-function clear_session() {
-	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
-
-	// Send "" session data
-	$.post({
-		url:'session/',
-		data: {data: "", csrfmiddlewaretoken: token},
-	});
-}
-
 function set_background_image(src) {
 	var imgObj = new Image();
 	imgObj.src = src;
@@ -528,7 +405,6 @@ function set_background_image(src) {
 		History.add();
 	}
 }
-
 function add_image(src) {
 	var imgObj = new Image();
 	imgObj.src = src;
@@ -539,7 +415,6 @@ function add_image(src) {
 		History.add();
 	}
 }
-
 function group_align(axis, align) {
 	var actobj = canvas.getActiveObject();
 	var opts, origin, distence;
@@ -570,8 +445,6 @@ function group_align(axis, align) {
 		obj.set(origin['key'], origin[align]);
 	});
 }
-
-// set values on text selection
 function setTextAttrBox(obj) {
 	if (!obj) obj = canvas.getActiveObject();
 	if (!obj) {
@@ -600,23 +473,18 @@ function setTextAttrBox(obj) {
 	// Fourth line of char spacing
 	$("#sliderCharSpace")[0].value = obj.getUpper('charSpacing');
 }
-
 function isIText(obj) {
    if (!obj) obj = canvas.getActiveObject();
    return !!(obj && obj.type === "i-text");
 }
-
 function isMultipleSelected(obj) {
    if (!obj) obj = canvas.getActiveObject();
    return !!(obj && obj.type === "activeSelection");
 }
-
 function isDoubleText(obj) {
 	if (!obj) obj = canvas.getActiveObject();
 	return !!(obj && obj.type === "group");
 }
-
-// Return false if test one IText
 function isAllIText(obj) {
 	var i;
 	if (!obj) obj = canvas.getActiveObject();
@@ -626,8 +494,6 @@ function isAllIText(obj) {
 	}
 	return true;
 }
-
-// Return false if test one doubleText
 function isAllDoubleText(obj) {
 	var i;
 	if (!obj) obj = canvas.getActiveObject();
@@ -637,7 +503,6 @@ function isAllDoubleText(obj) {
 	}
 	return true;
 }
-
 function addExtraStroke(actobj, _clonedObj) {
 	var ret;
 
@@ -693,7 +558,6 @@ function addExtraStroke(actobj, _clonedObj) {
 
 	return ret;
 }
-
 function editExtraStroke() {
 	let actobj = canvas.getActiveObject();
 
@@ -750,7 +614,6 @@ function editExtraStroke() {
 		});
 	});
 }
-
 function centeralize(obj) {
 	var crd = obj.aCoords;
 	if (!obj) return;
@@ -764,13 +627,11 @@ function centeralize(obj) {
 	}
 	return;
 }
-
 function deleteActiveObject() {
 	activeObjectSet(function(obj) {canvas.remove(obj)});
 	canvas.discardActiveObject();
 	canvas.renderAll();
 }
-
 function setFirstActive() {
 	var objs = canvas.getObjects();
 	if (objs.length) {
@@ -782,7 +643,6 @@ function setFirstActive() {
 		canvas.renderAll();
 	}
 }
-
 function toggleLoadingPage() {
 	var target = $("#loading-page");
 	if (target.css("display") === "none") {
@@ -791,14 +651,12 @@ function toggleLoadingPage() {
 		target.css("display", "none");
 	}
 }
-
 function initTemplate() {
 	Mainbox.stepForward();
 	if (canvas._objects.length === 0) {
 		$(".block-thumbnail img").first().click();
 	}
 }
-
 function freeze() {
 	canvas.discardActiveObject();
 	canvas.forEachObject(function(object){
@@ -807,7 +665,6 @@ function freeze() {
 	}).renderAll();
 	// TODO : remove hovering event to do not change cursor
 };
-
 function melt() {
 	canvas.forEachObject(function(object){
 		object.selectable = true;
@@ -821,69 +678,16 @@ function melt() {
 //
 // EVENT HANDLERS
 //
-fillHue.on('change', function(color) {
-	if($(".huebee").length !== 0) {
-		activeObjectSet(function(obj) {
-			obj.setUpper('fill', color);
-		});
-	}
-});
-strokeHue.on('change', function(color) {
-	if($(".huebee").length !== 0) {
-		activeObjectSet(function(obj) {
-			obj.setUpper('stroke', color);
-		});
-	}
-});
-strokeHue2.on('change', function(color) {
-	if($(".huebee").length !== 0) {
-		activeObjectSet(function(obj) {
-			if (obj.setLower) obj.setLower('stroke', color);
-		});
-	}
-});
-// DOM events
+
 $("#btn-undo").click(History.undo);
 $("#btn-redo").click(History.redo);
 $("#js-btn-copy").click(function() {Copy(); Paste()});
 $(".js-btn-delete").click(function(){
 	deleteActiveObject();
 });
-/* It will be used some day... do not erase
-$(".js-btn-edit").click(function() {
-	var obj = canvas.getActiveObject();
-	if (isIText(obj)) {
-		obj.enterEditing();
-		obj.selectAll();
-	} else if (isDoubleText(obj)) {
-		// Run twice, like double click
-		editExtraStroke();
-		editExtraStroke();
-	}
-});
-*/
-$("#toggle-objctrl").click(function() {
-	var target = $("#advanced-objctrl");
-	if (target.hasClass("hide")) {
-		target.removeClass("hide");
-	} else {
-		target.addClass("hide");
-	}
-});
-/*
-$("#btnGroupDrop1").click(function() {
-	var target = $("#font-dropdown-menu");
-	if (target.hasClass("hide")) {
-		target.removeClass("hide");
-	} else {
-		target.addClass("hide");
-	}
-});
-*/
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
 });
-// Get value of slider and set text
 $("#sliderFontSize").on("input", function() {
 	var actobj = canvas.getActiveObject();
 	var value;
@@ -922,144 +726,6 @@ $("#sliderCharSpace").on("input", function() {
 		obj.setAllText('charSpacing', value);
 	});
 });
-// MOVED
-$("#download-btn-a").click(function(ev) {
-	if (isLogin()) {
-		// Download Image
-		var link = document.createElement('a');
-		var imgId = 'imgForDownload';
-		var img;
-
-		// Download Directly
-		link.href = canvas.toDataURL();
-		link.download = "mypainting.png";
-		link.click();
-
-		// IOS Chrome, Desktop Safari don't support direct download
-		// So, show image, then user do download
-		if ($(this).siblings('#'+imgId).length === 0) {
-			img = document.createElement('img');
-			$(img).attr('id', imgId);
-			$(this).after(img);
-		}
-		$('#'+imgId).attr('src', canvas.toDataURL());
-		dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
-	} else {
-		alert("로그인이 필요합니다");
-		save_session(null, function() {
-			location.href = LOGIN_URL;
-		});
-	}
-});
-//This Function is copyed to app.js
-$("#add-my-template").click(function(ev) {
-	if (isLogin()) {
-		// Upload template
-		var jdata = canvas.toJSON();
-
-		// Delete bg for data reduce
-		jdata["backgroundImage"] = undefined;
-
-		// Fill form, submit
-		save_session(null, function() {
-			$('#input-data').attr('value', JSON.stringify(jdata));
-			$('#input-thumbnail').attr('value', canvas.toDataURL({multiplier:0.25}));
-			$('#upload-tmpl-form').submit();
-			dataLayer.push({'event': 'custom: 완료-템플릿생성', 'eventLabel': ''});
-		});
-	} else {
-		alert("로그인이 필요합니다");
-		save_session(null, function() {
-			location.href = LOGIN_URL;
-		});
-	}
-});
-$("#btnGoogleLogin").click(function(ev) {
-	save_session(null, function() {
-		location.href = LOGIN_URL;
-	});
-});
-
-/*
-// Thumbnail image loading and hook event
-$(".block-thumbnail").each(function(i, item) {
-	var token = $("input[name='csrfmiddlewaretoken']").attr("value");
-	let id, img, icon, pjson;
-
-	// Template id
-	id = item.id.split('-')[1];
-
-	// Load Image
-	img = $(item).find('img')[0];
-	$.ajax({
-		url:'templates/'+id+'/thumbnail/',
-		success:function(src) {
-			$(img).attr("src", src);
-		}
-	});
-
-	// Hook image click event
-	$(img).click(function() {
-		$.ajax({
-			url:'templates/'+id+'/data/',
-			success: restore_template,
-		});
-	});
-
-	// Hook delete btn click event
-	// Find icon <i> tag
-	icon = $(item).find('i');
-	if (icon) {
-		icon.click(function() {
-			if(confirm("정말 삭제하시겠습니까?")) {
-				$.ajax({
-					url:'templates/'+id+'/',
-					type:'DELETE',
-					beforeSend: function(xhr) {
-						save_session();
-						xhr.setRequestHeader("X-CSRFToken", token);
-					},
-					success:function() {
-						location.href = '';
-					}
-				});
-			}
-		});
-	}
-
-	// Set first templete in canvas
-	// It needs to be here for fast loading
-	// Try to get session data, if get, use it
-	if (i === 1) {
-		$.get("session/", function(json) {
-			if (json === "") {
-				//set_background_image(SAMPLE_BACKGROUND_URL);
-				History.add();
-			} else {
-				// If session exist, we don't need first page
-				Mainbox.stepForward();
-				pjson = JSON.parse(json);
-				Toolbox.switchToNum(parseInt(pjson['box_info']));
-				// Todo: clean up session data format
-				restore_template(JSON.stringify(pjson['cdata']));
-				console.log("restore session");
-			}
-		});
-	}
-});
-*/
-$("#switch-user").click(function() {
-	var href, txt;
-	if (isLogin()) {
-		if(confirm("데이터가 사라집니다 계속하시겠습니까?")) {
-			location.href = LOGOUT_URL;
-		}
-	} else {
-		save_session(null, function() {
-			location.href = LOGIN_URL;
-		});
-	}
-});
 $("#align-left").click(function() {group_align("originX", "left")});
 $("#align-vertical-center").click(function() {group_align("originX", "center")});
 $("#align-right").click(function() {group_align("originX", "right")});
@@ -1076,7 +742,8 @@ $("#addText").click(function() {
 		History.add();
 	});
 });
-$('#imgLoader').on('change', function(e) {
+// it can't be moved, input type file click() can't be triggered
+$('#bgLoader').on('change', function(e) {
 	var reader = new FileReader();
 
 	reader.onload = function (event){
@@ -1142,56 +809,6 @@ $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();
 });
-$("#before-templates").click(function() {
-	// 0->1->2->0
-	Mainbox.stepForward();
-});
-$("#after-templates").click(function() {
-	Toolbox.switchTo('.objectControl');
-	setFirstActive();
-});
-$("#before-object-view").click(function() {
-	Toolbox.previousBox();
-});
-$("#after-object-view").click(function() {
-	Toolbox.nextBox();
-});
-$("#before-save").click(function() {
-	Toolbox.switchTo('.objectControl');
-	setFirstActive();
-});
-$("#complete-object-control").click(function() {
-	Toolbox.switchTo(".objectView");
-	canvas.discardActiveObject().renderAll();
-});
-$(".js-btn-edit").click(function() {
-	var obj = canvas.getActiveObject();
-	// Turn off keyboard shortcut
-	SHORTCUT = false;
-	if (isIText(obj) || isDoubleText(obj)) {
-		$("#type-text-input").val(obj.getUpper('text'));
-		$("#type-text").css("display", "block");
-		$("#type-text-input").select();
-	}
-});
-$("#complete-type-text").click(function() {
-	var inputBox = $("#type-text-input");
-	var input = inputBox.val();
-	var obj = canvas.getActiveObject();
-	// Turn on keyboard shortcut
-	SHORTCUT = true;
-	if (input === "") {
-		console.log("no text");
-		$("#type-text").css("display", "none");
-		return;
-	}
-	if (obj.setUpper) obj.setUpper('text', input);
-	if (obj.setLower) obj.setLower('text', input);
-	canvas.renderAll();
-	History.add();
-	inputBox.val("");
-	$("#type-text").css("display", "none");
-});
 $("#feedback-link").click(function() {
 	if (confirm("저장하지 않은 내용을 잃게됩니다. 계속하시겠습니까?")) {
 		$(this).attr('href', 'https://goo.gl/forms/iu1jmmQXXGoPz6If2');
@@ -1201,10 +818,10 @@ $("#feedback-link").click(function() {
 
 
 
-
 //
 // EDIT DOM ELEMENTS
 //
+
 // Font selector
 FONTS.forEach(function(font) {
 	e = document.createElement('option');
