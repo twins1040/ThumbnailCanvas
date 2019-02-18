@@ -2,7 +2,12 @@ var app = angular.module('myApp', []);
 
 app.controller('globalCtrl', function($scope, $http) {
 	$scope.gval = {
+		user : {
+			login : false,
+			super : false,
+		},
 		page : 'selectTemplate',
+		tmplTab : 'hot',
 		advancedOption : false,
 		canvasCover : false,
 		tmplFocused : 0,
@@ -20,6 +25,10 @@ app.controller('globalCtrl', function($scope, $http) {
 		});
 	}
 	$scope.getUserTmpls = function() {
+		if (!$scope.isLogin()) {
+			console.log("unauthorized");
+			return;
+		}
 		$http.get("user/templates/").then(function(response) {
 			$scope.gval.userTemplates = response.data;
 		});
@@ -170,8 +179,6 @@ app.controller('globalCtrl', function($scope, $http) {
 	$scope.getUser();
 	$.get("session/", function(response) {
 		var json = response;
-		console.log(response);
-		window.resres = response;
 		if ($.isEmptyObject(json)) {
 			$scope.gval.canvasCover = true;
 			//History.add();
@@ -184,5 +191,5 @@ app.controller('globalCtrl', function($scope, $http) {
 		}
 	});
 	$scope.getHotTmpls();
-	$scope.getUserTmpls();
+	if ($scope.isLogin()) $scope.getUserTmpls();
 });

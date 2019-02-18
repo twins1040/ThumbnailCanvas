@@ -33,25 +33,23 @@
 
 <div class="noScroll gray900 white-text" ng-cloak>
 	<div>
-		<nav class="navbar" ng-show="gval.page === 'selectTemplate'">
-			<div class="navbar__title">썸네일 메이커</div>
-		</nav>
-		<nav class="navbar" ng-show="gval.page === 'initEdit'">
-			<div class="navbar__tab-icon" ng-click="gval.page='selectTemplate'">
+		<nav class="navbar">
+			<div ng-show="gval.page === 'selectTemplate'" class="navbar__title">
+				썸네일 메이커
+			</div>
+			<div ng-show="gval.page === 'initEdit'" ng-click="gval.page='selectTemplate'" class="navbar__tab-icon">
 				<i>keyboard_arrow_left</i>이전
 			</div>
-			<div class="navbar__tab-icon" ng-click="gval.page='saveTemplate'">
+			<div ng-show="gval.page === 'initEdit'" ng-click="gval.page='saveTemplate'" class="navbar__tab-icon">
 				저장<i>keyboard_arrow_right</i>
 			</div>
-		</nav>
-		<nav class="navbar" ng-show="gval.page === 'editTemplate'">
-			<div class="navbar__tab" ng-click="gval.page='initEdit'">완료</div>
-		</nav>
-		<nav class="navbar" ng-show="gval.page === 'saveTemplate'">
-			<div class="navbar__tab-icon" ng-click="gval.page='initEdit'">
+			<div ng-show="gval.page === 'editTemplate'" ng-click="gval.page='initEdit'" class="navbar__tab">
+				완료
+			</div>
+			<div ng-show="gval.page === 'saveTemplate'" ng-click="gval.page='initEdit'" class="navbar__tab-icon">
 				<i>keyboard_arrow_left</i>이전
 			</div>
-			<div class="navbar__tab-icon" ng-click="gval.page='saveTemplate'">
+			<div ng-show="gval.page === 'saveTemplate'" ng-click="gval.page='saveTemplate'" class="navbar__tab-icon">
 				^-^
 			</div>
 		</nav>
@@ -72,31 +70,29 @@
 				</canvas>
 			</div>
 			<!-- Tools -->
-			<div class="col-md-6 p-0 d-flex w-100 tool-options gray850 transition scroll-on py-2 px-3">
+			<div class="p-0 d-flex transition col-md-6">
 				<div class="w-100 tool-options gray850 transition scroll-on py-2 px-3" ng-show="gval.page === 'selectTemplate'">
-					<ul class="nav nav-tabs" id="tmplTab" role="tablist">
-						<li class="nav-item">
-							<a class="nav-link active" id="hot-tmpl-tab" data-toggle="tab" href="#hot-tmpl" role="tab" aria-controls="hot-tmpl" aria-selected="true">인기 템플릿</a>
+					<ul class="nav nav-tabs">
+						<li class="nav-item" ng-click="gval.tmplTab='hot'">
+							<a class="nav-link active">인기 템플릿</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="my-tmpl-tab" data-toggle="tab" href="#my-tmpl" role="tab" aria-controls="my-tmpl" aria-selected="false">내 템플릿</a>
+						<li class="nav-item" ng-click="gval.tmplTab='my'">
+							<a class="nav-link">내 템플릿</a>
 						</li>
 					</ul>
 					<div class="tab-content">
-						<div class="tab-pane fade show active" id="hot-tmpl" role="tabpanel" aria-labelledby="hot-tmpl-tab">
+						<div ng-show="gval.tmplTab === 'hot'">
 							<div class="d-flex flex-wrap">
-								<div ng-repeat="tmpl in gval.hotTemplates | orderBy:'id':true">
-									<div class="block-thumbnail" >
-										<img ng-click="loadTemplate(tmpl.id); focusTemplate(tmpl.id)" src={{tmpl.url}}>
-										<i ng-show="gval.user.super === true">highlight_off</i>
-										<div ng-show="gval.tmplFocused === tmpl.id">
-											<div ng-click="gval.page='editTemplate'">선택하기</div>
-										</div>
+								<div class="block-thumbnail" ng-repeat="tmpl in gval.hotTemplates | orderBy:'id':true">
+									<img ng-click="loadTemplate(tmpl.id); focusTemplate(tmpl.id)" src={{tmpl.url}}>
+									<i ng-show="gval.user.super === true">highlight_off</i>
+									<div ng-show="gval.tmplFocused === tmpl.id">
+										<div ng-click="gval.page='editTemplate'">선택하기</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="tab-pane fade" id="my-tmpl" role="tabpanel" aria-labelledby="my-tmpl-tab">
+						<div ng-show="gval.tmplTab === 'my'">
 							<div class="d-flex flex-wrap">
 								<div ng-show="gval.user.login === true" ng-repeat="tmpl in gval.userTemplates | orderBy:'id':true">
 									<div class="block-thumbnail">
@@ -138,8 +134,8 @@
 					</label>
 					<select class="btn btn-block btn-secondary mb-3" id="font-dropdown-menu">
 					</select>
-					<label class="btn btn-block btn-secondary mb-3" ng-click="advancedOption=!advancedOption">옵션 펼치기</label>
-					<div ng-show="gval.advancedOption === true">
+					<label class="btn btn-block btn-secondary mb-3" ng-click="gval.moreOption=!gval.moreOption">옵션 펼치기</label>
+					<div ng-show="gval.moreOption === true">
 						<div class="btn-group">
 							<button id="align-left" class="btn btn-text-white btn-icon">
 								<i >format_align_left</i>
