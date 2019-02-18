@@ -15,22 +15,30 @@ app.controller('globalCtrl', function($scope, $http) {
 	}
 	// Login, Session
 	$scope.getUser = function() {
-		$http.get("user/").then(function(response) {
+		return $http.get("user/").then(function(response) {
 			$scope.gval.user = response.data;
 		});
 	}
+	$scope.isLogin = function() {
+		return new Promise(function(resolve, reject) {
+			$scope.getUser().then(function() {
+				var _login = $scope.gval.user.login;
+				if (_login === true) resolve(true);
+				if (_login === false) resolve(false);
+				throw new Error("user.login is neither true or false");
+			});
+		});
+	}
 	$scope.getHotTmpls = function() {
-		$http.get("templates/hot/").then(function(response) {
+		return $http.get("templates/hot/").then(function(response) {
 			$scope.gval.hotTemplates = response.data;
 		});
 	}
 	$scope.getUserTmpls = function() {
-		if (!$scope.isLogin()) {
-			console.log("unauthorized");
-			return;
-		}
-		$http.get("user/templates/").then(function(response) {
-			$scope.gval.userTemplates = response.data;
+		return $scope.isLogin().then(function() {
+			return $http.get("user/templates/").then(function(response) {
+				$scope.gval.userTemplates = response.data;
+			});
 		});
 	}
 	$scope.getCookie = function(name) {
@@ -48,137 +56,110 @@ app.controller('globalCtrl', function($scope, $http) {
 		}
 		return cookieValue;
 	}
-	$scope.saveSession = function (e, callback) {
-		var token = $scope.getCookie('csrftoken');
-		var jdata, tmpl_data, box_num;
+	$scope.saveSession = function() {
+		return new Promise(function(resolve, reject) {
+			var token = $scope.getCookie('csrftoken');
+			var jdata;
 
-		if (!token) {
-			console.log("no token data");
-			return;
-		}
+			if (!token) throw new Error("no token data");
 
-		jdata = canvas.toJSON();
-		tmpl_data = JSON.stringify(jdata);
+			jdata = canvas.toJSON();
 
-		// Save session data
-		$.post({
-			url:'session/',
-			data: {
+			// Save session data
+			$http.post('session/', {
 				page: $scope.gval.page,
-				data: tmpl_data,
+				data: JSON.stringify(jdata),
 				csrfmiddlewaretoken: token,
-			},
-			success: function() {
-				if (callback) {callback()}
-			},
+			}).then(resolve);
 		});
-	}
+	});
 	$scope.login = function() {
-		$scope.saveSession(null, function() {
+		return $scope.saveSession().then(function() {
 			location.href = $scope.gval.LOGIN_URL;
 		});
-	}
-	$scope.isLogin = function() {
-		$scope.getUser();
-		if ($scope.gval.user.login === undefined) {
-			alert("user.login is undefined");
-			return false;
-		} else if ($scope.gval.user.login === true) {
-			return true;
-		} else if ($scope.gval.user.login === false) {
-			return false;
-		}
-		alert("user.login is neither true or false");
-		return false;
 	}
 	// Template
 	$scope.focusTemplate =  function(id) {
 		$scope.gval.tmplFocused = id;
 	}
 	$scope.loadTemplate =  function(id) {
-		$.ajax({
-			url:'templates/'+id+'/data/',
-			success: function(response) {
-				restore_template(response);
-			},
+		return $http.get('templates/'+id+'/data/').then(function() {
+			restore_template(response);
+			$scope.gval.canvasCover = false;
 		});
-		$scope.gval.canvasCover = false;
 	}
 	$scope.addMyTemplate = function() {
-		if ($scope.isLogin()) {
-			var token = $scope.getCookie('csrftoken');
-			var jdata = canvas.toJSON();
+		return $scope.isLogin().then(function(boolean) {
+			if (boolean) {
+				var token = $scope.getCookie('csrftoken');
+				var jdata;
 
-			if (!token) {
-				console.log("no token data");
-				return;
-			}
-			// Remove Background
-			jdata["backgroundImage"] = undefined;
-			// Save session and upload template
-			$scope.saveSession(null, function() {
-				$.post({
-					url:'user/templates/',
-					data: {
+				if (!token) throw new Error("no token data");
+
+				jdata = canvas.toJSON();
+				jdata["backgroundImage"] = undefined;
+
+				// Save session and upload template
+				return $scope.saveSession().then(function() {
+					$http.post({'user/templates/', {
 						data: JSON.stringify(jdata),
 						thumbnail: canvas.toDataURL({multiplier:0.25}),
 						csrfmiddlewaretoken: token,
-					},
-					success: function() {
+					}).then(function() {
 						$scope.getUserTmpls(); //Update user tmpls
 						$scope.getHotTmpls(); //Update user tmpls
 						alert("템플릿이 저장되었습니다. 이전으로 돌아가 템플릿을 확인 해 보세요");
 						dataLayer.push({'event': 'custom: 완료-템플릿생성', 'eventLabel': ''});
-					},
+					});
 				});
-			});
-		} else {
-			alert("로그인이 필요합니다");
-			$scope.saveSession(null, function() {
-				location.href = $scope.gval.LOGIN_URL;
-			});
-		}
+			} else {
+				alert("로그인이 필요합니다");
+				return $scope.saveSession().then(function() {
+					location.href = $scope.gval.LOGIN_URL;
+				});
+			}
+		});
 	}
 	// Canvas
 	$scope.downloadCanvas = function($event) {
-		var imgId = "imgForDownload";
-		var _this = $event.currentTarget;
-		if ($scope.isLogin()) {
-			// Download Image
-			var link = document.createElement('a');
-			var img;
+		return $scope.isLogin().then(function(boolean) {
+			if (boolean) {
+				var imgId = "imgForDownload";
+				var _this = $event.currentTarget;
+				var link = document.createElement('a');
+				var img;
 
-			// Download Directly
-			link.href = canvas.toDataURL();
-			link.download = "mypainting.png";
-			link.click();
+				// Download Directly
+				link.href = canvas.toDataURL();
+				link.download = "mypainting.png";
+				link.click();
 
-			// IOS Chrome, Desktop Safari don't support direct download
-			// So, show image, then user do download
-			if ($(_this).siblings('#'+imgId).length === 0) {
-				img = document.createElement('img');
-				$(img).attr('id', imgId);
-				$(_this).after(img);
+				// IOS Chrome, Desktop Safari don't support direct download
+				// So, show image, then user do download
+				if ($(_this).siblings('#'+imgId).length === 0) {
+					img = document.createElement('img');
+					$(img).attr('id', imgId);
+					$(_this).after(img);
+				}
+				$('#'+imgId).attr('src', canvas.toDataURL());
+				dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
+			} else {
+				alert("로그인이 필요합니다");
+				$scope.saveSession().then(function() {
+					location.href = LOGIN_URL;
+				});
 			}
-			$('#'+imgId).attr('src', canvas.toDataURL());
-			dataLayer.push({'event': 'custom: 완료-저장', 'eventLabel': ''});
-		} else {
-			alert("로그인이 필요합니다");
-			save_session(null, function() {
-				location.href = LOGIN_URL;
-			});
-		}
+		});
 	};
 	$scope.loadBackground = function() {
-
 	}
 	// Etc
 	$scope.jump = function() { $scope.gval.page = 'editTemplate' };
 
 	// Inital setting
 	$scope.getUser();
-	$.get("session/", function(response) {
-		var json = response;
+	$http.get("session/").then(function(response) {
+		var json = response.data;
 		if ($.isEmptyObject(json)) {
 			$scope.gval.canvasCover = true;
 			//History.add();
@@ -191,5 +172,5 @@ app.controller('globalCtrl', function($scope, $http) {
 		}
 	});
 	$scope.getHotTmpls();
-	if ($scope.isLogin()) $scope.getUserTmpls();
+	$scope.isLogin().then(function() {$scope.getUserTmpls()});
 });
