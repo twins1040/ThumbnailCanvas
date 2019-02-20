@@ -10,7 +10,6 @@
           </div>
         </div>
       </div> -->
-
       <div class="outer" id="preview-wrapper">
         <canvas class="inner" id="preview"></canvas>
       </div>
@@ -24,7 +23,13 @@ export default {
   computed: {
     nodes(){
       return this.$store.getters.GET_NODES;
-    }
+    },
+    selectedNodeIds(){
+      return this.$store.getters.GET_SELECTED_NODE_IDS;
+    },
+    selectedNodes(){
+      return this.$store.getters.GET_SELECTED_NODES;
+    },
   },
   mounted(){
     var preview = new fabric.Canvas( "preview" );

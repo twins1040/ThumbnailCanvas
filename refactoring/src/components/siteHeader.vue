@@ -7,11 +7,11 @@
       <template v-if="selectedStep == 1 && selectedTemplateId">
         <button class="nav-button" id="nav-next" type="button" @click="nextStep">다음<i class="material-icons">chevron_right</i></button>
       </template>
-      <template v-if="selectedStep == 2 && !selectedNodeId">
+      <template v-if="selectedStep == 2 && selectedNodeIds.length == 0">
         <button class="nav-button" id="nav-previous" type="button" @click="previousStep"><i class="material-icons">chevron_left</i>이전</button>
         <button class="nav-button" id="nav-save" type="button" @click="nextStep">다음<i class="material-icons">chevron_right</i></button>
       </template>
-      <template v-if="selectedStep == 2 && selectedNodeId">
+      <template v-if="selectedStep == 2 && selectedNodeIds.length > 0">
         <button class="nav-button" id="nav-complete" type="button" @click="completeEditingNode">완료<i class="material-icons">chevron_right</i></button>
       </template>
       <template v-if="selectedStep == 3">
@@ -30,8 +30,8 @@ export default {
     selectedTemplateId(){
       return this.$store.state.selectedTemplateId;
     },
-    selectedNodeId(){
-      return this.$store.state.selectedNodeId;
+    selectedNodeIds(){
+      return this.$store.getters.GET_SELECTED_NODE_IDS;
     },
     nodes(){
       return this.$store.getters.GET_NODES;

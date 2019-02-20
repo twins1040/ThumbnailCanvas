@@ -40,6 +40,9 @@ const store = new Vuex.Store({
         return [];
       };
     },
+    GET_SELECTED_NODE_IDS( state ){
+      return state.selectedNodeIds;
+    },
     GET_SELECTED_NODES( state ){
       if( state.selectedNodeIds.length > 0 ){
         return state.selectedNodeIds.map( nodeId => {

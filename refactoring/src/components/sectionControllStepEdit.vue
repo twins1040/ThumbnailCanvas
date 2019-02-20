@@ -95,8 +95,8 @@ export default {
       return this.$store.getters.GET_SELECTED_NODES;
     },
     selectedNodeIds(){
-      return this.$store.state.selectedNodeIds;
-    }
+      return this.$store.getters.GET_SELECTED_NODE_IDS;
+    },
   },
   methods: {
     shiftTab( tab ){
@@ -162,16 +162,23 @@ export default {
       }, { deep: true });
     });
     this.$watch( "selectedNodeIds", newIds => {
-      // 여기서 한 번 체크!
       if( newIds.length >= 2 ){
         Object.keys( this.selectedNodes[0] ).forEach( key => {
-          this.formData[ key ] = this.selectedNodes[0][ key ];
+          var sameAll = false;
+          this.selectedNodes.forEach( node => {
+            if( this.selectedNodes[0][ key ] != node[ key ] ){
+              sameAll = false;
+            };
+          });
+          if( sameAll ){
+            this.formData[ key ] = this.selectedNodes[o][ key ];
+          };
         });
-      }else{
+      }else if( newIds.length == 1 ){
         Object.keys( this.selectedNodes[0] ).forEach( key => {
           this.formData[ key ] = this.selectedNodes[0][ key ];
         });
-      }
+      };
     }, { deep: true });
   }
 }
