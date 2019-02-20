@@ -6,9 +6,12 @@ Vue.use( Vuex );
 
 const store = new Vuex.Store({
   state: {
+    config: {
+      API_URL: "https://thumbnail-maker.xyz"
+    },
     selectedStep: 1,
     selectedTemplateId: null,
-    selectedNodeId: null,
+    selectedNodeIds: [],
     nodes: {}
   },
   mutations: {
@@ -19,7 +22,7 @@ const store = new Vuex.Store({
       state.selectedStep = payload;
     },
     SELECT_NODE( state, payload ){
-      state.selectedNodeId = payload;
+      state.selectedNodeIds = payload ? payload : [];
     }
   },
   getters: {
@@ -37,14 +40,16 @@ const store = new Vuex.Store({
         return [];
       };
     },
-    GET_SELECTED_NODE( state ){
-      if( state.selectedNodeId ){
-        return JSON.parse( JSON.stringify({
-          id: state.selectedNodeId,
-          ...state.nodes[ state.selectedNodeId ]
-        }));
+    GET_SELECTED_NODES( state ){
+      if( state.selectedNodeIds.length > 0 ){
+        return state.selectedNodeIds.map( nodeId => {
+          return JSON.parse( JSON.stringify({
+            id: nodeId,
+            ...state.nodes[ nodeId ]
+          }) );
+        });
       }else{
-        return null;
+        return [];
       };
     },
   },
@@ -58,24 +63,32 @@ const store = new Vuex.Store({
     },
     updateNode({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        Vue.set( state.nodes, payload.id, JSON.parse( JSON.stringify(
-          $.extend({}, state.nodes[ payload.id ], payload.data )
-        )) );
+        payload.ids.forEach( id => {
+          Vue.set( state.nodes, id, JSON.parse( JSON.stringify(
+            $.extend({}, state.nodes[ id ], payload.data )
+          )) );
+        });
         resolve( payload.id );
       });
     },
     cloneNode({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        var newId = nonce()();
-        Vue.set( state.nodes, newId, JSON.parse( JSON.stringify(
-          state.nodes[ payload.id ]
-        )) );
-        resolve( newId );
+        var newIds = [];
+        payload.ids.forEach( id => {
+          var newId = nonce()();
+          Vue.set( state.nodes, newId, JSON.parse( JSON.stringify(
+            state.nodes[ id ]
+          )) );
+          newIds.push( newId );
+        });
+        resolve( newIds );
       });
     },
     deleteNode({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        Vue.delete( state.nodes, payload.id );
+        payload.ids.forEach( id => {
+          Vue.delete( state.nodes, id );
+        });
         resolve( payload.id );
       });
     },

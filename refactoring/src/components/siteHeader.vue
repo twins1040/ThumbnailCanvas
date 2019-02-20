@@ -16,7 +16,6 @@
       </template>
       <template v-if="selectedStep == 3">
         <button class="nav-button" id="nav-previous" type="button" @click="previousStep"><i class="material-icons">chevron_left</i>이전</button>
-        <button class="nav-button" id="nav-next" type="button" @click="nextStep">저장<i class="material-icons">chevron_right</i></button>
       </template>
 
     </nav>

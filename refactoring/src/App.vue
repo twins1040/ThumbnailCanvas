@@ -18,8 +18,5 @@ export default {
     sectionPreview,
     sectionControll
   },
-  data(){
-    return {}
-  }
 }
 </script>

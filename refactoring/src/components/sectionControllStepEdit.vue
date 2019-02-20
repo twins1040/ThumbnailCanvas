@@ -1,13 +1,13 @@
 <template>
   <div class="step" id="step-controll-step-edit">
-    <div class="tab" v-if="selectedNode">
+    <div class="tab" v-if="selectedNodes.length > 0">
       <div class="tab-item" :class="{ on: tab == 'font' }" @click="shiftTab( 'font' )">글자</div>
       <div class="tab-item" :class="{ on: tab == 'style' }" @click="shiftTab( 'style' )">스타일</div>
     </div>
-    <div class="contents" v-if="selectedNode">
+    <div class="contents" v-if="selectedNodes.length > 0">
       <ul>
         <template v-if="tab == 'font'">
-          <li>
+          <li v-if="selectedNodes.length == 1">
             <div class="text">
               <input type="text" v-model="formData.text" placeholder="텍스트">
             </div>
@@ -23,7 +23,7 @@
               </select>
             </div>
           </li>
-          <li>
+          <li v-if="selectedNodes.length > 1">
             <div class="vertical-select">
               <button :class="{ on: formData.align == 'left' }" type="button"><input type="radio" v-model="formData.align" value="left" /><i class="material-icons">format_align_left</i></button>
               <button :class="{ on: formData.align == 'center' }" type="button"><input type="radio" v-model="formData.align" value="center" /><i class="material-icons">format_align_center</i></button>
@@ -58,11 +58,11 @@
         </li>
       </ul>
     </div>
-    <div class="interface" v-if="!selectedNode">
+    <div class="interface" v-if="selectedNodes.length == 0">
       <ul>
         <li><button type="button" @click="addNode( 'text' )"><i class="material-icons">text_fields</i>글자 추가</button></li>
-        <li><button type="button" @click="addNode( 'image' )"><i class="material-icons">filter_hdr</i>이미지 추가</button></li>
-        <li><button type="button" @click="addNode( 'background' )"><i class="material-icons">insert_photo</i>배경 이미지 변경</button></li>
+        <li><input type="file" @change="addNode( 'image', $event )" /><i class="material-icons">filter_hdr</i>이미지 추가</li>
+        <li><input type="file" @change="addNode( 'image', $event )" /><i class="material-icons">insert_photo</i>배경 이미지 변경</li>
       </ul>
     </div>
   </div>
@@ -91,8 +91,11 @@ export default {
     };
   },
   computed: {
-    selectedNode(){
-      return this.$store.getters.GET_SELECTED_NODE;
+    selectedNodes(){
+      return this.$store.getters.GET_SELECTED_NODES;
+    },
+    selectedNodeIds(){
+      return this.$store.state.selectedNodeIds;
     }
   },
   methods: {
@@ -102,7 +105,7 @@ export default {
     addBorder(){
       this.formData.borders.push({ width: 1, color: "#000" });
     },
-    addNode( type ){
+    addNode( type, e ){
       var nodeData = {};
       if( type == "text" ){
         nodeData = {
@@ -113,44 +116,62 @@ export default {
           align: "left",
           border: []
         };
-        this.$store.dispatch( "createNode", nodeData ).then( nodeId => {
-          this.$store.commit( "SELECT_NODE", nodeId );
+      }else if( type == "image" ){
+        var data = new FormData();
+        data.append( "file", event.target.files[0] );
+        this.axios.post( this.$store.config.API_HOST + "/upload", data ).then( res => {
+          nodeData = {
+            type: "image",
+            url: res.url
+          };
         });
-      // }else if( type == "image" ){
-      //   nodeData = {
-      //     type: "image",
-      //     fontFamily: "굴림",
-      //     align: "left"
-      //   };
-      // }else if( type == "background" ){
-      //   nodeData = {
-      //     type: "text",
-      //     fontFamily: "굴림",
-      //     align: "left"
-      //   };
+      }else if( type == "background" ){
+        var data = new FormData();
+        data.append( "file", event.target.files[0] );
+        this.axios.post( this.$store.config.API_HOST + "/upload", data ).then( res => {
+          nodeData = {
+            type: "background",
+            url: res.url
+          };
+        });
       };
+      this.$store.dispatch( "createNode", nodeData ).then( nodeId => {
+        this.$store.commit( "SELECT_NODE", [ nodeId ] );
+      });
     },
     cloneNode(){
-      this.$store.dispatch( "cloneNode", { id: this.selectedNode.id }).then( nodeId => {
-        this.$store.commit( "SELECT_NODE", nodeId );
+      this.$store.dispatch( "cloneNode", { ids: this.selectedNodeIds }).then( nodeId => {
+        this.$store.commit( "SELECT_NODE", [ nodeId ] );
       });
     },
     deleteNode(){
-      var targetId = this.selectedNode.id;
+      var targetIds = this.selectedNodeIds;
       this.$store.commit( "SELECT_NODE", null );
-      this.$store.dispatch( "deleteNode", { id: targetId });
+      this.$store.dispatch( "deleteNode", { ids: targetIds });
     },
   },
   created(){
-    this.$watch( "selectedNode.id", nodeId => {
-      if( this.selectedNode ){
-        this.formData.text = this.selectedNode.text;
-        this.formData.fontFamily = this.selectedNode.fontFamily;
-        this.formData.align = this.selectedNode.align;
-      };
+
+
+    Object.keys( this.formData ).forEach( fieldName => {
+      this.$watch( "formData." + fieldName, value => {
+        this.$store.dispatch( "updateNode", {
+          ids: this.selectedNodeIds,
+          data: { [fieldName]: value }
+        });
+      }, { deep: true });
     });
-    this.$watch( "formData", formData => {
-      this.$store.dispatch( "updateNode", { id: this.selectedNode.id, data: formData });
+    this.$watch( "selectedNodeIds", newIds => {
+      // 여기서 한 번 체크!
+      if( newIds.length >= 2 ){
+        Object.keys( this.selectedNodes[0] ).forEach( key => {
+          this.formData[ key ] = this.selectedNodes[0][ key ];
+        });
+      }else{
+        Object.keys( this.selectedNodes[0] ).forEach( key => {
+          this.formData[ key ] = this.selectedNodes[0][ key ];
+        });
+      }
     }, { deep: true });
   }
 }
