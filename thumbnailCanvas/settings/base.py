@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'fabricCanvas.apps.FabriccanvasConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -130,8 +132,6 @@ STATICFILES_DIRS = [
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # CORS allow
-INSTALLED_APPS.insert(0, 'corsheaders')
-MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
 CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8000',
     '127.0.0.1:8080',
