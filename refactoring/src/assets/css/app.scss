@@ -1,0 +1,305 @@
+@import url( "//fonts.googleapis.com/css?family=Noto+Sans+KR:300,500,700,900|Roboto:300,400,700,900|Material+Icons" );
+
+@import "settings";
+@import "default";
+@import "elements";
+@import "form";
+
+
+html{
+  font-size: 15px;
+}
+body{
+  font-family: "Roboto", "Noto Sans", sans-serif;
+  line-height: 1.75;
+  color: $color-white;
+}
+html, body, #app{
+  @include absolute;
+}
+
+
+
+#site-header{
+  @include fixed( top );
+  @include cl;
+  height: $site-header-height;
+  padding: 0 $unit;
+  background-color: $gray-1;
+  border-bottom: 1px solid $gray-2;
+  line-height: $site-header-height;
+  z-index: 1000;
+  nav{
+    @include absolute;
+    .nav-button{
+      padding: 0 $unit;
+    }
+    #nav-previous{
+      @include absolute( left );
+      padding-left: 3.5*$unit;
+      i{
+        @include absolute( left );
+        @include square( 4*$unit, 0 );
+      }
+    }
+    #nav-next, #nav-complete, #nav-save{
+      @include absolute( right );
+      padding-right: 3.5*$unit;
+      i{
+        @include absolute( right );
+        @include square( 4*$unit, 0 );
+      }
+    }
+  }
+}
+#site-container{
+  @include absolute;
+  top: $site-header-height;
+}
+
+
+
+
+#section-preview{
+  background-color: $gray-2;
+  text-align: center;
+  z-index: 1;
+  & > .container{
+    @include absolute;
+    @include vertical-center-container( "& > .outer", 100% );
+  }
+  #cover-wrapper{
+    @include fix-ratio( "& > .inner", 9/16 );
+    #cover{
+      @include vertical-center-container( "& > .container" );
+      margin: 2*$unit;
+      border: 2px dashed $color-white;
+      user-select: none;
+      cursor: pointer;
+      i{
+        font-size: 3*$unit;
+      }
+    }
+  }
+  #preview-wrapper{
+    @include fix-ratio( "& > .inner", 9/16 );
+    #preview{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  @media screen and (min-width:#{$width-small}){
+    @include absolute;
+    right: $width-smartphone;
+    .step-1 & {
+      right: 50%;
+    }
+    & > .container{
+      margin: 2*$unit;
+    }
+  }
+  @media screen and (max-width:#{$width-small}){
+    @include absolute( top );
+    @include fix-ratio( "& > .container", 9/16 );
+  }
+}
+
+
+#section-controll{
+  background-color: $gray-1;
+  z-index: 0;
+  & > .container{
+    @include absolute;
+  }
+  @media screen and (min-width:#{$width-small}){
+    @include absolute( right );
+    width: $width-smartphone;
+    .step-1 & {
+      width: 50%;
+    }
+  }
+  @media screen and (max-width:#{$width-small}){
+    @include absolute;
+    margin-top: 9/16*100%;
+  }
+}
+
+.step{
+  @include absolute;
+  .tab{
+    @include absolute( top );
+    width: 100%;
+    line-height: $tab-height;
+    display: flex;
+    text-align: center;
+    z-index: 1;
+    .tab-item{
+      width: 100%;
+      height: $tab-height;
+      border-bottom: 1px solid $gray-0;
+      user-select: none;
+      cursor: pointer;
+      &.on{
+        border-bottom: 2px solid $color-white;
+        font-weight: 900;
+      }
+    }
+  }
+  .contents{
+    @include absolute;
+    margin-top: $tab-height;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 0;
+  }
+}
+
+#step-controll-step-template{
+  .contents{
+    padding: $unit;
+    ul{
+      @media screen and (min-width:$width-4inch){
+        @include column( "& > li", 2, 1% );
+      }
+      @media screen and (max-width:$width-4inch){
+        @include column( "& > li", 1, 1% );
+      }
+      li{
+        @include fix-ratio( "none", 9/16 );
+        margin-bottom: 1%;
+        background-color: $color-bright-1;
+        background-position: center;
+        background-size: cover;
+        cursor: pointer;
+        .layer{
+          @include absolute;
+          @include vertical-center-container( "button", none );
+          text-align: center;
+          background-color: $color-dark-3;
+          cursor: default;
+          button{
+            width: auto;
+            background-color: $color-red;
+            padding: .5*$unit $unit;
+            border-radius: $radius;
+          }
+          &.on{
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+#step-controll-step-edit{
+  .contents{
+    padding: 2*$unit;
+    li{
+      & + li{
+        margin-top: $unit;
+      }
+      .text{
+        input{
+          line-height: 2*$unit;
+          background-color: $color-white;
+          border-radius: $radius;
+          height: 4*$unit;
+          padding: $unit;
+          color: $color-black;
+        }
+      }
+      .select{
+        .label{
+          background-color: $gray-0;
+          line-height: 2*$unit;
+          border-radius: $radius;
+          height: 4*$unit;
+          padding: $unit;
+        }
+        i{
+          @include absolute( right );
+          @include square( 4*$unit, 0 );
+          margin: 0;
+        }
+        select{
+          @include absolute;
+          opacity: 0;
+        }
+      }
+      .vertical-select{
+        display: flex;
+        width: 100%;
+        border-radius: $radius;
+        border: 1px solid $gray-0;
+        cursor: pointer;
+        button{
+          width: 100%;
+          height: 4*$unit;
+          input{
+            @include absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            z-index: 1;
+            cursor: inherit;
+          }
+          i{
+            @include absolute;
+            line-height: 4*$unit;
+            margin: 0;
+          }
+          &.on{
+            background-color: $gray-0;
+          }
+        }
+      }
+      .node-controlls{
+        display: flex;
+        width: 8*$unit;
+        margin-left: auto;
+        margin-right: auto;
+        i{
+          @include square( 4*$unit, 0 );
+        }
+      }
+      .border-maker{
+        background-color: $gray-0;
+        border-radius: $radius;
+        line-height: 4*$unit;
+        text-align: center;
+        button{
+          width: 100%;
+        }
+        i{
+          @include square( 4*$unit, 0 );
+          @include absolute( left );
+        }
+      }
+      .color-picker-and-slider{
+        .twin-color-picker{
+          @include absolute( left );
+        }
+        .twin-slider{
+          height: 4*$unit;
+          margin-left: 6*$unit;
+        }
+      }
+    }
+  }
+  .interface{
+    @include absolute( bottom );
+    ul{
+      padding: 2*$unit;
+      li{
+        line-height: 1;
+        i{
+          vertical-align: -.25em;
+          margin-right: .5*$unit;
+        }
+        & + li{
+          margin-top: $unit;
+        }
+      }
+    }
+  }
+}
