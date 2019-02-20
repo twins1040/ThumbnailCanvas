@@ -128,3 +128,13 @@ STATICFILES_DIRS = [
 
 # my custom memory size 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
+# CORS allow
+INSTALLED_APPS.insert(0, 'corsheaders')
+MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
+CORS_ORIGIN_WHITELIST = (
+    '127.0.0.1:8000',
+    '127.0.0.1:8080',
+    'localhost:8000',
+    'localhost:8080',
+)
