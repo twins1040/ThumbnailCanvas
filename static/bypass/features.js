@@ -1,6 +1,3 @@
-//
-// GLOBAL VARIABLES
-//
 var LOGIN_URL = '/login/google-oauth2/';
 var LOGOUT_URL = '/logout/';
 var DEFAULT_BACKGROUND_URL = "static/img/backgroundFirst.PNG";
@@ -15,25 +12,6 @@ var GRADIENTS = [{name: "red orange", h:0, v:1, stops:{0:"red", 1:"orange"}},
 				 {name: "red darkred", h:0, v:1, stops:{0:"red", 1:"darkred"}}];
 var SHORTCUT = true;
 
-var canvas = new fabric.Canvas('myCanvas');
-
-
-// For Add text
-var sampleText = new fabric.IText("Double Click to edit!", {
-	fontFamily: 'Noto Sans KR',
-	fontSize: 50,
-	fontWeight: 900,
-	fill: 'white',
-	stroke: 'black',
-	strokeWidth:20,
-	paintFirst: 'stroke',
-	charSpacing: -100,
-	angle:  0,
-	top: canvas.height/2,
-	left: canvas.width/2,
-	originX: 'center',
-	originY: 'center',
-});
 
 var History = new function() {
 	var _work_history = [];
@@ -142,16 +120,9 @@ var Toolbox = new function() {
 		}
 	}
 }
-// END OF GLOBAL VARIABLES
 
 
 
-//
-// CANVAS SETTINGS
-//
-
-canvas.setDimensions({width:1280, height:720}, {backstoreOnly:true});
-canvas.selection = true;
 
 canvas.on("mouse:up", function(opt) {
 	console.log(opt.target);
@@ -161,29 +132,6 @@ canvas.on("object:modified", History.add);
 
 
 
-//
-// PROTOTYPE WRAPPER
-//
-
-// Controller design setting
-fabric.Object.prototype.set({
-	transparentCorners: false,
-	cornerColor: 'white',
-	cornerStrokeColor: "#69F",
-	borderColor: "#69F",
-	cornerSize: 40,
-	borderScaleFactor: 10,	// controller border width
-	padding: 8,
-	cornerStyle: 'circle',
-	isDoubleText: false,
-	originX: 'center',
-	originY: 'center',
-	selectable: true,
-});
-
-fabric.IText.prototype.set({
-	editable: true,
-});
 
 // Remove middle point of controller
 fabric.Object.prototype.setControlsVisibility({

@@ -12,9 +12,13 @@ const store = new Vuex.Store({
     selectedStep: 1,
     selectedTemplateId: null,
     selectedNodeIds: [],
-    nodes: {}
+    nodes: {},
+    canvas: {}
   },
   mutations: {
+    UPDATE_CANVAS( state, payload ){
+      state.canvas = payload;
+    },
     SELECT_TEMPLATE( state, payload ){
       state.selectedTemplateId = payload;
     },
