@@ -10,3 +10,4 @@ server.json
 staticfiles
 media
 static/admin/
+package-lock.json
