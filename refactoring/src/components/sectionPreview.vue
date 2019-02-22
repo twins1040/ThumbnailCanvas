@@ -13,6 +13,7 @@
       <div class="outer" id="preview-wrapper">
         <canvas class="inner" id="preview"></canvas>
       </div>
+      {{ editingData }}
 
     </div>
   </section>
@@ -22,17 +23,45 @@ import $ from "jquery";
 import Fabric from "fabric";
 export default {
   computed: {
-    nodes(){
-      return this.$store.getters.GET_NODES;
-    },
-    selectedNodeIds(){
-      return this.$store.getters.GET_SELECTED_NODE_IDS;
-    },
-    selectedNodes(){
-      return this.$store.getters.GET_SELECTED_NODES;
+    editingData(){
+      return this.$store.getters.GET_EDITING_DATA;
     },
   },
   mounted(){
+
+    this.$watch( "editingData", data => {
+      // 여기서 canvas 데이터를 업데이트한다.
+      canvas._objects.forEach( o => {
+        o.text = data.text;
+      });
+      canvas.renderAll();
+      // 여기서 canvas 데이터를 업데이트한다.
+    }, { deep: true });
+
+
+    // $( "#preview-wrapper" ).click( () => {
+    //  잘 정리해서 보내주면 됨!
+    //   this.$store.commit( "SET_EDITING_DATA", {
+    //     type: text|image (required)
+    //     isMultiple: boolean
+    //     url: "",
+    //     text: "",
+    //     fontFamily: "",
+    //     fill: "",
+    //     scale: "",
+    //     charSpacing: "",
+    //     strokes: [],
+    //   });
+    //
+    // });
+
+
+
+
+
+
+
+
 //
 // GLOBAL VARIABLES
 //

@@ -11,6 +11,14 @@ const store = new Vuex.Store({
     },
     selectedStep: 1,
     selectedTemplateId: null,
+    editingData: {
+      text: "",
+      fontFamily: "",
+      fontSize: "",
+      fontColor: "",
+      align: "",
+      strokes: []
+    },
     selectedNodeIds: [],
     nodes: {},
     canvas: {}
@@ -25,78 +33,31 @@ const store = new Vuex.Store({
     SELECT_STEP( state, payload ){
       state.selectedStep = payload;
     },
-    SELECT_NODE( state, payload ){
-      state.selectedNodeIds = payload ? payload : [];
+    SET_EDITING_DATA( state, payload ){
+      state.editingData = payload;
     }
   },
   getters: {
-    GET_NODES( state ){
-      var nodeIds = Object.keys( state.nodes );
-      if( nodeIds.length ){
-        var nodes = nodeIds.map( nodeId => {
-          return {
-            id: nodeId,
-            ...state.nodes[ nodeId ]
-          };
-        });
-        return nodes;
-      }else{
-        return [];
-      };
-    },
-    GET_SELECTED_NODE_IDS( state ){
-      return state.selectedNodeIds;
-    },
-    GET_SELECTED_NODES( state ){
-      if( state.selectedNodeIds.length > 0 ){
-        return state.selectedNodeIds.map( nodeId => {
-          return JSON.parse( JSON.stringify({
-            id: nodeId,
-            ...state.nodes[ nodeId ]
-          }) );
-        });
-      }else{
-        return [];
-      };
-    },
+    GET_EDITING_DATA( state ){
+      return state.editingData;
+    }
   },
   actions: {
-    createNode({ state, rootState, commit, dispatch }, payload ){
+    createObject({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        var newId = nonce()();
-        Vue.set( state.nodes, newId, payload );
-        resolve( newId );
       });
     },
-    updateNode({ state, rootState, commit, dispatch }, payload ){
+    updateObject({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        payload.ids.forEach( id => {
-          Vue.set( state.nodes, id, JSON.parse( JSON.stringify(
-            $.extend({}, state.nodes[ id ], payload.data )
-          )) );
-        });
-        resolve( payload.id );
+
       });
     },
-    cloneNode({ state, rootState, commit, dispatch }, payload ){
+    cloneObject({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        var newIds = [];
-        payload.ids.forEach( id => {
-          var newId = nonce()();
-          Vue.set( state.nodes, newId, JSON.parse( JSON.stringify(
-            state.nodes[ id ]
-          )) );
-          newIds.push( newId );
-        });
-        resolve( newIds );
       });
     },
-    deleteNode({ state, rootState, commit, dispatch }, payload ){
+    deleteObject({ state, rootState, commit, dispatch }, payload ){
       return new Promise( ( resolve, reject ) => {
-        payload.ids.forEach( id => {
-          Vue.delete( state.nodes, id );
-        });
-        resolve( payload.id );
       });
     },
   }

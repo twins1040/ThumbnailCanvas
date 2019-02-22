@@ -262,7 +262,7 @@ html, body, #app{
           }
         }
       }
-      .node-controlls{
+      .objects-controlls{
         display: flex;
         width: 8*$unit;
         margin-left: auto;
@@ -271,7 +271,7 @@ html, body, #app{
           @include square( 4*$unit, 0 );
         }
       }
-      .border-maker{
+      .stroke-maker{
         background-color: $gray-0;
         border-radius: $radius;
         line-height: 4*$unit;
