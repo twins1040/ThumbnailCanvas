@@ -14,8 +14,8 @@ const store = new Vuex.Store({
     editingData: {
       text: "",
       fontFamily: "",
-      fontSize: "",
-      fontColor: "",
+      scale: 1,
+      fill: "",
       align: "",
       strokes: []
     },

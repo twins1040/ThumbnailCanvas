@@ -83,8 +83,8 @@ var setSelectedNodes = (event) => {
         fontFamily    : o.getUpper('fontFamily'),
         fill          : o.getUpper('fill'),
         scale         : o.scaleX, // assume scaleX and scaleY is same
-        charSpace     : o.getUpper('charSpacing'),
-        strokes        : _strokes,
+        charSpacing   : o.getUpper('charSpacing'),
+        strokes       : _strokes,
       };
     } else {
       ed = {
@@ -95,8 +95,8 @@ var setSelectedNodes = (event) => {
         fontFamily    : "",
         fill          : "",
         scale         : 1, // assume scaleX and scaleY is same
-        charSpace     : 0,
-        strokes        :[],
+        charSpacing   : 0,
+        strokes       : [],
       };
     }
     this.$store.commit( "SET_EDITING_DATA", ed );
@@ -119,16 +119,28 @@ sampleText.clone((obj) => canvas.add(obj));
 
 
 // Get editingData
-/*
 this.$watch( "editingData", data => {
-  // 여기서 canvas 데이터를 업데이트한다.
-  canvas._objects.forEach( o => {
-    o.text = data.text;
-  });
+  var objs = canvas.getActiveObjects();
+  objs.forEach( o => {
+    if ( data.type === 'text' && isText(o) ) {
+      o.setAllText('text', data.text);
+      o.setUpper('fontFamily', data.fontFamily);
+      o.setUpper('fill', data.fill);
+      o.set('scaleX', data.scale);
+      o.set('scaleY', data.scale);
+      o.setAllText('charSpacing', data.charSpacing);
+      o.setUpper('stroke', data.strokes[0].color);
+      o.setUpper('strokeWidth', data.strokes[0].width);
+      if (isDoubleText(o)) {
+        o.setLower('stroke', data.strokes[1].color);
+        o.setLower('strokeWidth', data.strokes[1].width);
+      }
+    } else {
+      console.log("set data of undef");
+    }
+  } );
   canvas.renderAll();
-  // 여기서 canvas 데이터를 업데이트한다.
 }, { deep: true });
-*/
 
 // Set editingData
 canvas.on("mouse:up", (opt) => {

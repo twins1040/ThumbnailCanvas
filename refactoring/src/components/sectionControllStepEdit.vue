@@ -35,8 +35,8 @@
         <template v-if="tab == 'style'">
           <li>
             <div class="color-picker-and-slider">
-              <twin-color-picker v-model="editingData.fontColor" icon="title" />
-              <twin-slider v-model="editingData.fontSize" :min="12" :max="36" />
+              <twin-color-picker v-model="editingData.fill" icon="title" />
+              <twin-slider v-model="editingData.scale" :min="1" :max="10" />
             </div>
           </li>
           <li v-for="stroke in editingData.strokes">
