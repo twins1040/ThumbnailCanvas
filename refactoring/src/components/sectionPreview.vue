@@ -29,42 +29,10 @@ export default {
   },
   mounted(){
 
-    this.$watch( "editingData", data => {
-      // 여기서 canvas 데이터를 업데이트한다.
-      canvas._objects.forEach( o => {
-        o.text = data.text;
-      });
-      canvas.renderAll();
-      // 여기서 canvas 데이터를 업데이트한다.
-    }, { deep: true });
-
-
-    // $( "#preview-wrapper" ).click( () => {
-    //  잘 정리해서 보내주면 됨!
-    //   this.$store.commit( "SET_EDITING_DATA", {
-    //     type: text|image (required)
-    //     isMultiple: boolean
-    //     url: "",
-    //     text: "",
-    //     fontFamily: "",
-    //     fill: "",
-    //     scale: "",
-    //     charSpacing: "",
-    //     strokes: [],
-    //   });
-    //
-    // });
-
-
-
-
-
-
-
-
 //
 // GLOBAL VARIABLES
 //
+
 var canvas = new fabric.Canvas( "preview" );
 var sampleText = new fabric.IText("Double Click to edit!", {
   fontFamily: 'Noto Sans KR',
@@ -81,38 +49,102 @@ var sampleText = new fabric.IText("Double Click to edit!", {
   originX: 'center',
   originY: 'center',
 });
-var addCommitEvent = (event) => {
-  canvas.on(event, (opt) => {
-    this.$store.commit( "UPDATE_CANVAS", canvas );
+// use '=>' to inherit parent's this
+var setSelectedNodes = (event) => {
+  canvas.on(event, () => {
+    var _nodes = [];
+    var _stroke = [];
+    var objs = canvas.getActiveObjects();
+    var i, o;
+
+    // do not use Object.keys().length. objs is array of objects.
+    if (objs.length === 0) console.log("no active obj");
+
+    for (i in objs) {
+      o = objs[i];
+
+      if (isText(o)) {
+        _stroke.push({
+          color : o.getUpper('stroke'),
+          width : o.getUpper('strokeWidth'),
+        });
+
+        if (isDoubleText(o)) {
+          _stroke.push({
+            color : o.getLower('stroke'),
+            width : o.getLower('strokeWidth'),
+          });
+        }
+
+        _nodes.push({
+          type          : 'text',
+          isMultiple    : isDoubleText(o),
+          url           : "",
+          text          : o.getUpper('text'),
+          fontFamily    : o.getUpper('fontFamily'),
+          fill          : o.getUpper('fill'),
+          scale         : o.scaleX, // assume scaleX and scaleY is same
+          charSpace     : o.getUpper('charSpacing'),
+          stroke        : _stroke,
+        });
+      } else {
+        console.log("it is not text");
+      }
+    }
+    this.$store.commit( "SET_EDITING_DATA", _nodes );
   });
 };
+
+//
 // END OF GLOBAL VARIABLES
+//
+
 
 //
 // CANVAS SETTINGS
 //
+
 canvas.setDimensions({ width: 1280, height:720 }, { backstoreOnly:true });
 canvas.selection = true;
 canvas.add(sampleText);
 sampleText.clone((obj) => canvas.add(obj));
-this.$store.commit( "UPDATE_CANVAS", canvas );
+
+
+// Get editingData
+/*
+this.$watch( "editingData", data => {
+  // 여기서 canvas 데이터를 업데이트한다.
+  canvas._objects.forEach( o => {
+    o.text = data.text;
+  });
+  canvas.renderAll();
+  // 여기서 canvas 데이터를 업데이트한다.
+}, { deep: true });
+*/
+
+// Set editingData
 canvas.on("mouse:up", (opt) => {
 	console.log(opt.target);
 });
-addCommitEvent("object:modified");
-addCommitEvent("selection:cleared");
-addCommitEvent("selection:updated");
-addCommitEvent("selection:created");
+setSelectedNodes("object:modified");
+setSelectedNodes("selection:cleared");
+setSelectedNodes("selection:updated");
+setSelectedNodes("selection:created");
 
 // Remove middle point of controller
 fabric.Object.prototype.setControlsVisibility({
   mb: false, ml: false, mr: false, mt: false
 });
+
+//
 // END OF CANVAS SETTINGS
+//
+
 
 //
 // PROTOTYPE WRAPPER
 //
+
 // Controller design setting
 fabric.Object.prototype.set({
   transparentCorners: false,
@@ -248,6 +280,40 @@ function activeObjectSet(callback) {
 		// Save work history
 		//History.add();
 	}
+}
+function isIText(obj) {
+   if (!obj) obj = canvas.getActiveObject();
+   return !!(obj && obj.type === "i-text");
+}
+function isDoubleText(obj) {
+	if (!obj) obj = canvas.getActiveObject();
+	return !!(obj && obj.type === "group");
+}
+function isText(obj) {
+	if (!obj) obj = canvas.getActiveObject();
+  return isIText(obj) || isDoubleText(obj);
+}
+function isMultipleSelected(obj) {
+   if (!obj) obj = canvas.getActiveObject();
+   return !!(obj && obj.type === "activeSelection");
+}
+function isAllIText(obj) {
+	var i;
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj || obj.type !== 'activeSelection') return false;
+	for (i=0; i<obj._objects.length; i++) {
+		if (obj.item(i).type !== 'i-text') return false;
+	}
+	return true;
+}
+function isAllDoubleText(obj) {
+	var i;
+	if (!obj) obj = canvas.getActiveObject();
+	if (!obj || obj.type !== 'activeSelection') return false;
+	for (i=0; i<obj._objects.length; i++) {
+		if (!isDoubleText(obj.item(i))) return false;
+	}
+	return true;
 }
 // END OF FUNCTIONS
 
