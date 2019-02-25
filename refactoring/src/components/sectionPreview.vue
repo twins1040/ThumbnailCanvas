@@ -52,46 +52,54 @@ var sampleText = new fabric.IText("Double Click to edit!", {
 // use '=>' to inherit parent's this
 var setSelectedNodes = (event) => {
   canvas.on(event, () => {
-    var _nodes = [];
-    var _stroke = [];
+    var ed = {};
+    var _strokes = [];
     var objs = canvas.getActiveObjects();
-    var i, o;
+    var o;
 
     // do not use Object.keys().length. objs is array of objects.
     if (objs.length === 0) console.log("no active obj");
 
-    for (i in objs) {
-      o = objs[i];
+    o = objs[0];
 
-      if (isText(o)) {
-        _stroke.push({
-          color : o.getUpper('stroke'),
-          width : o.getUpper('strokeWidth'),
+    if (isText(o)) {
+      _strokes.push({
+        color : o.getUpper('stroke'),
+        width : o.getUpper('strokeWidth'),
+      });
+
+      if (isDoubleText(o)) {
+        _strokes.push({
+          color : o.getLower('stroke'),
+          width : o.getLower('strokeWidth'),
         });
-
-        if (isDoubleText(o)) {
-          _stroke.push({
-            color : o.getLower('stroke'),
-            width : o.getLower('strokeWidth'),
-          });
-        }
-
-        _nodes.push({
-          type          : 'text',
-          isMultiple    : isDoubleText(o),
-          url           : "",
-          text          : o.getUpper('text'),
-          fontFamily    : o.getUpper('fontFamily'),
-          fill          : o.getUpper('fill'),
-          scale         : o.scaleX, // assume scaleX and scaleY is same
-          charSpace     : o.getUpper('charSpacing'),
-          stroke        : _stroke,
-        });
-      } else {
-        console.log("it is not text");
       }
+
+      ed = {
+        type          : 'text',
+        isMultiple    : isMultipleSelected(), // used by align
+        url           : "",
+        text          : o.getUpper('text'),
+        fontFamily    : o.getUpper('fontFamily'),
+        fill          : o.getUpper('fill'),
+        scale         : o.scaleX, // assume scaleX and scaleY is same
+        charSpace     : o.getUpper('charSpacing'),
+        strokes        : _strokes,
+      };
+    } else {
+      ed = {
+        type          : 'undef',
+        isMultiple    : isMultipleSelected(), // used by align
+        url           : "",
+        text          : "",
+        fontFamily    : "",
+        fill          : "",
+        scale         : 1, // assume scaleX and scaleY is same
+        charSpace     : 0,
+        strokes        :[],
+      };
     }
-    this.$store.commit( "SET_EDITING_DATA", _nodes );
+    this.$store.commit( "SET_EDITING_DATA", ed );
   });
 };
 
