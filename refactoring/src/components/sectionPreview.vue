@@ -13,7 +13,6 @@
       <div class="outer" id="preview-wrapper">
         <canvas class="inner" id="preview"></canvas>
       </div>
-      {{ editingData }}
 
     </div>
   </section>
@@ -38,6 +37,22 @@ var sampleText = new fabric.IText("Double Click to edit!", {
   fontFamily: 'Noto Sans KR',
   fontSize: 50,
   fontWeight: 900,
+  fill: '#192930',
+  stroke: 'black',
+  strokeWidth:20,
+  paintFirst: 'stroke',
+  charSpacing: -100,
+  angle:  0,
+  top: canvas.height/2,
+  left: canvas.width/2,
+  originX: 'center',
+  originY: 'center',
+});
+
+var sampleText2 = new fabric.IText("NONONO!", {
+  fontFamily: 'Noto Sans KR',
+  fontSize: 50,
+  fontWeight: 900,
   fill: 'white',
   stroke: 'black',
   strokeWidth:20,
@@ -50,13 +65,14 @@ var sampleText = new fabric.IText("Double Click to edit!", {
   originY: 'center',
 });
 // use '=>' to inherit parent's this
+
 var setSelectedNodes = (event) => {
   canvas.on(event, () => {
     var _nodes = [];
     var objs = canvas.getActiveObjects();
 
     // do not use Object.keys().length. objs is array of objects.
-    if (objs.length === 0) console.log("no active obj");
+    // if (objs.length === 0) console.log("no active obj");
 
     objs.forEach( o => {
       var ed = {};
@@ -115,6 +131,7 @@ var setSelectedNodes = (event) => {
 canvas.setDimensions({ width: 1280, height:720 }, { backstoreOnly:true });
 canvas.selection = true;
 canvas.add(sampleText);
+canvas.add(sampleText2);
 sampleText.clone((obj) => canvas.add(obj));
 
 
@@ -138,7 +155,7 @@ this.$watch( "editingData", dataList => {
         o.setLower('strokeWidth', data.strokes[1].width);
       }
     } else {
-      console.log("set data of undef");
+      // console.log("set data of undef");
     }
   } );
   canvas.renderAll();
@@ -146,7 +163,7 @@ this.$watch( "editingData", dataList => {
 
 // Set editingData
 canvas.on("mouse:up", (opt) => {
-	console.log(opt.target);
+	// console.log(opt.target);
 });
 setSelectedNodes("object:modified");
 setSelectedNodes("selection:cleared");

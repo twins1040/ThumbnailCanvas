@@ -284,13 +284,29 @@ html, body, #app{
           @include absolute( left );
         }
       }
+      .char-spacing-slider{
+        .icon{
+          @include absolute( left );
+          background-color: $gray-0;
+          border-radius: $radius;
+          line-height: 4*$unit;
+          text-align: center;
+          i{
+            @include square( 4*$unit, 0 );
+          }
+        }
+        .twin-slider{
+          height: 4*$unit;
+          margin-left: 5.5*$unit;
+        }
+      }
       .color-picker-and-slider{
         .twin-color-picker{
           @include absolute( left );
         }
         .twin-slider{
           height: 4*$unit;
-          margin-left: 6*$unit;
+          margin-left: 5.5*$unit;
         }
       }
     }

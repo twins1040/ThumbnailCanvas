@@ -10,11 +10,12 @@ export default {
   props: {
     value: {},
     min: {
-      default: 1
+      default: 0.01
     },
     max: {
       default: 10
-    }
+    },
+    default: {}
   },
   data(){
     var isTouchDevice = /iPhone|iPad|iPod|Android/i.test( navigator.userAgent );
@@ -31,7 +32,10 @@ export default {
   computed: {
     model: {
       get(){
-        return this.value;
+        if( this.value !== null ){
+          this.setValue( this.value );
+          return this.value;
+        };
       },
       set( value ){
         this.$emit( "input", value );
@@ -83,7 +87,8 @@ export default {
       this.grabPosition = value * 100;
     },
     updateValue( value ){
-      this.$emit( "input", this.min + Math.round( ( this.max - this.min ) * value ) );
+      this.$emit( "input", this.min + ( this.max - this.min ) * value );
+      this.$emit( "slideChange" );
     }
   },
   mounted(){

@@ -1,51 +1,62 @@
 <template>
   <div class="step" id="step-controll-step-edit">
-    {{ isMultiple }}
-    {{ editingDataType }}
-    <div class="tab" v-if="editingDataType === 'text'">
-      <div class="tab-item" :class="{ on: tab == 'font' }" @click="shiftTab( 'font' )">글자</div>
-      <div class="tab-item" :class="{ on: tab == 'style' }" @click="shiftTab( 'style' )">스타일</div>
+    <div class="tab" v-if="editingDataType !== 'none'">
+      <template v-if="editingDataType === 'text'">
+        <div class="tab-item" :class="{ on: tab == 'font' }" @click="shiftTab( 'font' )">글자</div>
+        <div class="tab-item" :class="{ on: tab == 'style' }" @click="shiftTab( 'style' )">스타일</div>
+      </template>
+      <template v-if="editingDataType === 'image'">
+        <div class="tab-item" :class="{ on: true }">이미지</div>
+      </template>
     </div>
-    <div class="contents" v-if="editingDataType === 'text'">
-      selectedNodes :{{ selectedNodes }} </br>
-      editingData :{{ editingData }}
+    <div class="contents">
       <ul>
-        <template v-if="tab == 'font'">
+        <template v-if="editingDataType === 'text' && tab == 'font'">
           <li>
             <div class="text">
-              <input type="text" v-model="editingData.text" placeholder="텍스트">
+              <input type="text" v-model="editingData.text" placeholder="텍스트" @keyup="updateData( 'text' )">
             </div>
           </li>
           <li>
             <div class="select">
               <div class="label">{{ editingData.fontFamily }}</div>
               <i class="material-icons">arrow_drop_down</i>
-              <select v-model="editingData.fontFamily">
-                <option value="굴림">굴림</option>
-                <option value="명조">명조</option>
-                <option value="본고딕">본고딕</option>
+              <select v-model="editingData.fontFamily" @change="updateData( 'fontFamily' )">
+                <option value="Noto Sans KR">Noto Sans KR</option>
+                <option value="Nanum Gothic">Nanum Gothic</option>
+                <option value="Nanum Myeongjo">Nanum Myeongjo</option>
+                <option value="Hanna">Hanna</option>
+                <option value="Poor Story">Poor Story</option>
+                <option value="Gothic A1 Regular">Gothic A1 Regular</option>
+                <option value="Gothic A1 Light">Gothic A1 Light</option>
+                <option value="Gothic A1 Thin">Gothic A1 Thin</option>
+                <option value="TmonMonsori">TmonMonsori</option>
+                <option value="Cute Font">Cute Font</option>
+                <option value="HANNA Pro">HANNA Pro</option>
+                <option value="Black Han Sans">Black Han Sans</option>
+                <option value="JUA">JUA</option>
+                <option value="Swagger">Swagger</option></select>
               </select>
             </div>
           </li>
-          <li v-if="isMultiple">
-            <div class="vertical-select">
-              <button :class="{ on: editingData.align == 'left' }" type="button"><input type="radio" v-model="editingData.align" value="left" /><i class="material-icons">format_align_left</i></button>
-              <button :class="{ on: editingData.align == 'center' }" type="button"><input type="radio" v-model="editingData.align" value="center" /><i class="material-icons">format_align_center</i></button>
-              <button :class="{ on: editingData.align == 'right' }" type="button"><input type="radio" v-model="editingData.align" value="right" /><i class="material-icons">format_align_right</i></button>
+          <li>
+            <div class="char-spacing-slider">
+              <div class="icon" @click="editingData.charSpacing = 0"><i class="material-icons">format_shapes</i></div>
+              <twin-slider v-model="editingData.charSpacing" :min="-300" :default="0" :max="300" @slideChange="updateData( 'charSpacing' )" />
             </div>
           </li>
         </template>
-        <template v-if="tab == 'style'">
+        <template v-if="editingDataType === 'text' && tab == 'style'">
           <li>
             <div class="color-picker-and-slider">
-              <twin-color-picker v-model="editingData.fill" icon="title" />
-              <twin-slider v-model="editingData.scale" :min="1" :max="10" />
+              <twin-color-picker v-model="editingData.fill" icon="title" @colorChange="updateData( 'fill' )" />
+              <twin-slider v-model="editingData.scale" :min="0.05" :default="1" :max="10" @slideChange="updateData( 'scale' )" />
             </div>
           </li>
           <li v-for="stroke in editingData.strokes">
             <div class="color-picker-and-slider">
               <twin-color-picker v-model="stroke.color" icon="edit" />
-              <twin-slider v-model="stroke.width" :min="0" :max="12" />
+              <twin-slider v-model="stroke.width" :min="0" :default="0" :max="100" />
             </div>
           </li>
           <li>
@@ -54,15 +65,24 @@
             </div>
           </li>
         </template>
-        <li>
-          <div class="objects-controlls">
-            <button type="button" @click="deleteObjects"><i class="material-icons">delete</i></button>
-            <button type="button" @click="cloneObjects"><i class="material-icons">file_copy</i></button>
+        <li v-if="isMultiple">
+          <div class="vertical-select">
+            <button type="button"><i class="material-icons">format_align_left</i></button>
+            <button type="button"><i class="material-icons">format_align_center</i></button>
+            <button type="button"><i class="material-icons">format_align_right</i></button>
           </div>
         </li>
+        <template v-if="editingDataType !== 'none'">
+          <li>
+            <div class="objects-controlls">
+              <button type="button" @click="deleteObjects"><i class="material-icons">delete</i></button>
+              <button type="button" @click="cloneObjects"><i class="material-icons">file_copy</i></button>
+            </div>
+          </li>
+        </template>
       </ul>
     </div>
-    <div class="interface" v-if="editingData === 'none'">
+    <div class="interface" v-if="editingDataType === 'none'">
       <ul>
         <li><button type="button" @click="addObject( 'text' )"><i class="material-icons">text_fields</i>글자 추가</button></li>
         <li><input type="file" @change="addObject( 'image', $event )" /><i class="material-icons">filter_hdr</i>이미지 추가</li>
@@ -81,8 +101,12 @@ export default {
   },
   data(){
     var tab = "font";
+    var editingData = {};
+    var readyToSubmitToCanvas = false;
     return {
       tab,
+      editingData,
+      readyToSubmitToCanvas
     };
   },
   computed: {
@@ -92,23 +116,64 @@ export default {
     isMultiple(){
       return this.$store.getters.GET_IS_NODE_MULTIPLE;
     },
-    // This is real code
-    /*
     selectedNodes(){
       return this.$store.getters.GET_SELECTED_NODES;
     }
-    */
-    editingData(){
-      return this.$store.getters.GET_SELECTED_NODES[0];
-    }
+  },
+  created(){
+
+
+
+    this.$watch( "selectedNodes", nodes => {
+      if( nodes.length > 0 ){
+        if( this.isMultiple ){
+          if( this.editingDataType == "combined" ){  // 여러개의 노드가 선택되었으며, 노드 타입이 다를 때.
+            Object.keys( this.editingData ).forEach( key => {
+              this.editingData[ key ] = null;
+            });
+          }else{
+            Object.keys( nodes[0] ).forEach( key => {
+              var isSame = true;
+              var tempValue = nodes[0][key];
+              nodes.forEach( node => {
+                if( tempValue != node[ key ] ){
+                  isSame = false;
+                };
+              });
+              if( isSame ){
+                this.$set( this.editingData, key, tempValue );
+              }else{
+                this.$set( this.editingData, key, null );
+              };
+            });
+          };
+        }else{  // 한개의 노드만 선택되었을 때.
+          Object.keys( nodes[0] ).forEach( key => {
+            this.$set( this.editingData, key, nodes[0][key] );
+          });
+        };
+      }else{  // 선택된 노드가 없을 때.
+        Object.keys( this.editingData ).forEach( key => {
+          this.editingData[ key ] = null;
+        });
+      };
+    });
+
   },
   methods: {
+    updateData( fieldName ){
+      this.$store.commit( "SET_EDITING_DATA", { fieldName, data: this.editingData[ fieldName ] });
+    },
     shiftTab( tab ){
       this.tab = tab;
     },
     addStroke(){
-      if( this.editingData.strokes.length < 2 ){
-        this.editingData.strokes.push({ width: 1, color: "#000" });
+      if( this.editingData.strokes ){
+        if( this.editingData.strokes.length < 2 ){
+          this.editingData.strokes.push({ width: 1, color: "#000" });
+        };
+      }else{
+        this.editingData.strokes = [{ width: 1, color: "#000" }];
       };
     },
     addObject( type, e ){

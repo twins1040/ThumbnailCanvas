@@ -56,6 +56,7 @@ export default {
     },
     selectColor( color ){
       this.$emit( "input", color );
+      this.$emit( "colorChange" );
       this.modalOpened = false;
     }
   },

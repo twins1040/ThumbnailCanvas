@@ -11,14 +11,7 @@ const store = new Vuex.Store({
     },
     selectedStep: 1,
     selectedTemplateId: null,
-    selectedNodes: [{
-      text: "",
-      fontFamily: "",
-      scale: 1,
-      fill: "",
-      align: "",
-      strokes: []
-    }],
+    selectedNodes: [],
     nodes: {},
     canvas: {}
   },
@@ -37,7 +30,7 @@ const store = new Vuex.Store({
     },
     SET_EDITING_DATA( state, payload ){
       for( var i = 0; i < state.selectedNodes.length; i++ ) {
-        state.selectedNodes[i] = payload;
+        state.selectedNodes[i][ payload.fieldName ] = payload.data;
       }
     }
   },
@@ -50,6 +43,7 @@ const store = new Vuex.Store({
     },
     GET_SELECTED_TYPE( state ){
       var type = "none";
+
       var i;
       if( state.selectedNodes.length === 0 ) return "none";
       for( i = 0; i < state.selectedNodes.length; i++ ){
@@ -59,7 +53,7 @@ const store = new Vuex.Store({
           continue;
         }else{
           return "combined";
-        }
+        };
       }
       return type;
     }
