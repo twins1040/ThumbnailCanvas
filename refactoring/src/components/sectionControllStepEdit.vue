@@ -1,11 +1,14 @@
 <template>
   <div class="step" id="step-controll-step-edit">
-    <div class="tab" v-if="editingData">
+    {{ isMultiple }}
+    {{ editingDataType }}
+    <div class="tab" v-if="editingDataType === 'text'">
       <div class="tab-item" :class="{ on: tab == 'font' }" @click="shiftTab( 'font' )">글자</div>
       <div class="tab-item" :class="{ on: tab == 'style' }" @click="shiftTab( 'style' )">스타일</div>
     </div>
-    <div class="contents" v-if="editingData">
-      {{ editingData }}
+    <div class="contents" v-if="editingDataType === 'text'">
+      selectedNodes :{{ selectedNodes }} </br>
+      editingData :{{ editingData }}
       <ul>
         <template v-if="tab == 'font'">
           <li>
@@ -24,7 +27,7 @@
               </select>
             </div>
           </li>
-          <li v-if="editingData && editingData.isMultiple">
+          <li v-if="isMultiple">
             <div class="vertical-select">
               <button :class="{ on: editingData.align == 'left' }" type="button"><input type="radio" v-model="editingData.align" value="left" /><i class="material-icons">format_align_left</i></button>
               <button :class="{ on: editingData.align == 'center' }" type="button"><input type="radio" v-model="editingData.align" value="center" /><i class="material-icons">format_align_center</i></button>
@@ -59,7 +62,7 @@
         </li>
       </ul>
     </div>
-    <div class="interface" v-if="!editingData">
+    <div class="interface" v-if="editingData === 'none'">
       <ul>
         <li><button type="button" @click="addObject( 'text' )"><i class="material-icons">text_fields</i>글자 추가</button></li>
         <li><input type="file" @change="addObject( 'image', $event )" /><i class="material-icons">filter_hdr</i>이미지 추가</li>
@@ -83,8 +86,20 @@ export default {
     };
   },
   computed: {
+    editingDataType(){
+      return this.$store.getters.GET_SELECTED_TYPE;
+    },
+    isMultiple(){
+      return this.$store.getters.GET_IS_NODE_MULTIPLE;
+    },
+    // This is real code
+    /*
+    selectedNodes(){
+      return this.$store.getters.GET_SELECTED_NODES;
+    }
+    */
     editingData(){
-      return this.$store.getters.GET_EDITING_DATA;
+      return this.$store.getters.GET_SELECTED_NODES[0];
     }
   },
   methods: {
@@ -125,13 +140,5 @@ export default {
       this.$store.dispatch( "deleteOjbects" );
     },
   },
-  created(){
-    // this.$watch( "editingData", data => {
-    //   Object.keys( data ).forEach( key => {
-    //     this.formData[ key ] = data[ key ];
-    //   });
-    // });
-
-  }
 }
 </script>

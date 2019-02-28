@@ -24,7 +24,7 @@ import Fabric from "fabric";
 export default {
   computed: {
     editingData(){
-      return this.$store.getters.GET_EDITING_DATA;
+      return this.$store.getters.GET_SELECTED_NODES;
     },
   },
   mounted(){
@@ -52,54 +52,54 @@ var sampleText = new fabric.IText("Double Click to edit!", {
 // use '=>' to inherit parent's this
 var setSelectedNodes = (event) => {
   canvas.on(event, () => {
-    var ed = {};
-    var _strokes = [];
+    var _nodes = [];
     var objs = canvas.getActiveObjects();
-    var o;
 
     // do not use Object.keys().length. objs is array of objects.
     if (objs.length === 0) console.log("no active obj");
 
-    o = objs[0];
+    objs.forEach( o => {
+      var ed = {};
+      var _strokes = [];
 
-    if (isText(o)) {
-      _strokes.push({
-        color : o.getUpper('stroke'),
-        width : o.getUpper('strokeWidth'),
-      });
-
-      if (isDoubleText(o)) {
+      if (isText(o)) {
         _strokes.push({
-          color : o.getLower('stroke'),
-          width : o.getLower('strokeWidth'),
+          color : o.getUpper('stroke'),
+          width : o.getUpper('strokeWidth'),
         });
+
+        if (isDoubleText(o)) {
+          _strokes.push({
+            color : o.getLower('stroke'),
+            width : o.getLower('strokeWidth'),
+          });
+        }
+
+        ed = {
+          type          : 'text',
+          text          : o.getUpper('text'),
+          fontFamily    : o.getUpper('fontFamily'),
+          fill          : o.getUpper('fill'),
+          scale         : o.scaleX, // assume scaleX and scaleY is same
+          charSpacing   : o.getUpper('charSpacing'),
+          strokes       : _strokes,
+        };
+      } else {
+        ed = {
+          type          : 'undef',
+          url           : "",
+          text          : "",
+          fontFamily    : "",
+          fill          : "",
+          scale         : 1, // assume scaleX and scaleY is same
+          charSpacing   : 0,
+          strokes       : [],
+        };
       }
 
-      ed = {
-        type          : 'text',
-        isMultiple    : isMultipleSelected(), // used by align
-        url           : "",
-        text          : o.getUpper('text'),
-        fontFamily    : o.getUpper('fontFamily'),
-        fill          : o.getUpper('fill'),
-        scale         : o.scaleX, // assume scaleX and scaleY is same
-        charSpacing   : o.getUpper('charSpacing'),
-        strokes       : _strokes,
-      };
-    } else {
-      ed = {
-        type          : 'undef',
-        isMultiple    : isMultipleSelected(), // used by align
-        url           : "",
-        text          : "",
-        fontFamily    : "",
-        fill          : "",
-        scale         : 1, // assume scaleX and scaleY is same
-        charSpacing   : 0,
-        strokes       : [],
-      };
-    }
-    this.$store.commit( "SET_EDITING_DATA", ed );
+      _nodes.push(ed);
+    });
+    this.$store.commit( "SET_SELECTED_NODES", _nodes );
   });
 };
 
@@ -119,9 +119,11 @@ sampleText.clone((obj) => canvas.add(obj));
 
 
 // Get editingData
-this.$watch( "editingData", data => {
+this.$watch( "editingData", dataList => {
   var objs = canvas.getActiveObjects();
-  objs.forEach( o => {
+  objs.forEach( (o, i) => {
+    var data = dataList[i];
+    if ( data === undefined ) throw new Error("missmatch between data and objs");
     if ( data.type === 'text' && isText(o) ) {
       o.setAllText('text', data.text);
       o.setUpper('fontFamily', data.fontFamily);
