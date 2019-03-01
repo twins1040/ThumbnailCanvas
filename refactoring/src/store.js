@@ -7,7 +7,7 @@ Vue.use( Vuex );
 const store = new Vuex.Store({
   state: {
     config: {
-      API_URL: "https://thumbnail-maker.xyz"
+      API_URL: "http://127.0.0.1:8000"
     },
     selectedStep: 1,
     selectedTemplateId: null,

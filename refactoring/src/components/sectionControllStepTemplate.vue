@@ -66,6 +66,15 @@ export default {
     //     console.log( err );
     //   });
     // }, { immediate: true });
+  },
+  mounted() {
+    var host = this.$store.state.config.API_URL;
+    this.axios.get( host+"/templates/hot/" ).then( response => {
+      response.data.forEach( d => {
+        d.thumbnail = host + d.thumbnail;
+      });
+      this.popularTemplates = response.data;
+    });
   }
 }
 </script>

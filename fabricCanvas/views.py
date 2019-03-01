@@ -52,7 +52,7 @@ def hot_templates(request):
         # Loop is essential for using property like .url
         hot_tmpls_query = Template.objects.only('id', 'thumbnail')
         for q in hot_tmpls_query:
-            hot_tmpls.append({'id' : q.id, 'url' : q.thumbnail.url})
+            hot_tmpls.append({'id' : q.id, 'thumbnail' : q.thumbnail.url})
         return JsonResponse(hot_tmpls, safe=False)
     return HttpResponse(status=405)
 
