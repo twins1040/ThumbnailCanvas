@@ -56,6 +56,9 @@ const store = new Vuex.Store({
         };
       }
       return type;
+    },
+    GET_SELECTED_TEMPLATE_ID( state ){
+      return state.selectedTemplateId;
     }
   },
   actions: {

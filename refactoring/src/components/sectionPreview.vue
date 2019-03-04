@@ -20,10 +20,14 @@
 <script>
 import $ from "jquery";
 import Fabric from "fabric";
+import FontFaceObserver from "fontfaceobserver";
 export default {
   computed: {
     editingData(){
       return this.$store.getters.GET_SELECTED_NODES;
+    },
+    selectedTemplateId(){
+      return this.$store.getters.GET_SELECTED_TEMPLATE_ID;
     },
   },
   mounted(){
@@ -32,6 +36,7 @@ export default {
 // GLOBAL VARIABLES
 //
 
+var host = this.$store.state.config.API_URL;
 var canvas = new fabric.Canvas( "preview" );
 var sampleText = new fabric.IText("Double Click to edit!", {
   fontFamily: 'Noto Sans KR',
@@ -354,6 +359,103 @@ function isAllDoubleText(obj) {
 	}
 	return true;
 }
+function loadFont(font) {
+	var myfont = new FontFaceObserver(font);
+	//toggleLoadingPage();
+	//return myfont.load().then(toggleLoadingPage);
+	return myfont.load();
+}
+function loadAndUse(font, obj) {
+	return loadFont(font)
+		.then(function() {
+			console.log(font + ' loaded');
+			// when font is loaded, use it.
+			obj.setAllText("fontFamily", font);
+			canvas.requestRenderAll();
+		}).catch(function(e) {
+			console.log(e)
+			alert('폰트 로딩이 느려 기본으로 대체합니다 :' + font);
+		});
+}
+function loadFontFromPJSON(json) {
+	var result = [];
+	var prom;
+	// Find all font in json from decendants
+	var recurse = function(obj) {
+		for (var e in obj) {
+			if (obj[e] instanceof Object) {
+				recurse(obj[e]);
+			} else {
+				if (e === 'fontFamily' && !result.includes(obj[e])) {
+					result.push(obj[e]);
+				}
+			}
+		}
+	}
+	recurse(json);
+	console.log(result);
+
+	if (result.length === 0) {
+		console.log("no font");
+		prom = new Promise(function(resolve, reject) {reject()});
+		return prom;
+	}
+
+	// Chaining All font loading sequences ex) p.then(f).then(f)....
+	prom = loadFont(result.shift());
+	for (let i in result) {
+		prom = prom.then(function() {return loadFont(result[i])});
+	}
+
+	return prom;
+}
+function load_template(json) {
+	var items = json["objects"];
+
+	canvas.forEachObject(function(t) {
+		canvas.remove(t);
+	});
+
+	return loadFontFromPJSON(json).then(function() {
+		fabric.util.enlivenObjects(items, function(objects) {
+			canvas.renderOnAddRemove = false;
+			objects.forEach(function(o) {
+				if (isDoubleText(o)) o.customSetCoords();
+				canvas.add(o);
+			});
+			canvas.renderOnAddRemove = true;
+			canvas.renderAll();
+		});
+	});
+}
+function set_background_image(src) {
+	var imgObj = new Image();
+	imgObj.src = src;
+	imgObj.onload = function () {
+		var image = new fabric.Image(imgObj);
+		var wRatio = canvas.width / image.width;
+		var hRatio = canvas.height / image.height;
+		var scale = (wRatio > hRatio) ? wRatio : hRatio;
+
+		canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
+			scaleX: scale,
+			scaleY: scale,
+			top: canvas.height / 2,
+			left: canvas.width / 2,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		//History.add();
+	}
+}
+function restore_template(json) {
+	var bg = json['backgroundImage'];
+	if (bg) set_background_image(bg.src);
+	load_template(json).then(function() {
+		//History.add();
+	});
+}
 // END OF FUNCTIONS
 
 //
@@ -404,6 +506,20 @@ $(window).keydown(function(e){
 */
 // END OF EDIT DOM ELEMENTS
 
+
+//
+// EVENT HANDLERS
+//
+this.$watch( "selectedTemplateId", id => {
+  if( id !== null ) {
+    console.log(id);
+    return this.axios.get( host+'/templates/'+id+'/data/' ).then( res => {
+      console.log(res.data);
+			restore_template(res.data);
+		});
+  }
+});
+// END OF EVENT HANDLERS
   }
 }
 </script>
