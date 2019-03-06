@@ -416,7 +416,10 @@ function load_template(json) {
 		canvas.remove(t);
 	});
 
-	return loadFontFromPJSON(json).then(function() {
+	return loadFontFromPJSON(json).catch(function(e) {
+			console.log(e)
+			console.log('폰트 로딩이 느려 기본으로 대체합니다');
+		}).then(function() {
 		fabric.util.enlivenObjects(items, function(objects) {
 			canvas.renderOnAddRemove = false;
 			objects.forEach(function(o) {
