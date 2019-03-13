@@ -21,13 +21,18 @@
 import $ from "jquery";
 import Fabric from "fabric";
 import FontFaceObserver from "fontfaceobserver";
+import { mapMutations, mapGetters } from 'vuex'
 export default {
   computed: {
-    editingData(){
-      return this.$store.getters.GET_SELECTED_NODES;
+    ...mapGetters({
+      editingData: 'GET_SELECTED_NODES',
+      selectedTemplateId: 'GET_SELECTED_TEMPLATE_ID'
+    }),
+    eventCreateTemplate(){
+      return this.$store.getters.GET_CANVAS_EVENT('createTemplate');
     },
-    selectedTemplateId(){
-      return this.$store.getters.GET_SELECTED_TEMPLATE_ID;
+    eventDownloadTemplate(){
+      return this.$store.getters.GET_CANVAS_EVENT('downloadTemplate');
     },
   },
   mounted(){
@@ -36,7 +41,9 @@ export default {
 // GLOBAL VARIABLES
 //
 
-var host = this.$store.state.config.API_URL;
+var HOST = this.$store.state.config.API_URL;
+var LOGIN_URL = HOST+'/login/google-oauth2/';
+var LOGOUT_URL = HOST+'/logout/';
 var canvas = new fabric.Canvas( "preview" );
 var sampleText = new fabric.IText("Double Click to edit!", {
   fontFamily: 'Noto Sans KR',
@@ -516,13 +523,25 @@ $(window).keydown(function(e){
 this.$watch( "selectedTemplateId", id => {
   if( id !== null ) {
     console.log(id);
-    return this.axios.get( host+'/templates/'+id+'/data/' ).then( res => {
+    return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
+			restore_template(res.data);
+		});
+  }
+});
+this.$watch( "eventDownloadTemplate", boolean => {
+  if( boolean ) {
+    return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
       console.log(res.data);
 			restore_template(res.data);
 		});
   }
 });
 // END OF EVENT HANDLERS
+  },
+  methods: {
+    ...mapMutations({
+      trigger: 'COMPLETE_CANVAS_EVENT'
+    })
   }
 }
 </script>
