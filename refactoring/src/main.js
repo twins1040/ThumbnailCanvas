@@ -11,5 +11,8 @@ new Vue({
   el: "#app",
   components: { App },
   template: "<App />",
-  store
+  store,
+  beforeCreate(){
+    this.$store.commit('INIT_STORE');
+  }
 })

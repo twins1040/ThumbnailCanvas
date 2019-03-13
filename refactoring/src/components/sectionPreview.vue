@@ -26,14 +26,9 @@ export default {
   computed: {
     ...mapGetters({
       editingData: 'GET_SELECTED_NODES',
-      selectedTemplateId: 'GET_SELECTED_TEMPLATE_ID'
+      selectedTemplateId: 'GET_SELECTED_TEMPLATE_ID',
+      vuexCanvas: 'GET_CANVAS',
     }),
-    eventCreateTemplate(){
-      return this.$store.getters.GET_CANVAS_EVENT('createTemplate');
-    },
-    eventDownloadTemplate(){
-      return this.$store.getters.GET_CANVAS_EVENT('downloadTemplate');
-    },
   },
   mounted(){
 
@@ -44,7 +39,14 @@ export default {
 var HOST = this.$store.state.config.API_URL;
 var LOGIN_URL = HOST+'/login/google-oauth2/';
 var LOGOUT_URL = HOST+'/logout/';
+
+// if local storage has canvas data, load
 var canvas = new fabric.Canvas( "preview" );
+if( this.vuexCanvas !== {} ){
+  canvas.loadFromJSON( this.vuexCanvas, () => canvas.renderAll.call(canvas) );
+}
+this.updateCanvas(canvas);
+
 var sampleText = new fabric.IText("Double Click to edit!", {
   fontFamily: 'Noto Sans KR',
   fontSize: 50,
@@ -528,19 +530,12 @@ this.$watch( "selectedTemplateId", id => {
 		});
   }
 });
-this.$watch( "eventDownloadTemplate", boolean => {
-  if( boolean ) {
-    return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
-      console.log(res.data);
-			restore_template(res.data);
-		});
-  }
-});
 // END OF EVENT HANDLERS
   },
   methods: {
     ...mapMutations({
-      trigger: 'COMPLETE_CANVAS_EVENT'
+      trigger: 'COMPLETE_CANVAS_EVENT',
+      updateCanvas: 'UPDATE_CANVAS',
     })
   }
 }

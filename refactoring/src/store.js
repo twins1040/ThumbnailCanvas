@@ -9,7 +9,7 @@ const store = new Vuex.Store({
     config: {
       API_URL: "http://127.0.0.1:8000"
     },
-    selectedStep: 3,
+    selectedStep: 1,
     selectedTemplateId: null,
     selectedNodes: [],
     nodes: {},
@@ -27,6 +27,15 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    INIT_STORE(state) {
+      // Check if the ID exists
+      if(localStorage.getItem('store')) {
+        // Replace the state object with the stored item
+        this.replaceState(
+          Object.assign(state, JSON.parse(localStorage.getItem('store')))
+        );
+      }
+    },
     UPDATE_CANVAS( state, payload ){
       state.canvas = payload;
     },
@@ -67,6 +76,9 @@ const store = new Vuex.Store({
     }
   },
   getters: {
+    GET_CANVAS( state ){
+      return state.canvas;
+    },
     GET_SELECTED_NODES( state ){
       return state.selectedNodes;
     },
@@ -186,6 +198,21 @@ const store = new Vuex.Store({
     }
 
   }
+});
+
+// Subscribe to store updates
+store.subscribe((mutation, state) => {
+  // Store the state object as a JSON string
+  var temp = {};
+  if( state.canvas.toJSON === undefined ) return;
+  Object.entries( state ).forEach( ([key, value]) => {
+    if( key === 'canvas' ){
+      temp[key] = value.toJSON();
+    }else{
+      temp[key] = value;
+    }
+  });
+  localStorage.setItem('store', JSON.stringify(temp));
 });
 
 export default store;
