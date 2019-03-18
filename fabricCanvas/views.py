@@ -1,7 +1,12 @@
+from django.contrib.auth.models import User
+from rest_framework import generics, permissions, renderers, viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
+from fabricCanvas.models import Template
+from fabricCanvas.serializers import TemplateSerializer, UserSerializer
+
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from .models import Template
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.views.decorators.cache import cache_control, never_cache
 
@@ -118,3 +123,20 @@ def my_user(request):
         })
     else:
         return HttpResponse(status=400)
+
+class TemplateViewSet(viewsets.ModelViewSet):
+    queryset = Template.objects.all()
+    serializer_class = TemplateSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    @detail_route()
+    def data(self, request, *args, **kwargs):
+        template = self.get_object()
+        return Response(template.data)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
