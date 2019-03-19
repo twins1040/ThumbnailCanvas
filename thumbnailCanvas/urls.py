@@ -13,10 +13,10 @@ def webHook(request):
     return HttpResponse("deployed ")
 
 urlpatterns = [
+    path('', include('fabricCanvas.urls')),
     path('', serve_static, kwargs={'path': 'bypass/index.html'}, name='index'),
     path('admin/', admin.site.urls),
     path('payload/', webHook),
-    path('', include('fabricCanvas.urls')),
     path('', include('social_django.urls', namespace='social')),
     path('logout/', logout_then_login, {'login_url': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

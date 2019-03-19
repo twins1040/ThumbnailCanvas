@@ -5,7 +5,7 @@ import os
 
 # Create your models here.
 class Template(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(User, related_name='templates', on_delete=models.CASCADE, null=True)
     thumbnail = models.ImageField(upload_to="templates")
     data = models.TextField()
 
