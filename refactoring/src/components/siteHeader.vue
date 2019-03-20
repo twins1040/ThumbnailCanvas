@@ -1,23 +1,15 @@
 <template>
   <header id="site-header">
-    <template v-if="selectedStep == 1">
-      <h1>썸네일 메이커</h1>
-    </template>
     <nav>
-      <template v-if="selectedStep == 1 && selectedTemplateId">
-        <button class="nav-button" id="nav-next" type="button" @click="nextStep">다음<i class="material-icons">chevron_right</i></button>
+      <template v-if="fill.logo">
+        <h1>썸네일 메이커</h1>
       </template>
-      <template v-if="selectedStep == 2 && !editingData">
-        <button class="nav-button" id="nav-previous" type="button" @click="previousStep"><i class="material-icons">chevron_left</i>이전</button>
-        <button class="nav-button" id="nav-save" type="button" @click="nextStep">다음<i class="material-icons">chevron_right</i></button>
+      <template v-if="fill.left">
+        <button class="nav-button" id="nav-previous" type="button" @click="fill.left.event"><i class="material-icons">chevron_left</i>{{fill.left.text}}</button>
       </template>
-      <template v-if="selectedStep == 2 && editingData">
-        <button class="nav-button" id="nav-complete" type="button" @click="completeEditingData">완료<i class="material-icons">chevron_right</i></button>
+      <template v-if="fill.right">
+        <button class="nav-button" id="nav-next" type="button" @click="fill.right.event">{{fill.right.text}}<i class="material-icons">chevron_right</i></button>
       </template>
-      <template v-if="selectedStep == 3">
-        <button class="nav-button" id="nav-previous" type="button" @click="previousStep"><i class="material-icons">chevron_left</i>이전</button>
-      </template>
-
     </nav>
   </header>
 </template>
@@ -32,6 +24,39 @@ export default {
     },
     editingData(){
       return this.$store.state.editingData;
+    },
+    fillData(){
+      return [
+        {},
+        // Step 1 : select template
+        {
+          logo: true,
+          right: this.selectedTemplateId ?
+            // Template selected
+            { text: '다음', event: this.nextStep } :
+            // Not selected
+            undefined
+        },
+        // Step 2 : editing
+        (this.editingData ?
+          // Something selected
+          {
+            right:  { text: '완료', event: this.completeEditingData }
+          } :
+          // Nothing elected
+          {
+            left:  { text: '이전', event: this.previousStep },
+            right:  { text: '다음', event: this.nextStep } 
+          }
+        ),
+        // Step 3 : complete ( save, upload ...)
+        {
+          left: { text: '이전', event: this.previousStep }
+        }
+      ];
+    },
+    fill(){
+      return this.fillData[this.selectedStep];
     }
   },
   methods: {
