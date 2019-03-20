@@ -42,6 +42,14 @@ html, body, #app{
         @include square( 4*$unit, 0 );
       }
     }
+    #nav-login, #nav-logout{
+      @include absolute( right );
+      padding-right: 7*$unit;
+      i{
+        @include absolute( right );
+        @include square( 4*$unit, 0 );
+      }
+    }
     #nav-next, #nav-complete, #nav-save{
       @include absolute( right );
       padding-right: 3.5*$unit;

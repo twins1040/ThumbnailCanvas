@@ -2,8 +2,21 @@ import Vue from "vue";
 import Vuex from "vuex";
 import $ from "jquery";
 import nonce from "nonce";
+
+const HelloJs = require('hellojs/dist/hello.all.min.js');
+const VueHello = require('vue-hellojs');
+
+HelloJs.init({
+  google: '626999294415-uotoverock9qhhcrbkkcm1m709i2hsvh.apps.googleusercontent.com',
+}, {
+  redirect_uri: '/'
+});
+
+Vue.use( VueHello, HelloJs );
 Vue.use( Vuex );
 
+const hello = Vue.hello;
+const provider = 'google';
 const store = new Vuex.Store({
   state: {
     config: {
@@ -22,6 +35,7 @@ const store = new Vuex.Store({
       login: false,
       super: false
     },
+    socialProfile: {},
     cookie: {
       csrftoken: ""
     }
@@ -73,7 +87,10 @@ const store = new Vuex.Store({
     // Private
     SET_COOKIE( state, key, value ){
       state.cookie[key] = value;
-    }
+    },
+    SET_PROFILE( state, profile ){
+      state.socialProfile = profile;
+    },
   },
   getters: {
     GET_CANVAS( state ){
@@ -81,6 +98,9 @@ const store = new Vuex.Store({
     },
     GET_SELECTED_NODES( state ){
       return state.selectedNodes;
+    },
+    GET_IS_SELECTED_NODES_EMPTY( state ){
+      return state.selectedNodes.length === 0;
     },
     GET_IS_NODE_MULTIPLE( state ){
       return state.selectedNodes.length > 1;
@@ -101,6 +121,9 @@ const store = new Vuex.Store({
       }
       return type;
     },
+    GET_SELECTED_STEP( state ){
+      return state.selectedStep;
+    },
     GET_SELECTED_TEMPLATE_ID( state ){
       return state.selectedTemplateId;
     },
@@ -109,6 +132,9 @@ const store = new Vuex.Store({
     },
     GET_USER_DATA( state ){
       return state.user;
+    },
+    GET_IS_LOGIN( state ){
+      return !!state.socialProfile.id;
     }
   },
   actions: {
@@ -183,17 +209,23 @@ const store = new Vuex.Store({
         })
       });
     },
-    login({ state, rootState, commit, dispatch }, jdata){
-      /*
-      if ( !jdata || jdata === "" ) {
-        return new Promise( ( resolve, reject ) => {
-          location.href = LOGIN_URL;
+    login({ state, rootState, commit, dispatch }){
+      return new Promise( (resolve, recject) => {
+        hello( provider ).login().then( () => {
+          //authRes = hello(provider).getAuthResponse();
+          return hello( provider ).api('me');
+        }).then( (profile) => {
+          commit( 'SET_PROFILE', profile );
           resolve();
         });
-      }
-      */
-      return dispatch( 'saveSession', jdata ).then( () => {
-        location.href = LOGIN_URL;
+      });
+    },
+    logout({ state, rootState, commit, dispatch }){
+      return new Promise( (resolve, recject) => {
+        hello( provider ).logout().then( () => {
+          commit( 'SET_PROFILE', {} );
+          resolve();
+        });
       });
     }
 

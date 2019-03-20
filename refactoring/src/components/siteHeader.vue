@@ -5,26 +5,30 @@
         <h1>썸네일 메이커</h1>
       </template>
       <template v-if="fill.left">
-        <button class="nav-button" id="nav-previous" type="button" @click="fill.left.event"><i class="material-icons">chevron_left</i>{{fill.left.text}}</button>
+        <button class="nav-button" id="nav-previous" type="button" @click="fill.left.event">
+          <i class="material-icons">chevron_left</i>{{fill.left.text}}
+        </button>
       </template>
+      <button v-if="isLogin" class="nav-button" id="nav-logout" type="button" @click="logout()">로그아웃</button>
+      <button v-if="!isLogin" class="nav-button" id="nav-login" type="button" @click="login()">로그인</button>
       <template v-if="fill.right">
-        <button class="nav-button" id="nav-next" type="button" @click="fill.right.event">{{fill.right.text}}<i class="material-icons">chevron_right</i></button>
+        <button class="nav-button" id="nav-next" type="button" @click="fill.right.event">
+          {{fill.right.text}}<i class="material-icons">chevron_right</i>
+        </button>
       </template>
     </nav>
   </header>
 </template>
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   computed: {
-    selectedStep(){
-      return this.$store.state.selectedStep;
-    },
-    selectedTemplateId(){
-      return this.$store.state.selectedTemplateId;
-    },
-    editingData(){
-      return this.$store.state.editingData;
-    },
+    ...mapGetters({
+      selectedStep: 'GET_SELECTED_STEP',
+      selectedTemplateId: 'GET_SELECTED_TEMPLATE_ID',
+      isEmptySelection: 'GET_IS_SELECTED_NODES_EMPTY',
+      isLogin: 'GET_IS_LOGIN'
+    }),
     fillData(){
       return [
         {},
@@ -38,15 +42,15 @@ export default {
             undefined
         },
         // Step 2 : editing
-        (this.editingData ?
-          // Something selected
-          {
-            right:  { text: '완료', event: this.completeEditingData }
-          } :
+        (this.isEmptySelection ?
           // Nothing elected
           {
             left:  { text: '이전', event: this.previousStep },
             right:  { text: '다음', event: this.nextStep } 
+          } :
+          // Something selected
+          {
+            right:  { text: '완료', event: this.completeEditingData }
           }
         ),
         // Step 3 : complete ( save, upload ...)
@@ -68,7 +72,11 @@ export default {
     },
     completeEditingData(){
       this.$store.commit( "SELECT_NODE", null );
-    }
+    },
+    ...mapActions([
+      'login',
+      'logout'
+    ]),
   }
 }
 </script>
