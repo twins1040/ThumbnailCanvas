@@ -1,22 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import $ from "jquery";
-import nonce from "nonce";
 
-const HelloJs = require('hellojs/dist/hello.all.min.js');
-const VueHello = require('vue-hellojs');
-
-HelloJs.init({
-  google: '626999294415-uotoverock9qhhcrbkkcm1m709i2hsvh.apps.googleusercontent.com',
-}, {
-  redirect_uri: '/'
-});
-
-Vue.use( VueHello, HelloJs );
 Vue.use( Vuex );
 
-const hello = Vue.hello;
-const provider = 'google';
 const store = new Vuex.Store({
   state: {
     config: {
@@ -25,20 +11,21 @@ const store = new Vuex.Store({
     selectedStep: 1,
     selectedTemplateId: null,
     selectedNodes: [],
-    nodes: {},
     canvas: {},
     canvasEvents: {
       createTemplate: false,
       downloadTemplate: false
     },
     user: {
-      login: false,
-      super: false
+      // sample data
+      // id: -1,
+      // thumbnail: "",
+      // email: "",
+      // templates: [],
+      // super: false,
+      // googleCode: "",
+      // apiToken: "",
     },
-    socialProfile: {},
-    cookie: {
-      csrftoken: ""
-    }
   },
   mutations: {
     INIT_STORE(state) {
@@ -75,21 +62,9 @@ const store = new Vuex.Store({
       if( state.canvasEvents[ eventName ] === false ) console.log("already completed");
       state.canvasEvents[ eventName ] = false;
     },
-    // Private
-    SET_USER_DATA( state, data ){
-      // Assume object's values are string or number
-      var keys = Object.keys( state.user );
-      var undefKey = key => { return data[key] === undefined };
-      if( keys.some( undefKey ) ) return;
-      // It should be called by value not ref, if not, can be used maliciously
-      Object.entries( data ).forEach( ([key, value]) => { state.user[key] = value } );
-    },
-    // Private
-    SET_COOKIE( state, key, value ){
-      state.cookie[key] = value;
-    },
-    SET_PROFILE( state, profile ){
-      state.socialProfile = profile;
+    SET_USER( state, payload ){
+      state.user = payload;
+      Vue.axios.default.headers.common['Autorization'] = payload.apiToken;
     },
   },
   getters: {
@@ -130,105 +105,39 @@ const store = new Vuex.Store({
     GET_CANVAS_EVENT: (state) => (eventName) => {
       return state.canvasEvents[ eventName ];
     },
-    GET_USER_DATA( state ){
+    GET_USER( state ){
       return state.user;
     },
     GET_IS_LOGIN( state ){
-      return !!state.socialProfile.id;
+      // !!"" => false, !!undefined => false
+      return !!state.user.apiToken;
     }
   },
   actions: {
-    createObject({ state, rootState, commit, dispatch }, payload ){
-      return new Promise( ( resolve, reject ) => {
-      });
-    },
-    updateObject({ state, rootState, commit, dispatch }, payload ){
-      return new Promise( ( resolve, reject ) => {
-
-      });
-    },
-    cloneObject({ state, rootState, commit, dispatch }, payload ){
-      return new Promise( ( resolve, reject ) => {
-      });
-    },
-    deleteObject({ state, rootState, commit, dispatch }, payload ){
-      return new Promise( ( resolve, reject ) => {
-      });
-    },
-    // Login, Session
-    requestUserData({ state, rootState, commit, dispatch }){
-      return this.axios.get(state.config.API_URL+"/user/").then( response => {
-        commit( 'SET_USER_DATA', response.data );
-      });
-    },
-    isLogin({ state, rootState, commit, dispatch }){
-      return dispatch( 'requestUserData' ).then( () => {
-        var _login = state.user.login;
-        if( typeof _login === 'boolean' ){
-          throw new Error("user.login is not boolean");
-        }
-        return _login;
-      });
-    },
-    setCookieFromDocument({ state, rootState, commit, dispatch }, name){
-      return new Promise( ( resolve, reject ) => {
-        var rawCookie = window.document.cookie;
-        var cookieValue = null;
-        var cookies;
-
-        console.log(rawCookie);
-        if( rawCookie === undefined || rawCookie === '') reject("no cookie");
-
-        cookies = rawCookie.split(';');
-        cookies.some( cookie => {
-          cookie = $.trim( cookie );
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            return true;
-          }
-          return false;
-        });
-
-        commit( 'SET_COOKIE', name, cookieValue );
-        resolve();
-      });
-    },
-    getCookie({ state, rootState, commit, dispatch }, name){
-      return dispatch( 'setCookieFromDocument', name ).then( () => {
-        return state.cookies[name];
-      });
-    },
-    saveSession({ state, rootState, commit, dispatch }, jdata){
-      return dispatch( 'getCookie', 'csrftoken' ).then( token => {
-        if( !token ) throw new Error( "no token data" );
-        return this.axios.post( state.config.API_URL+'/session/', {
-          step: state.selectedStep,
-          data: jdata,
-          csrfmiddlewaretoken: token,
-        })
-      });
-    },
     login({ state, rootState, commit, dispatch }){
-      return new Promise( (resolve, recject) => {
-        hello( provider ).login().then( () => {
-          //authRes = hello(provider).getAuthResponse();
-          return hello( provider ).api('me');
-        }).then( (profile) => {
-          commit( 'SET_PROFILE', profile );
-          resolve();
+      var user = {};
+      // Try Google login
+      return Vue.gAuth.getAuthCode().then( authCode => {
+        // Try API login
+        return Vue.axios.post( "/login/social/token/", {
+          provider: 'google-oauth2',
+          code: authCode,
         });
-      });
+      }).then( response => {
+        user.apiToken = response.data.token;
+      }).then( () => {
+        // Try get user data
+        return Vue.axios.get( "/user/"+state.user.id+"/" );
+      }).then( response => {
+        user.id = response.data.id;
+        user.email = response.data.email;
+        user.templates = response.data.templates;
+        commit( 'SET_USER', user );
+      }).catch( alert );
     },
     logout({ state, rootState, commit, dispatch }){
-      return new Promise( (resolve, recject) => {
-        hello( provider ).logout().then( () => {
-          commit( 'SET_PROFILE', {} );
-          resolve();
-        });
-      });
+      commit( 'SET_USER', {} );
     }
-
   }
 });
 
