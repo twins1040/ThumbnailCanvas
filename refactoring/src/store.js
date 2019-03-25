@@ -19,10 +19,10 @@ const store = new Vuex.Store({
     user: {
       // sample data
       // id: 1,
-      // thumbnail: "",
+      // thumbnail: "", (not implemented)
       // email: "",
       // templates: [],
-      // super: false,
+      // isSuper: false,
     },
     apiToken: "",
   },
@@ -127,14 +127,31 @@ const store = new Vuex.Store({
           redirect_uri: 'http://localhost:8080',
         });
       }).then( response => {
+        // response = {
+        //   email: "my@gmail.com"
+        //   first_name: "Wook"
+        //   id: 2
+        //   last_name: "Kim"
+        //   token: "0e20955776fb24a8900..."
+        //   username: "wook.kim"
+        // }
         commit( 'SET_API_TOKEN', 'Token '+response.data.token );
         user.id = response.data.id;
       }).then( () => {
         // Try get user data
         return Vue.axios.get( "/users/"+user.id+"/" );
       }).then( response => {
+        // response.data = {
+        //  "url": "http://127.0.0.1:8000/api/users/1/",
+        //  "id": 1,
+        //  "username": "wook",
+        //  "email": "my@gmail.com",
+        //  "is_superuser": true,
+        //  "templates": []
+        // }
         user.email = response.data.email;
         user.templates = response.data.templates;
+        user.isSuper = response.data.is_superuser;
         commit( 'SET_USER', user );
       });
     },
