@@ -4,7 +4,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from fabricCanvas.models import Template
 from fabricCanvas.serializers import TemplateSerializer, UserSerializer
-from fabricCanvas.permissions import IsOwnerOrReadOnly
+from fabricCanvas.permissions import IsOwnerOrReadOnly, IsSameUser
 
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -129,7 +129,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     # Error if any permission check fails
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (IsOwnerOrReadOnly, )
 
     @detail_route()
     def data(self, request, *args, **kwargs):
@@ -142,4 +142,4 @@ class TemplateViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (IsSameUser, )

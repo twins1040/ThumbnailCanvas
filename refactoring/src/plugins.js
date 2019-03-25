@@ -3,7 +3,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 Vue.use( VueAxios, axios );
-Vue.axios.default.baseURL = 'http://127.0.0.1:8000/api';
+Vue.axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
 
 // Google oauth2
 import GAuth from 'vue-google-oauth2'

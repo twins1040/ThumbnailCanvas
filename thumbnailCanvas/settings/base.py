@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_social_auth',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +141,10 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:8000',
     'localhost:8080',
 )
+
+# Rest Setting
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+        ),
+}

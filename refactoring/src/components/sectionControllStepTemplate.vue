@@ -69,7 +69,7 @@ export default {
   },
   mounted() {
     var host = this.$store.state.config.API_URL;
-    this.axios.get( host+"/templates/hot/" ).then( response => {
+    this.axios.get( "/templates/" ).then( response => {
       response.data.forEach( d => {
         d.thumbnail = host + d.thumbnail;
       });

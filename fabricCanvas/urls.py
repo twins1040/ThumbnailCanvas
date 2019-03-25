@@ -9,5 +9,6 @@ router.register(r'templates', views.TemplateViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('login/', include('rest_social_auth.urls_token')),
 ]

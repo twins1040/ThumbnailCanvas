@@ -18,14 +18,13 @@ const store = new Vuex.Store({
     },
     user: {
       // sample data
-      // id: -1,
+      // id: 1,
       // thumbnail: "",
       // email: "",
       // templates: [],
       // super: false,
-      // googleCode: "",
-      // apiToken: "",
     },
+    apiToken: "",
   },
   mutations: {
     INIT_STORE(state) {
@@ -64,7 +63,10 @@ const store = new Vuex.Store({
     },
     SET_USER( state, payload ){
       state.user = payload;
-      Vue.axios.default.headers.common['Autorization'] = payload.apiToken;
+    },
+    SET_API_TOKEN( state, token ){
+      state.apiToken = token;
+      Vue.axios.defaults.headers.common['Authorization'] = token;
     },
   },
   getters: {
@@ -110,7 +112,7 @@ const store = new Vuex.Store({
     },
     GET_IS_LOGIN( state ){
       // !!"" => false, !!undefined => false
-      return !!state.user.apiToken;
+      return !!state.apiToken;
     }
   },
   actions: {
@@ -119,24 +121,26 @@ const store = new Vuex.Store({
       // Try Google login
       return Vue.gAuth.getAuthCode().then( authCode => {
         // Try API login
-        return Vue.axios.post( "/login/social/token/", {
+        return Vue.axios.post( "/login/social/token_user/", {
           provider: 'google-oauth2',
           code: authCode,
+          redirect_uri: 'http://localhost:8080',
         });
       }).then( response => {
-        user.apiToken = response.data.token;
+        commit( 'SET_API_TOKEN', 'Token '+response.data.token );
+        user.id = response.data.id;
       }).then( () => {
         // Try get user data
-        return Vue.axios.get( "/user/"+state.user.id+"/" );
+        return Vue.axios.get( "/users/"+user.id+"/" );
       }).then( response => {
-        user.id = response.data.id;
         user.email = response.data.email;
         user.templates = response.data.templates;
         commit( 'SET_USER', user );
-      }).catch( alert );
+      });
     },
     logout({ state, rootState, commit, dispatch }){
       commit( 'SET_USER', {} );
+      commit( 'SET_API_TOKEN', "" );
     }
   }
 });
