@@ -2,10 +2,12 @@
 youtube thumbnail maker by canvas, fabric.js
 
 app : https://thumbnail-maker.xyz/
+
 api : https://thumbnail-maker.xyz/api/
 
 # API local test Guide (macOS)
 install
+
 0. install python3 and pip3 https://itsevans.com/install-pip-osx/ (we need python3.6 or later)
 1. git clone https://github.com/twins1040/ThumbnailCanvas.git (do not need to make dir)
 2. cd ThumbnailCanvas
