@@ -30,6 +30,19 @@ export default {
       vuexCanvas: 'GET_CANVAS',
     }),
   },
+  watch: {
+    selectedTemplateId: id => {
+      if( id === null ) return;
+      return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
+        restore_template(res.data);
+      });
+    },
+  },
+  methods: {
+    ...mapMutations({
+      updateCanvas: 'UPDATE_CANVAS',
+    })
+  },
   mounted(){
 
 //
@@ -522,21 +535,7 @@ $(window).keydown(function(e){
 //
 // EVENT HANDLERS
 //
-this.$watch( "selectedTemplateId", id => {
-  if( id !== null ) {
-    console.log(id);
-    return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
-			restore_template(res.data);
-		});
-  }
-});
 // END OF EVENT HANDLERS
   },
-  methods: {
-    ...mapMutations({
-      trigger: 'COMPLETE_CANVAS_EVENT',
-      updateCanvas: 'UPDATE_CANVAS',
-    })
-  }
 }
 </script>

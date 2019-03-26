@@ -12,10 +12,6 @@ const store = new Vuex.Store({
     selectedTemplateId: null,
     selectedNodes: [],
     canvas: {},
-    canvasEvents: {
-      createTemplate: false,
-      downloadTemplate: false
-    },
     user: {
       // sample data
       // id: 1,
@@ -52,14 +48,6 @@ const store = new Vuex.Store({
       for( var i = 0; i < state.selectedNodes.length; i++ ) {
         state.selectedNodes[i][ payload.fieldName ] = payload.data;
       }
-    },
-    TRIGGER_CANVAS_EVENT( state, eventName ){
-      if( state.canvasEvents[ eventName ] === true ) console.log("already triggered");
-      state.canvasEvents[ eventName ] = true;
-    },
-    COMPLETE_CANVAS_EVENT( state, eventName ){
-      if( state.canvasEvents[ eventName ] === false ) console.log("already completed");
-      state.canvasEvents[ eventName ] = false;
     },
     SET_USER( state, payload ){
       state.user = payload;
@@ -103,9 +91,6 @@ const store = new Vuex.Store({
     },
     GET_SELECTED_TEMPLATE_ID( state ){
       return state.selectedTemplateId;
-    },
-    GET_CANVAS_EVENT: (state) => (eventName) => {
-      return state.canvasEvents[ eventName ];
     },
     GET_USER( state ){
       return state.user;

@@ -33,8 +33,6 @@ export default {
       { id: 2 },
     ];
     var myTemplates = [
-      { id: 3 },
-      { id: 4 },
     ];
     return {
       tab,
@@ -59,20 +57,9 @@ export default {
     },
   },
   created(){
-    // this.$watch( "tab", tab => {
-    //   this.axios.get( this.$store.state.config.API_HOST + "/templates/" + ( tab == "popular" ? "popular" : "my" ) ).then( res => {
-    //     console.log( res );
-    //   }).catch( err => {
-    //     console.log( err );
-    //   });
-    // }, { immediate: true });
   },
   mounted() {
-    var host = this.$store.state.config.API_URL;
     this.axios.get( "/templates/" ).then( response => {
-      response.data.forEach( d => {
-        d.thumbnail = host + d.thumbnail;
-      });
       this.popularTemplates = response.data;
     });
   }
