@@ -22,5 +22,8 @@ export default {
       return this.$store.state.selectedStep;
     }
   },
+  mounted() {
+    this.$store.dispatch( "loadHotTemplates" );
+  }
 }
 </script>

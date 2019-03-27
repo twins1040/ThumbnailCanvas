@@ -24,6 +24,10 @@ export default {
   methods: {
     ...mapMutations({
     }),
+    ...mapActions([
+      'loadUserTemplates',
+      'loadHotTemplates',
+    ]),
     createTemplate(){
       if( !this.isLogin ){
 				alert("로그인이 필요합니다");
@@ -40,10 +44,12 @@ export default {
         return this.axios.post( "/templates/", {
           data: JSON.stringify(_data),
           thumbnail: this.canvas.toDataURL({format: 'png', multiplier:0.25}),
-        }).then( () => {
-          // update templates
-          alert( "저장이 완료되었습니다. 이전 탭으로 돌아가 내 템플릿을 확인해보세요.");
-        })
+        }).then( (response) => {
+          this.loadUserTemplates();
+          alert( "내 템플릿이 생성되었습니다. 이전 탭으로 돌아가 내 템플릿을 확인해보세요.");
+        }).catch( () => {
+          alert( "저장이 안됐어요 ㅠㅠ. 다시 로그인해보세요." );
+        });
       }
     },
     downloadCanvas(){

@@ -7,14 +7,14 @@
     <div class="contents">
       <ul>
         <template v-if="tab == 'popular'">
-          <li v-for="template in popularTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
+          <li v-for="template in hotTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
             <div class="layer" v-if="selectedTemplateId == template.id">
               <button @click="nextStep" type="button">선택 완료</button>
             </div>
           </li>
         </template>
         <template v-if="tab == 'my'">
-          <li v-for="template in myTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
+          <li v-for="template in userTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
             <div class="layer" v-if="selectedTemplateId == template.id">
               <button @click="nextStep" type="button">선택 완료</button>
             </div>
@@ -25,22 +25,19 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data(){
     var tab = "popular";
-    var popularTemplates = [
-      { id: 1 },
-      { id: 2 },
-    ];
-    var myTemplates = [
-    ];
     return {
       tab,
-      popularTemplates,
-      myTemplates,
     };
   },
   computed: {
+    ...mapGetters({
+      hotTemplates: 'GET_HOT_TEMPLATES',
+      userTemplates: 'GET_USER_TEMPLATES',
+    }),
     selectedTemplateId(){
       return this.$store.state.selectedTemplateId;
     },
@@ -56,12 +53,5 @@ export default {
       this.$store.commit( "SELECT_STEP", 2 );
     },
   },
-  created(){
-  },
-  mounted() {
-    this.axios.get( "/templates/" ).then( response => {
-      this.popularTemplates = response.data;
-    });
-  }
 }
 </script>

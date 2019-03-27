@@ -15,9 +15,8 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'owner', 'thumbnail', 'data')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    templates = serializers.HyperlinkedRelatedField(
+    templates = TemplateSerializer(
         many=True,
-        view_name='template-detail',
         read_only=True)
 
     class Meta:

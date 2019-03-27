@@ -21,6 +21,7 @@ const store = new Vuex.Store({
       // isSuper: false,
     },
     apiToken: "",
+    hotTemplates:[],
   },
   mutations: {
     INIT_STORE(state) {
@@ -55,6 +56,9 @@ const store = new Vuex.Store({
     SET_API_TOKEN( state, token ){
       state.apiToken = token;
       Vue.axios.defaults.headers.common['Authorization'] = token;
+    },
+    SET_HOT_TEMPLATES( state, templates ){
+      state.hotTemplates = templates;
     },
   },
   getters: {
@@ -98,9 +102,26 @@ const store = new Vuex.Store({
     GET_IS_LOGIN( state ){
       // !!"" => false, !!undefined => false
       return !!state.apiToken;
-    }
+    },
+    GET_HOT_TEMPLATES( state ){
+      return state.hotTemplates;
+    },
+    GET_USER_TEMPLATES( state ){
+      return state.user.templates;
+    },
   },
   actions: {
+    loadHotTemplates({ state, rootState, commit, dispatch }){
+      return Vue.axios.get( "/templates/" ).then( response => {
+        commit( 'SET_HOT_TEMPLATES', response.data );
+      });
+    },
+    loadUserTemplates({ state, rootState, commit, dispatch }){
+      return Vue.axios.get( "/users/"+state.user.id+"/" ).then( response => {
+        state.user.templates = response.data.templates;
+        commit( 'SET_USER', state.user );
+      });
+    },
     login({ state, rootState, commit, dispatch }){
       var user = {};
       // Try Google login
@@ -143,7 +164,7 @@ const store = new Vuex.Store({
     logout({ state, rootState, commit, dispatch }){
       commit( 'SET_USER', {} );
       commit( 'SET_API_TOKEN', "" );
-    }
+    },
   }
 });
 
