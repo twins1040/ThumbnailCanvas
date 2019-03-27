@@ -26,17 +26,8 @@ export default {
   computed: {
     ...mapGetters({
       editingData: 'GET_SELECTED_NODES',
-      selectedTemplateId: 'GET_SELECTED_TEMPLATE_ID',
       vuexCanvas: 'GET_CANVAS',
     }),
-  },
-  watch: {
-    selectedTemplateId: id => {
-      if( id === null ) return;
-      return this.axios.get( HOST+'/templates/'+id+'/data/' ).then( res => {
-        restore_template(res.data);
-      });
-    },
   },
   methods: {
     ...mapMutations({

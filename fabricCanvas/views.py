@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions, renderers, viewsets, status
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from fabricCanvas.models import Template
@@ -24,7 +24,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
     # Error if any permission check fails
     permission_classes = (IsOwnerOrReadOnly, )
 
-    @detail_route()
+    @action(detail=True)
     def data(self, request, *args, **kwargs):
         template = self.get_object()
         return Response(template.data)

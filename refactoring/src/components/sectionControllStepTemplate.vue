@@ -7,7 +7,7 @@
     <div class="contents">
       <ul>
         <template v-if="tab == 'popular'">
-          <li v-for="template in hotTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
+          <li v-for="template in hotTemplates" :class="{ on: selectedTemplateId == template.id }" :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id, template.data )">
             <div class="layer" v-if="selectedTemplateId == template.id">
               <button @click="nextStep" type="button">선택 완료</button>
             </div>
@@ -37,6 +37,7 @@ export default {
     ...mapGetters({
       hotTemplates: 'GET_HOT_TEMPLATES',
       userTemplates: 'GET_USER_TEMPLATES',
+      canvas: 'GET_CANVAS',
     }),
     selectedTemplateId(){
       return this.$store.state.selectedTemplateId;
@@ -46,7 +47,8 @@ export default {
     shiftTab( tab ){
       this.tab = tab;
     },
-    selectTemplate( id ){
+    selectTemplate( id, data ){
+      this.canvas.loadFromJSON( data, () => this.canvas.renderAll.call(this.canvas) );
       this.$store.commit( "SELECT_TEMPLATE", id );
     },
     nextStep(){

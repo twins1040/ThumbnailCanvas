@@ -7,8 +7,7 @@ from fabricCanvas.models import Template
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     thumbnail = serializers.ImageField(use_url=True)
-    data = serializers.HyperlinkedIdentityField(
-        view_name='template-data')
+    data = serializers.CharField()
 
     class Meta:
         model = Template
