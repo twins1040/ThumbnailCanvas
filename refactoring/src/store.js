@@ -9,6 +9,7 @@ const store = new Vuex.Store({
       API_URL: "http://127.0.0.1:8000"
     },
     selectedStep: 1,
+    templateTab: "hot", // hot or my
     selectedTemplateId: null,
     selectedNodes: [],
     canvas: {},
@@ -60,6 +61,9 @@ const store = new Vuex.Store({
     SET_HOT_TEMPLATES( state, templates ){
       state.hotTemplates = templates;
     },
+    SET_TEMPLATE_TAB( state, tabName ){
+      state.templateTab = tabName;
+    },
   },
   getters: {
     GET_CANVAS( state ){
@@ -108,6 +112,9 @@ const store = new Vuex.Store({
     },
     GET_USER_TEMPLATES( state ){
       return state.user.templates;
+    },
+    GET_TEMPLATE_TAB( state ){
+      return state.templateTab;
     },
   },
   actions: {
