@@ -71,7 +71,7 @@ export default {
       this.$store.commit( "SELECT_STEP", this.selectedStep + 1 );
     },
     completeEditingData(){
-      this.$store.commit( "SELECT_NODE", null );
+      this.$store.commit( "SET_SELECTED_NODES", [] );
     },
     ...mapActions([
       'login',

@@ -156,9 +156,13 @@ sampleText.clone((obj) => canvas.add(obj));
 // Get editingData
 this.$watch( "editingData", dataList => {
   var objs = canvas.getActiveObjects();
+  if( dataList.length === 0 ) {
+    canvas.discardActiveObject().renderAll();
+    return;
+  }
+  if ( dataList.length !== objs.length ) throw new Error("missmatch between data and objs");
   objs.forEach( (o, i) => {
     var data = dataList[i];
-    if ( data === undefined ) throw new Error("missmatch between data and objs");
     if ( data.type === 'text' && isText(o) ) {
       o.setAllText('text', data.text);
       o.setUpper('fontFamily', data.fontFamily);
@@ -181,7 +185,7 @@ this.$watch( "editingData", dataList => {
 
 // Set editingData
 canvas.on("mouse:up", (opt) => {
-	// console.log(opt.target);
+	console.log(opt.target);
 });
 setSelectedNodes("object:modified");
 setSelectedNodes("selection:cleared");
