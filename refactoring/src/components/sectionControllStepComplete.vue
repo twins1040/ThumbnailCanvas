@@ -23,6 +23,8 @@ export default {
   },
   methods: {
     ...mapMutations({
+      setTemplateTab: 'SET_TEMPLATE_TAB',
+      setSelectedStep: 'SELECT_STEP',
     }),
     ...mapActions([
       'loadUserTemplates',
@@ -46,7 +48,9 @@ export default {
           thumbnail: this.canvas.toDataURL({format: 'png', multiplier:0.25}),
         }).then( (response) => {
           this.loadUserTemplates();
-          alert( "내 템플릿이 생성되었습니다. 이전 탭으로 돌아가 내 템플릿을 확인해보세요.");
+          // Move to my template
+          this.setSelectedStep(1);
+          this.setTemplateTab("my");
         }).catch( () => {
           alert( "저장이 안됐어요 ㅠㅠ. 다시 로그인해보세요." );
         });
