@@ -75,7 +75,7 @@
         <template v-if="editingDataType !== 'none'">
           <li>
             <div class="objects-controlls">
-              <button type="button" @click="deleteObjects"><i class="material-icons">delete</i></button>
+              <button type="button" @click="deleteActiveObject"><i class="material-icons">delete</i></button>
               <button type="button" @click="cloneObjects"><i class="material-icons">file_copy</i></button>
             </div>
           </li>
@@ -84,9 +84,9 @@
     </div>
     <div class="interface" v-if="editingDataType === 'none'">
       <ul>
-        <li><button type="button" @click="addObject( 'text' )"><i class="material-icons">text_fields</i>글자 추가</button></li>
-        <li><input type="file" @change="addObject( 'image', $event )" /><i class="material-icons">filter_hdr</i>이미지 추가</li>
-        <li><input type="file" @change="addObject( 'image', $event )" /><i class="material-icons">insert_photo</i>배경 이미지 변경</li>
+        <li><button type="button" @click="addNewText"><i class="material-icons">text_fields</i>글자 추가</button></li>
+        <li><input type="file" @change="loadImage( $event )" /><i class="material-icons">filter_hdr</i>이미지 추가</li>
+        <li><input type="file" @change="loadBackground( $event )" /><i class="material-icons">insert_photo</i>배경 이미지 변경</li>
       </ul>
     </div>
   </div>
@@ -118,12 +118,12 @@ export default {
     },
     selectedNodes(){
       return this.$store.getters.GET_SELECTED_NODES;
+    },
+    canvas(){
+      return this.$store.state.canvas;
     }
   },
   created(){
-
-
-
     this.$watch( "selectedNodes", nodes => {
       if( nodes.length > 0 ){
         if( this.isMultiple ){
@@ -198,12 +198,42 @@ export default {
         this.$store.dispatch( "creatObjects", data );
       });
     },
-    cloneObjects(){
-      this.$store.dispatch( "cloneObjects" );
+    loadBackground( e ){
+      var reader = new FileReader();
+      reader.onload = function( event ){
+        this.set_background_image( event.target.result );
+      }.bind( this );
+      reader.readAsDataURL( e.target.files[0] );
     },
-    deleteObjects(){
-      this.$store.dispatch( "deleteOjbects" );
+    loadImage( e ){
+      var addImage = this.addImage;
+      var readAndAdd = function( file ){
+        if ( /\.(jpe?g|png|gif)$/i.test( file.name ) ) {
+          var reader = new FileReader();
+          reader.onload = function ( event ) {
+            addImage( event.target.result );
+          }
+          reader.readAsDataURL( file );
+        }
+      }.bind(this);
+      if ( e.target.files ) {
+        [].forEach.call( e.target.files, readAndAdd );
+      }
     },
+    // addNewText(){ this.canvas['addNewText']() }, ...
+    ...((methods)=>{
+      const res = {};
+      methods.forEach(function(x){
+        res[x] = function(){ this.canvas[x].apply(null, arguments) };
+      });
+      return res;
+    })([
+      'addNewText',
+      'deleteActiveObject',
+      'set_background_image',
+      'cloneObjects',
+      'addImage',
+    ]),
   },
 }
 </script>

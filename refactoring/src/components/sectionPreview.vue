@@ -23,6 +23,11 @@ import Fabric from "fabric";
 import FontFaceObserver from "fontfaceobserver";
 import { mapMutations, mapGetters } from 'vuex'
 export default {
+  data(){
+    return {
+      canvas: {},
+    }
+  },
   computed: {
     ...mapGetters({
       editingData: 'GET_SELECTED_NODES',
@@ -43,6 +48,7 @@ export default {
 var HOST = this.$store.state.config.API_URL;
 var LOGIN_URL = HOST+'/login/google-oauth2/';
 var LOGOUT_URL = HOST+'/logout/';
+var _clipboard = {};
 
 // if local storage has canvas data, load
 var canvas = new fabric.Canvas( "preview" );
@@ -290,8 +296,8 @@ function Copy() {
 	// may want copy and paste on different moment.
 	// and you do not want the changes happened
 	// later to reflect on the copy.
-	canvas.getActiveObject().clone(function(cloned) {
-		_clipboard = cloned;
+  canvas.getActiveObject().clone( (cloned) => {
+    _clipboard = cloned
 	}, ['isDoubleText']);
 }
 function Paste() {
@@ -324,6 +330,7 @@ function deleteActiveObject() {
 	activeObjectSet(function(obj) {canvas.remove(obj)});
 	canvas.discardActiveObject();
 	canvas.renderAll();
+  this.$store.commit( "SET_SELECTED_NODES", [] );
 }
 function activeObjectSet(callback) {
 	var actobj = canvas.getActiveObject();
@@ -469,6 +476,16 @@ function set_background_image(src) {
 		//History.add();
 	}
 }
+function addImage(src) {
+	var imgObj = new Image();
+	imgObj.src = src;
+	imgObj.onload = function () {
+		var image = new fabric.Image(imgObj);
+
+		canvas.add(image);
+		//History.add();
+	}
+}
 function restore_template(json) {
 	var bg = json['backgroundImage'];
 	if (bg) set_background_image(bg.src);
@@ -476,6 +493,13 @@ function restore_template(json) {
 		//History.add();
 	});
 }
+// Export functions
+canvas.addNewText = function(){ canvas.add(sampleText); };
+canvas.deleteActiveObject = deleteActiveObject.bind(this);
+canvas.set_background_image = set_background_image;
+canvas.addImage = addImage;
+canvas.cloneObjects = function(){ Copy(); Paste() };
+
 // END OF FUNCTIONS
 
 //

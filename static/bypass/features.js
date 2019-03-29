@@ -255,16 +255,6 @@ function activeObjectSet(callback) {
 		History.add();
 	}
 }
-function add_image(src) {
-	var imgObj = new Image();
-	imgObj.src = src;
-	imgObj.onload = function () {
-		var image = new fabric.Image(imgObj);
-
-		canvas.add(image);
-		History.add();
-	}
-}
 function group_align(axis, align) {
 	var actobj = canvas.getActiveObject();
 	var opts, origin, distence;
@@ -501,12 +491,6 @@ function toggleLoadingPage() {
 		target.css("display", "none");
 	}
 }
-function initTemplate() {
-	Mainbox.stepForward();
-	if (canvas._objects.length === 0) {
-		$(".block-thumbnail img").first().click();
-	}
-}
 function freeze() {
 	canvas.discardActiveObject();
 	canvas.forEachObject(function(object){
@@ -592,37 +576,9 @@ $("#addText").click(function() {
 		History.add();
 	});
 });
-// it can't be moved, input type file click() can't be triggered
-$('#bgLoader').on('change', function(e) {
-	var reader = new FileReader();
-
-	reader.onload = function (event){
-		set_background_image(event.target.result);
-		initTemplate();
-		dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '배경 가져오기'});
-	}
-
-	reader.readAsDataURL(e.target.files[0]);
-});
 $('#clipLoader').on('change', function(e) {
-	function readAndAdd(file) {
-		if ( /\.(jpe?g|png|gif)$/i.test(file.name) ) {
-			var reader = new FileReader();
-
-			reader.onload = function (event) {
-				add_image(event.target.result);
-			}
-
-			reader.readAsDataURL(file);
-		}
-	}
-
-	if (e.target.files) {
-		[].forEach.call(e.target.files, readAndAdd);
-	}
 });
 $('#sampleLoader').click(function(e) {
-	initTemplate();
 	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
 });
 $("#stroke2-text").click(function(){
