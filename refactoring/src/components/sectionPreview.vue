@@ -1,19 +1,22 @@
 <template>
   <section id="section-preview">
     <div class="container">
-
-      <!-- <div class="outer" id="cover-wrapper">
+      <div class="outer" id="preview-wrapper">
+        <canvas class="inner" id="preview"></canvas>
+      </div>
+      <div class="outer" id="cover-wrapper" v-if="selectedStep === 1">
         <div class="inner" id="cover">
           <div class="container">
+            <input type="file" @change="loadBackground( $event )" />
             <i class="material-icons">add_photo_alternate</i><br>
             여기를 눌러 배경 이미지를 불러오세요
           </div>
         </div>
-      </div> -->
-      <div class="outer" id="preview-wrapper">
-        <canvas class="inner" id="preview"></canvas>
       </div>
-
+      <div class="interface" >
+        <ul>
+        </ul>
+      </div>
     </div>
   </section>
 </template>
@@ -32,12 +35,20 @@ export default {
     ...mapGetters({
       editingData: 'GET_SELECTED_NODES',
       vuexCanvas: 'GET_CANVAS',
+      selectedStep: 'GET_SELECTED_STEP',
     }),
   },
   methods: {
     ...mapMutations({
       updateCanvas: 'UPDATE_CANVAS',
-    })
+    }),
+    loadBackground( e ){
+      var reader = new FileReader();
+      reader.onload = function( event ){
+        this.$store.state.canvas.set_background_image( event.target.result );
+      }.bind( this );
+      reader.readAsDataURL( e.target.files[0] );
+    },
   },
   mounted(){
 
@@ -154,8 +165,8 @@ var setSelectedNodes = (event) => {
 
 canvas.setDimensions({ width: 1280, height:720 }, { backstoreOnly:true });
 canvas.selection = true;
-canvas.add(sampleText);
-canvas.add(sampleText2);
+//canvas.add(sampleText);
+//canvas.add(sampleText2);
 sampleText.clone((obj) => canvas.add(obj));
 
 
@@ -665,6 +676,7 @@ canvas.deleteActiveObject = deleteActiveObject.bind(this);
 canvas.set_background_image = set_background_image;
 canvas.addImage = addImage;
 canvas.cloneObjects = function(){ Copy(); Paste() };
+canvas.restore_template = restore_template;
 
 // END OF FUNCTIONS
 

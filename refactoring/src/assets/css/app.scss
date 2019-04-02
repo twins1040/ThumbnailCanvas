@@ -78,6 +78,7 @@ html, body, #app{
   }
   #cover-wrapper{
     @include fix-ratio( "& > .inner", 9/16 );
+    @include absolute;
     #cover{
       @include vertical-center-container( "& > .container" );
       margin: 2*$unit;
@@ -86,6 +87,14 @@ html, body, #app{
       cursor: pointer;
       i{
         font-size: 3*$unit;
+      }
+      input{
+        @include absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 1;
       }
     }
   }

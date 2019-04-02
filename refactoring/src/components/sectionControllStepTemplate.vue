@@ -46,7 +46,7 @@ export default {
       this.setTab( tab );
     },
     selectTemplate( id, data ){
-      this.canvas.loadFromJSON( data, () => this.canvas.renderAll.call(this.canvas) );
+      this.canvas.restore_template( JSON.parse(data) );
       this.$store.commit( "SELECT_TEMPLATE", id );
     },
     nextStep(){
