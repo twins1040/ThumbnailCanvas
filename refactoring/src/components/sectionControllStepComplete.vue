@@ -1,9 +1,23 @@
 <template>
   <div class="step" id="step-controll-step-complete">
-    <div class="content">
-      <button id="complete-save" type="button" @click="createTemplate">내 템플릿에 저장하기</button>
-      <button id="complete-download" @click="downloadCanvas" type="button">다운로드하기</button>
-      <img id="img-for-download" :src="downloadSrc" />
+    <div class="contents">
+      <ul>
+        <li>
+          <div class="button">
+            <button id="complete-save" type="button" @click="createTemplate">내 템플릿에 저장하기</button>
+          </div>
+        </li>
+        <li>
+          <div class="button">
+            <button id="complete-download" @click="downloadCanvas" type="button">다운로드하기</button>
+          </div>
+        </li>
+        <li>
+          <div class="image-for-download">
+            <img id="img-for-download" :src="downloadSrc" />
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
