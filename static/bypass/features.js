@@ -120,81 +120,11 @@ var Toolbox = new function() {
 		}
 	}
 }
-
-
-
-
-canvas.on("mouse:up", function(opt) {
-	console.log(opt.target);
-});
-canvas.on("object:modified", History.add);
 // END OF CANVAS SETTINGS
 
 
 
 
-// Remove middle point of controller
-fabric.Object.prototype.setControlsVisibility({
-	mb: false, ml: false, mr: false, mt: false
-});
-
-// Add method to match with DoubleText
-Object.assign(fabric.IText.prototype, {
-	setAllText: function(key, value) {
-		this.set(key, value);
-	},
-	setUpper: function(key, value) {
-		this.set(key, value);
-	},
-	getUpper: function(key) {
-		return this.get(key);
-	},
-});
-
-// Declare getter and setter of Text like types
-Object.assign(fabric.Group.prototype, {
-	setUpper: function(key, value) {
-		if (!isDoubleText(this)) return;
-		this.item(1).set(key, value);
-		this.customSetCoords();
-	},
-	getUpper: function(key) {
-		if (!isDoubleText(this)) return;
-		return this.item(1).get(key);
-	},
-	setLower: function(key, value) {
-		if (!isDoubleText(this)) return;
-		this.item(0).set(key, value);
-		this.customSetCoords();
-	},
-	getLower: function(key) {
-		if (!isDoubleText(this)) return;
-		return this.item(0).get(key);
-	},
-	setAllText: function(key, value) {
-		if (!isDoubleText(this)) return;
-		this.item(0).set(key, value);
-		this.item(1).set(key, value);
-		this.customSetCoords();
-	},
-	customSetCoords: function() {
-		this.addWithUpdate();
-		// to fix Fabric's bug
-		// fabric's setCoords() is not for group of group
-		if (this.group) {
-			this.left -= this.group.left;
-			this.top -= this.group.top;
-		}
-	},
-});
-
-fabric.Group.prototype.on("scaled", function(opt){
-	opt.target._lastSelected = false;
-});
-fabric.Group.prototype.on("moved", function(opt){
-	opt.target._lastSelected = false;
-});
-//fabric.Group.prototype.on("mouseup", editExtraStroke);
 // END OF PROTOTYPE WRAPPER
 
 
@@ -202,59 +132,6 @@ fabric.Group.prototype.on("moved", function(opt){
 //
 // FUNCTIONS
 //
-
-function Copy() {
-	// clone what are you copying since you
-	// may want copy and paste on different moment.
-	// and you do not want the changes happened
-	// later to reflect on the copy.
-	canvas.getActiveObject().clone(function(cloned) {
-		_clipboard = cloned;
-	}, ['isDoubleText']);
-}
-function Paste() {
-	// clone again, so you can do multiple copies.
-	_clipboard.clone(function(clonedObj) {
-		canvas.discardActiveObject();
-		clonedObj.set({
-			left: clonedObj.left + 10,
-			top: clonedObj.top + 10,
-			evented: true,
-		});
-		if (clonedObj.type === 'activeSelection') {
-			// active selection needs a reference to the canvas.
-			clonedObj.canvas = canvas;
-			clonedObj.forEachObject(function(obj) {
-				canvas.add(obj);
-			});
-			// this should solve the unselectability
-			clonedObj.setCoords();
-		} else {
-			canvas.add(clonedObj);
-		}
-		_clipboard.top += 10;
-		_clipboard.left += 10;
-		canvas.setActiveObject(clonedObj);
-		canvas.requestRenderAll();
-	}, ['isDoubleText']);
-}
-function activeObjectSet(callback) {
-	var actobj = canvas.getActiveObject();
-
-	if (actobj) {
-		if (actobj.type == 'activeSelection') {
-			actobj.forEachObject(function(obj){
-				callback(obj);
-			});
-		} else {
-			callback(actobj);
-		}
-		canvas.renderAll();
-
-		// Save work history
-		History.add();
-	}
-}
 function group_align(axis, align) {
 	var actobj = canvas.getActiveObject();
 	var opts, origin, distence;
@@ -313,160 +190,6 @@ function setTextAttrBox(obj) {
 	// Fourth line of char spacing
 	$("#sliderCharSpace")[0].value = obj.getUpper('charSpacing');
 }
-function isIText(obj) {
-   if (!obj) obj = canvas.getActiveObject();
-   return !!(obj && obj.type === "i-text");
-}
-function isMultipleSelected(obj) {
-   if (!obj) obj = canvas.getActiveObject();
-   return !!(obj && obj.type === "activeSelection");
-}
-function isDoubleText(obj) {
-	if (!obj) obj = canvas.getActiveObject();
-	return !!(obj && obj.type === "group");
-}
-function isAllIText(obj) {
-	var i;
-	if (!obj) obj = canvas.getActiveObject();
-	if (!obj || obj.type !== 'activeSelection') return false;
-	for (i=0; i<obj._objects.length; i++) {
-		if (obj.item(i).type !== 'i-text') return false;
-	}
-	return true;
-}
-function isAllDoubleText(obj) {
-	var i;
-	if (!obj) obj = canvas.getActiveObject();
-	if (!obj || obj.type !== 'activeSelection') return false;
-	for (i=0; i<obj._objects.length; i++) {
-		if (!isDoubleText(obj.item(i))) return false;
-	}
-	return true;
-}
-function addExtraStroke(actobj, _clonedObj) {
-	var ret;
-
-	if (!actobj) actobj = canvas.getActiveObject();
-	if (!actobj || !isIText(actobj)) return;
-
-	// Orign left, top -> center, center
-	centeralize(actobj);
-
-	if (!_clonedObj) {
-		actobj.clone(function(obj) {
-			obj.set({stroke: "green"});
-			obj.strokeWidth += 16;
-			clonedObj = obj;
-		});
-	} else {
-		// _clonedObj must have absolute top, left
-		_clonedObj.clone(function(obj) {
-			clonedObj = obj;
-			canvas.remove(_clonedObj);
-		});
-	}
-
-	actobj.clone(function(clonedObjUpper) {
-		var scale = clonedObjUpper.scaleX;
-		let group;
-
-		// Pass scale to Group
-		clonedObjUpper.set({scaleX: 1, scaleY: 1});
-		clonedObj.set({scaleX: 1, scaleY: 1});
-
-		group = new fabric.Group([clonedObj, clonedObjUpper]);
-
-		// If it is member of group, needs to find absolute coords
-		if (actobj.group) {
-			group.set({
-				left: actobj.group.left + group.left,
-				top: actobj.group.top + group.top,
-			});
-		}
-
-		// Apply passed scale
-		group.set({scaleX: scale, scaleY: scale});
-		group.set("isDoubleText", true);
-
-		canvas.remove(actobj).renderAll();
-		canvas.add(group);
-
-		History.add();
-
-		ret = group;
-	});
-
-	return ret;
-}
-function editExtraStroke() {
-	let actobj = canvas.getActiveObject();
-
-	if (!isDoubleText(actobj)) return;
-
-	if (!actobj._lastSelected) {
-		actobj._lastSelected = true;
-		// Group event needs to be offed
-		// Group share hander (bug?)
-		actobj.on("deselected", function() {
-			actobj._lastSelected = false;
-			actobj.off("deselected");
-		});
-		return;
-	}
-
-	// Prevent Scale Bug
-	canvas.renderAll();
-
-	actobj.item(0).clone(function(clonedObj0) {
-		actobj.item(1).clone(function(clonedObj1) {
-			var opt = {
-				scaleX: actobj.item(0).scaleX * actobj.scaleX,
-				scaleY: actobj.item(0).scaleY * actobj.scaleY,
-				left: actobj.left,
-				top: actobj.top,
-			};
-
-			clonedObj0.set(opt);
-			clonedObj1.set(opt);
-
-			canvas.remove(actobj);
-
-			// Caustion: IText share event!!
-			// It should be off after event exit
-			clonedObj1.on("editing:exited", function() {
-				addExtraStroke(clonedObj1, clonedObj0);
-				clonedObj1.off("changed");
-				clonedObj1.off("editing:exited");
-			});
-
-			clonedObj1.on("changed", function() {
-				clonedObj0.set("text", this.text);
-				canvas.renderAll();
-			});
-
-			canvas.add(clonedObj0);
-			canvas.add(clonedObj1);
-
-			// It should be active before enterEditing
-			canvas.setActiveObject(clonedObj1);
-			clonedObj1.enterEditing();
-			clonedObj1.selectAll();
-		});
-	});
-}
-function centeralize(obj) {
-	var crd = obj.aCoords;
-	if (!obj) return;
-	if (obj.originX !== 'center') {
-		obj.originX = 'center';
-		obj.set('left', obj.left + (crd.tr.x - crd.tl.x)/2);
-	}
-	if (obj.originY !== 'center') {
-		obj.originY = 'center';
-		obj.set('top', obj.top + (crd.bl.y - crd.tl.y)/2);
-	}
-	return;
-}
 function deleteActiveObject() {
 	activeObjectSet(function(obj) {canvas.remove(obj)});
 	canvas.discardActiveObject();
@@ -515,10 +238,6 @@ function melt() {
 
 $("#btn-undo").click(History.undo);
 $("#btn-redo").click(History.redo);
-$("#js-btn-copy").click(function() {Copy(); Paste()});
-$(".js-btn-delete").click(function(){
-	deleteActiveObject();
-});
 $("#stroke-delete").click(function() {
 	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
 });
@@ -576,41 +295,6 @@ $("#addText").click(function() {
 		History.add();
 	});
 });
-$('#clipLoader').on('change', function(e) {
-});
-$('#sampleLoader').click(function(e) {
-	dataLayer.push({'event': 'custom: go to 템플릿', 'eventLabel': '건너뛰기'});
-});
-$("#stroke2-text").click(function(){
-	var newObjs = [];
-	var act;
-
-	activeObjectSet(function(obj) {
-		var obj2 = addExtraStroke(obj);
-		newObjs.push(obj2);
-	});
-
-	// Discard empty selection, change to new one
-	canvas.discardActiveObject();
-
-	if (newObjs.length === 0) {
-		console.log("try to set nothing to active");
-		return;
-	}
-
-	if (newObjs.length === 1) {
-		act = newObjs[0];
-	} else {
-		act = new fabric.ActiveSelection(newObjs, {canvas: canvas});
-	}
-
-	canvas.setActiveObject(act);
-	canvas.requestRenderAll();
-
-	$("#stroke2-text").addClass("hide");
-	$("#stroke2-console").removeClass("hide");
-	setTextAttrBox();
-});
 $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();
@@ -623,26 +307,6 @@ $("#feedback-link").click(function() {
 // END OF EVENT HANDLERS
 
 
-
-//
-// EDIT DOM ELEMENTS
-//
-
-// Font selector
-FONTS.forEach(function(font) {
-	e = document.createElement('option');
-	$(e).html(font);
-	$(e).val(font);
-	$("#font-dropdown-menu").append(e);
-});
-$("#font-dropdown-menu").on('change', function() {
-	var font = $(this).val();
-	activeObjectSet(function(obj) {
-		loadAndUse(font, obj).then(function() {
-			History.add();
-		});
-	});
-});
 
 // Key Binding
 $(window).keydown(function(e){

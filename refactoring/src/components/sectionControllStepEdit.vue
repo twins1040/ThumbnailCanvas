@@ -60,7 +60,7 @@
             </div>
           </li>
           <li>
-            <div class="stroke-maker">
+            <div class="stroke-maker" v-if="editingData.strokes && editingData.strokes.length < 2">
               <button type="button" @click="addStroke"><i class="material-icons">add</i>외곽선 추가</button>
             </div>
           </li>
@@ -168,13 +168,10 @@ export default {
       this.tab = tab;
     },
     addStroke(){
-      if( this.editingData.strokes ){
-        if( this.editingData.strokes.length < 2 ){
-          this.editingData.strokes.push({ width: 1, color: "#000" });
-        };
-      }else{
-        this.editingData.strokes = [{ width: 1, color: "#000" }];
-      };
+      if( this.editingData.strokes && this.editingData.strokes.length < 2 ){
+        this.editingData.strokes.push({ width: 1, color: "#000" });
+      }
+      this.updateData( 'strokes' );
     },
     addObject( type, e ){
       var nodeData = {};

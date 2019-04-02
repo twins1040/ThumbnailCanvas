@@ -102,7 +102,7 @@ var setSelectedNodes = (event) => {
       var ed = {};
       var _strokes = [];
 
-      if (isText(o)) {
+      if (isText(o) || isDoubleText(o)) {
         _strokes.push({
           color : o.getUpper('stroke'),
           width : o.getUpper('strokeWidth'),
@@ -162,22 +162,32 @@ sampleText.clone((obj) => canvas.add(obj));
 // Get editingData
 this.$watch( "editingData", dataList => {
   var objs = canvas.getActiveObjects();
+
+  // selectedNodes === []
   if( dataList.length === 0 ) {
     canvas.discardActiveObject().renderAll();
     return;
   }
+
   if ( dataList.length !== objs.length ) throw new Error("missmatch between data and objs");
+
+  // if extra stroke data exist,
+  // check each objects and if not double stroke, make them double
+  //if (dataList.strokes[1]) doAddExtraStroke();
+
+  objs = canvas.getActiveObjects();
   objs.forEach( (o, i) => {
     var data = dataList[i];
     if ( data.type === 'text' && isText(o) ) {
       o.setAllText('text', data.text);
-      o.setUpper('fontFamily', data.fontFamily);
+      loadAndUse(data.fontFamily, o);
       o.setUpper('fill', data.fill);
       o.set('scaleX', data.scale);
       o.set('scaleY', data.scale);
       o.setAllText('charSpacing', data.charSpacing);
       o.setUpper('stroke', data.strokes[0].color);
       o.setUpper('strokeWidth', data.strokes[0].width);
+      if (data.strokes[1] && isIText(o)) addExtraStroke(o);
       if (isDoubleText(o)) {
         o.setLower('stroke', data.strokes[1].color);
         o.setLower('strokeWidth', data.strokes[1].width);
@@ -193,10 +203,10 @@ this.$watch( "editingData", dataList => {
 canvas.on("mouse:up", (opt) => {
 	console.log(opt.target);
 });
-setSelectedNodes("object:modified");
-setSelectedNodes("selection:cleared");
-setSelectedNodes("selection:updated");
-setSelectedNodes("selection:created");
+setSelectedNodes("mouse:up");
+//setSelectedNodes("selection:cleared");
+//setSelectedNodes("selection:updated");
+//setSelectedNodes("selection:created");
 
 // Remove middle point of controller
 fabric.Object.prototype.setControlsVisibility({
@@ -270,7 +280,8 @@ Object.assign(fabric.Group.prototype, {
     this.customSetCoords();
   },
   customSetCoords: function() {
-    this.addWithUpdate();
+    // below code can make scale bug
+    // this.addWithUpdate();
     // to fix Fabric's bug
     // fabric's setCoords() is not for group of group
     if (this.group) {
@@ -382,6 +393,161 @@ function isAllDoubleText(obj) {
 		if (!isDoubleText(obj.item(i))) return false;
 	}
 	return true;
+}
+function centeralize(obj) {
+	var crd = obj.aCoords;
+	if (!obj) return;
+	if (obj.originX !== 'center') {
+		obj.originX = 'center';
+		obj.set('left', obj.left + (crd.tr.x - crd.tl.x)/2);
+	}
+	if (obj.originY !== 'center') {
+		obj.originY = 'center';
+		obj.set('top', obj.top + (crd.bl.y - crd.tl.y)/2);
+	}
+	return;
+}
+function addExtraStroke(actobj, _clonedObj) {
+	var ret;
+  var clonedObj;
+
+	if (!actobj) actobj = canvas.getActiveObject();
+	if (!actobj || !isIText(actobj)) return;
+
+	// Orign left, top -> center, center
+	centeralize(actobj);
+
+	if (!_clonedObj) {
+		actobj.clone(function(obj) {
+			obj.set({stroke: "green"});
+			obj.strokeWidth += 16;
+			clonedObj = obj;
+		});
+	} else {
+		// _clonedObj must have absolute top, left
+		_clonedObj.clone(function(obj) {
+			clonedObj = obj;
+			canvas.remove(_clonedObj);
+		});
+	}
+
+	actobj.clone(function(clonedObjUpper) {
+		var scale = clonedObjUpper.scaleX;
+		let group;
+
+		// Pass scale to Group
+		clonedObjUpper.set({scaleX: 1, scaleY: 1});
+		clonedObj.set({scaleX: 1, scaleY: 1});
+
+		group = new fabric.Group([clonedObj, clonedObjUpper]);
+
+		// If it is member of group, needs to find absolute coords
+		if (actobj.group) {
+			group.set({
+				left: actobj.group.left + group.left,
+				top: actobj.group.top + group.top,
+			});
+		}
+
+		// Apply passed scale
+		group.set({scaleX: scale, scaleY: scale});
+		group.set("isDoubleText", true);
+
+		canvas.remove(actobj).renderAll();
+		canvas.add(group);
+    console.log(group);
+
+//		History.add();
+
+		ret = group;
+	});
+
+	return ret;
+}
+function editExtraStroke() {
+	let actobj = canvas.getActiveObject();
+
+	if (!isDoubleText(actobj)) return;
+
+	if (!actobj._lastSelected) {
+		actobj._lastSelected = true;
+		// Group event needs to be offed
+		// Group share hander (bug?)
+		actobj.on("deselected", function() {
+			actobj._lastSelected = false;
+			actobj.off("deselected");
+		});
+		return;
+	}
+
+	// Prevent Scale Bug
+	canvas.renderAll();
+
+	actobj.item(0).clone(function(clonedObj0) {
+		actobj.item(1).clone(function(clonedObj1) {
+			var opt = {
+				scaleX: actobj.item(0).scaleX * actobj.scaleX,
+				scaleY: actobj.item(0).scaleY * actobj.scaleY,
+				left: actobj.left,
+				top: actobj.top,
+			};
+
+			clonedObj0.set(opt);
+			clonedObj1.set(opt);
+
+			canvas.remove(actobj);
+
+			// Caustion: IText share event!!
+			// It should be off after event exit
+			clonedObj1.on("editing:exited", function() {
+				addExtraStroke(clonedObj1, clonedObj0);
+				clonedObj1.off("changed");
+				clonedObj1.off("editing:exited");
+			});
+
+			clonedObj1.on("changed", function() {
+				clonedObj0.set("text", this.text);
+				canvas.renderAll();
+			});
+
+			canvas.add(clonedObj0);
+			canvas.add(clonedObj1);
+
+			// It should be active before enterEditing
+			canvas.setActiveObject(clonedObj1);
+			clonedObj1.enterEditing();
+			clonedObj1.selectAll();
+		});
+	});
+}
+function doAddExtraStroke(){
+	var newObjs = [];
+	var act;
+
+	activeObjectSet(function(obj) {
+		var obj2 = addExtraStroke(obj);
+		newObjs.push(obj2);
+	});
+
+	// Discard empty selection, change to new one
+	canvas.discardActiveObject();
+
+	if (newObjs.length === 0) {
+		console.log("try to set nothing to active");
+		return;
+	}
+
+	if (newObjs.length === 1) {
+		act = newObjs[0];
+	} else {
+		act = new fabric.ActiveSelection(newObjs, {canvas: canvas});
+	}
+
+	canvas.setActiveObject(act);
+	canvas.requestRenderAll();
+
+	$("#stroke2-text").addClass("hide");
+	$("#stroke2-console").removeClass("hide");
 }
 function loadFont(font) {
 	var myfont = new FontFaceObserver(font);
