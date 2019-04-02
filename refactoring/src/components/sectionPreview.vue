@@ -167,7 +167,6 @@ canvas.setDimensions({ width: 1280, height:720 }, { backstoreOnly:true });
 canvas.selection = true;
 //canvas.add(sampleText);
 //canvas.add(sampleText2);
-sampleText.clone((obj) => canvas.add(obj));
 
 
 // Get editingData
@@ -671,7 +670,13 @@ function restore_template(json) {
 	});
 }
 // Export functions
-canvas.addNewText = function(){ canvas.add(sampleText); };
+canvas.addNewText = function(){
+  sampleText.clone((obj) => {
+    var randcolor = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
+    obj.setUpper('fill', randcolor);
+    canvas.add(obj);
+  })
+};
 canvas.deleteActiveObject = deleteActiveObject.bind(this);
 canvas.set_background_image = set_background_image;
 canvas.addImage = addImage;
