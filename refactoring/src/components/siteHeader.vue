@@ -2,7 +2,7 @@
   <header id="site-header">
     <nav>
       <template v-if="fill.logo">
-        <h1>썸네일 메이커</h1>
+        <h1 @click="clearAll">썸네일 메이커</h1>
       </template>
       <template v-if="fill.left">
         <button class="nav-button" id="nav-previous" type="button" @click="fill.left.event">
@@ -64,6 +64,12 @@ export default {
     }
   },
   methods: {
+    clearAll(){
+      if(confirm( "데이터를 초기화 합니다. 계속 진행할까요?" )){
+        window.localStorage.clear();
+        window.location.href = '/';
+      }
+    },
     previousStep(){
       this.$store.commit( "SELECT_STEP", this.selectedStep - 1 );
     },

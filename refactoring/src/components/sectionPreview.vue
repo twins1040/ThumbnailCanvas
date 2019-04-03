@@ -4,7 +4,7 @@
       <div class="outer" id="preview-wrapper">
         <canvas class="inner" id="preview"></canvas>
       </div>
-      <div class="outer" id="cover-wrapper" v-if="selectedStep === 1">
+      <div class="outer" id="cover-wrapper" v-if="selectedStep === 1 && !isBackground">
         <div class="inner" id="cover">
           <div class="container">
             <input type="file" @change="loadBackground( $event )" />
@@ -36,6 +36,7 @@ export default {
       editingData: 'GET_SELECTED_NODES',
       vuexCanvas: 'GET_CANVAS',
       selectedStep: 'GET_SELECTED_STEP',
+      isBackground: 'GET_IS_BACKGROUND',
     }),
   },
   methods: {
@@ -46,6 +47,7 @@ export default {
       var reader = new FileReader();
       reader.onload = function( event ){
         this.$store.state.canvas.set_background_image( event.target.result );
+        this.$store.commit( 'SET_IS_BACKGROUND', true );
       }.bind( this );
       reader.readAsDataURL( e.target.files[0] );
     },

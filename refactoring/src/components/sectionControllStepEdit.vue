@@ -199,6 +199,7 @@ export default {
       var reader = new FileReader();
       reader.onload = function( event ){
         this.set_background_image( event.target.result );
+        this.$store.commit( 'SET_IS_BACKGROUND', true );
       }.bind( this );
       reader.readAsDataURL( e.target.files[0] );
     },

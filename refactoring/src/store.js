@@ -23,6 +23,7 @@ const store = new Vuex.Store({
     },
     apiToken: "",
     hotTemplates:[],
+    isBackground: false,
   },
   mutations: {
     INIT_STORE(state) {
@@ -63,6 +64,9 @@ const store = new Vuex.Store({
     },
     SET_TEMPLATE_TAB( state, tabName ){
       state.templateTab = tabName;
+    },
+    SET_IS_BACKGROUND( state, payload ){
+      state.isBackground = payload;
     },
   },
   getters: {
@@ -115,6 +119,9 @@ const store = new Vuex.Store({
     },
     GET_TEMPLATE_TAB( state ){
       return state.templateTab;
+    },
+    GET_IS_BACKGROUND( state ){
+      return state.isBackground;
     },
   },
   actions: {
