@@ -1,9 +1,11 @@
-from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
-from django.http import HttpResponse
-from .models import Template
 from django.contrib.auth.models import User
-from django.urls import reverse
-from django.views.decorators.cache import cache_control, never_cache
+from rest_framework import generics, permissions, renderers, viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from fabricCanvas.models import Template
+from fabricCanvas.serializers import TemplateSerializer, UserSerializer
+from fabricCanvas.permissions import IsOwnerOrReadOnly, IsSameUser
 
 from django.core.files.base import ContentFile
 import base64
@@ -16,85 +18,35 @@ def base64_to_image(data, name):
     ext = format.split('/')[-1]
     return ContentFile(base64.b64decode(imgstr), name=name+'.'+ext)
 
-def save_tmpl(_tnail, data, user):
-    try:
-        tnail = base64_to_image(_tnail, "thumbnail")
-    except AttributeError:
-        pass
+class TemplateViewSet(viewsets.ModelViewSet):
+    queryset = Template.objects.all()
+    serializer_class = TemplateSerializer
+    # Error if any permission check fails
+    permission_classes = (IsOwnerOrReadOnly, )
 
-    record = Template(thumbnail=tnail, data=data, owner=user)
-    record.save()
+    @action(detail=True)
+    def data(self, request, *args, **kwargs):
+        template = self.get_object()
+        return Response(template.data)
 
-@cache_control(no_cache=True)
-def index(request):
-    tmpls = Template.objects.all()
-    user_tmpls = {}
-    if request.user.is_authenticated:
-        user = User.objects.get(pk=request.user.id)
-        user_tmpls = user.template_set.all()
-
-    return render(request, 'fabricCanvas/index.html',
-            {'templates':tmpls,
-             'user_templates':user_tmpls})
-
-@never_cache
-def session(request):
-    if request.method == 'POST':
-        print(request.POST['box_info'])
-        request.session['canvas_data'] = request.POST['data']
-        request.session['box_info'] = request.POST['box_info']
-        request.session.set_expiry(300)
-        return HttpResponse('session saved')
-
-    if request.method == 'GET':
-        data = "";
+    def create(self, request, *args, **kwargs):
+        # If base64 image, convet to blob
         try:
-            data += '{"cdata":'+request.session['canvas_data']+','
-            data += '"box_info":'+request.session['box_info']+'}'
-        except KeyError:
+            rd = request.data;
+            rd['thumbnail'] = base64_to_image(rd['thumbnail'], "thumbnail")
+        except:
             pass
-        return HttpResponse(data)
 
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-def insert_tmpl(request):
-    if not request.user.is_authenticated:
-        request.session['canvas_data'] = request.POST['data']
-        request.session.set_expiry(300)
-        return HttpResponseRedirect(reverse('social:begin', args=['google-oauth2']))
-    else:
-        _tnail = request.POST['thumbnail']
-        data = request.POST['data']
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
-        save_tmpl(_tnail, data, request.user)
-
-        return HttpResponseRedirect(reverse('fabric_canvas:index'))
-
-@never_cache
-def tmpl(request, template_id):
-    if request.method == 'DELETE':
-        if not request.user.has_perm('fabricCanvas.delete_template'):
-            return HttpResponse(status=401)
-        tmpl = get_object_or_404(Template, pk=template_id)
-        tmpl.delete()
-        return HttpResponse("delete success")
-    else:
-        return HttpResponse(status=400)
-
-def template_data(request, template_id):
-    tmpl = get_object_or_404(Template, pk=template_id)
-
-    return HttpResponse(tmpl.data)
-
-def template_thumbnail(request, template_id):
-    tmpl = get_object_or_404(Template, pk=template_id)
-    name = tmpl.thumbnail.name
-
-    try:
-        bimage = base64_to_image(name, "thumbnail")
-        tmpl.thumbnail = bimage
-        tmpl.save()
-        print("base image is decoded!!")
-    except AttributeError:
-        pass
-
-    return HttpResponse(tmpl.thumbnail.url)
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsSameUser, )

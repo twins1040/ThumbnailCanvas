@@ -30,6 +30,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_social_auth',
 ]
 
 MIDDLEWARE = [
@@ -133,8 +136,13 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # CORS allow
 CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1:8000',
-    '127.0.0.1:8080',
     'localhost:8000',
     'localhost:8080',
 )
+
+# Rest Setting
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+        ),
+}
