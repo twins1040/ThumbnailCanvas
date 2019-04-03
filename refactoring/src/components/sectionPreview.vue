@@ -58,9 +58,6 @@ export default {
 // GLOBAL VARIABLES
 //
 
-var HOST = this.$store.state.config.API_URL;
-var LOGIN_URL = HOST+'/login/google-oauth2/';
-var LOGOUT_URL = HOST+'/logout/';
 var _clipboard = {};
 
 // if local storage has canvas data, load

@@ -7,7 +7,7 @@ SECRET_KEY = 'f81(k3s572%o-_%x(t%nfjqt&=4m81*fz%y7#rib8=lqkfz34$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
+    'localhost',
 ]
 
 DATABASES = {

@@ -158,7 +158,6 @@ export default {
         });
       };
     });
-
   },
   methods: {
     updateData( fieldName ){
@@ -172,28 +171,6 @@ export default {
         this.editingData.strokes.push({ width: 1, color: "#000" });
       }
       this.updateData( 'strokes' );
-    },
-    addObject( type, e ){
-      var nodeData = {};
-      new Promise( ( resolve, reject ) => {
-        if( type == "text" ){
-          resolve({ type: "text" });
-        }else if( type == "image" ){
-          var data = new FormData();
-          data.append( "file", event.target.files[0] );
-          this.axios.post( this.$store.config.API_HOST + "/upload", data ).then( res => {
-            resolve({ type: "image", url: res.url });
-          }).catch( reject );
-        }else if( type == "background" ){
-          var data = new FormData();
-          data.append( "file", event.target.files[0] );
-          this.axios.post( this.$store.config.API_HOST + "/upload", data ).then( res => {
-            resolve({ type: "background", url: res.url });
-          }).catch( reject );
-        };
-      }).then( data => {
-        this.$store.dispatch( "creatObjects", data );
-      });
     },
     loadBackground( e ){
       var reader = new FileReader();

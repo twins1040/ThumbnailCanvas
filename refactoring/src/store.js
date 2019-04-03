@@ -5,9 +5,6 @@ Vue.use( Vuex );
 
 const store = new Vuex.Store({
   state: {
-    config: {
-      API_URL: "http://127.0.0.1:8000"
-    },
     selectedStep: 1,
     templateTab: "hot", // hot or my
     selectedTemplateId: null,
@@ -144,7 +141,7 @@ const store = new Vuex.Store({
         return Vue.axios.post( "/login/social/token_user/", {
           provider: 'google-oauth2',
           code: authCode,
-          redirect_uri: 'http://localhost:8080',
+          redirect_uri: window.location.origin,
         });
       }).then( response => {
         // response = {
@@ -162,7 +159,7 @@ const store = new Vuex.Store({
         return Vue.axios.get( "/users/"+user.id+"/" );
       }).then( response => {
         // response.data = {
-        //  "url": "http://127.0.0.1:8000/api/users/1/",
+        //  "url": "http://thumbnail-maker.xyz/api/users/1/",
         //  "id": 1,
         //  "username": "wook",
         //  "email": "my@gmail.com",

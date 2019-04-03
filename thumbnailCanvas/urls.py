@@ -13,6 +13,7 @@ def webHook(request):
     return HttpResponse("deployed ")
 
 urlpatterns = [
+    path('', serve_static, kwargs={'path': 'bypass/index.html'}, name='index'),
     path('api/', include('fabricCanvas.urls')),
     path('admin/', admin.site.urls),
     path('payload/', webHook),
