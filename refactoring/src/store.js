@@ -133,6 +133,11 @@ const store = new Vuex.Store({
         commit( 'SET_USER', state.user );
       });
     },
+    loadTemplateData({ state, rootState, commit, dispatch }, id ){
+      return Vue.axios.get( "/templates/"+id+"/data/" ).then( response => {
+        return response.data;
+      });
+    },
     login({ state, rootState, commit, dispatch }){
       var user = {};
       // Try Google login

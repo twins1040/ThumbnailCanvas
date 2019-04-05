@@ -1,7 +1,9 @@
 import Vue from 'vue'
+
+
+// Axios
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
 Vue.use( VueAxios, axios );
 Vue.axios.defaults.baseURL = process.env.API_HOST+"/api"
 
@@ -13,5 +15,9 @@ const gauthOption = {
   prompt: 'select_account'
 }
 Vue.use(GAuth, gauthOption);
+
+// infinite template loading
+import infiniteScroll from 'vue-infinite-scroll'
+Vue.use(infiniteScroll)
 
 export default {};
