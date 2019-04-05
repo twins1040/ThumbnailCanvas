@@ -6,7 +6,7 @@
     </div>
     <div class="contents" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="0">
       <ul>
-        <li v-for="template in visibleTemplates.reverse()" :class="{ on: selectedTemplateId == template.id }"
+        <li v-for="template in visibleTemplates.slice().reverse()" :class="{ on: selectedTemplateId == template.id }"
           :style="'background-image:url(' + template.thumbnail + ')'" :key="template.id" @click="selectTemplate( template.id )">
           <div class="layer" v-if="selectedTemplateId == template.id">
             <button @click="nextStep" type="button">선택 완료</button>
