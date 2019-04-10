@@ -144,36 +144,6 @@ var Toolbox = new function() {
 //
 // FUNCTIONS
 //
-function group_align(axis, align) {
-	var actobj = canvas.getActiveObject();
-	var opts, origin, distence;
-
-	if (!actobj || actobj.type != 'activeSelection') {
-		console.log("no actobj");
-		return;
-	}
-
-	opts = {originX:{key: "left",
-		             left: -actobj.width/2,
-					 center: 0,
-					 right: actobj.width/2},
-			originY:{key: "top",
-				     top: -actobj.height/2,
-					 center: 0,
-					 bottom: actobj.height/2}}
-
-	origin = opts[axis];
-
-	if (!origin || origin[align] == null) {
-		console.log("wrong args");
-		return;
-	}
-
-	activeObjectSet(function(obj) {
-		obj.set(axis, align);
-		obj.set(origin['key'], origin[align]);
-	});
-}
 function setTextAttrBox(obj) {
 	if (!obj) obj = canvas.getActiveObject();
 	if (!obj) {
@@ -247,66 +217,6 @@ function melt() {
 //
 // EVENT HANDLERS
 //
-
-$("#btn-undo").click(History.undo);
-$("#btn-redo").click(History.redo);
-$("#stroke-delete").click(function() {
-	activeObjectSet(function(obj){obj.set("strokeWidth", 0)});
-});
-$("#sliderFontSize").on("input", function() {
-	var actobj = canvas.getActiveObject();
-	var value;
-
-	if (!actobj) {
-		return;
-	}
-
-	// slider is 0 ~ 100
-	// max is x5
-	value = parseInt($(this).val()) / SLIDER_TO_1X;
-
-	actobj.set("scaleX", value);
-	actobj.set("scaleY", value);
-
-	canvas.renderAll();
-});
-$("#sliderTextStroke").on("input", function() {
-	var strVal = $(this).val();
-	var value = parseInt(strVal);
-	activeObjectSet(function(obj) {
-		obj.setUpper('strokeWidth', value);
-	});
-});
-$("#sliderTextStroke2").on("input", function() {
-	var strVal = $(this).val();
-	var value = parseInt(strVal);
-	activeObjectSet(function(obj) {
-		if (isDoubleText(obj)) obj.setLower('strokeWidth', value);
-	});
-});
-$("#sliderCharSpace").on("input", function() {
-	var strVal = $(this).val();
-	var value = parseInt(strVal);
-	activeObjectSet(function(obj) {
-		obj.setAllText('charSpacing', value);
-	});
-});
-$("#align-left").click(function() {group_align("originX", "left")});
-$("#align-vertical-center").click(function() {group_align("originX", "center")});
-$("#align-right").click(function() {group_align("originX", "right")});
-$("#align-top").click(function() {group_align("originY", "top")});
-$("#align-horizontal-center").click(function() {group_align("originY", "center")});
-$("#align-bottom").click(function() {group_align("originY", "bottom")});
-$("#addText").click(function() {
-	sampleText.clone(function(clonedObj) {
-		canvas.add(clonedObj);
-		canvas.setActiveObject(clonedObj);
-		if (Toolbox.nowSelector() === ".objectView") {
-			Toolbox.switchTo(".objectControl");
-		}
-		History.add();
-	});
-});
 $("input[type='range']").mouseup(function() {
 	// Prevent slider to add lots of history
 	History.add();

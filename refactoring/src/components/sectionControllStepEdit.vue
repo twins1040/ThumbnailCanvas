@@ -67,9 +67,9 @@
         </template>
         <li v-if="isMultiple">
           <div class="vertical-select">
-            <button type="button"><i class="material-icons">format_align_left</i></button>
-            <button type="button"><i class="material-icons">format_align_center</i></button>
-            <button type="button"><i class="material-icons">format_align_right</i></button>
+            <button type="button" @click="group_align('originX', 'left')"><i class="material-icons">format_align_left</i></button>
+            <button type="button" @click="group_align('originX', 'center')"><i class="material-icons">format_align_center</i></button>
+            <button type="button" @click="group_align('originX', 'right')"><i class="material-icons">format_align_right</i></button>
           </div>
         </li>
         <template v-if="editingDataType !== 'none'">
@@ -208,6 +208,7 @@ export default {
       'set_background_image',
       'cloneObjects',
       'addImage',
+      'group_align',
     ]),
   },
 }

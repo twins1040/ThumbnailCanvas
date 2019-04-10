@@ -668,6 +668,36 @@ function restore_template(json) {
 		//History.add();
 	});
 }
+function group_align(axis, align) {
+	var actobj = canvas.getActiveObject();
+	var opts, origin, distence;
+
+	if (!actobj || actobj.type != 'activeSelection') {
+		console.log("no actobj");
+		return;
+	}
+
+	opts = {originX:{key: "left",
+		             left: -actobj.width/2,
+					 center: 0,
+					 right: actobj.width/2},
+			originY:{key: "top",
+				     top: -actobj.height/2,
+					 center: 0,
+					 bottom: actobj.height/2}}
+
+	origin = opts[axis];
+
+	if (!origin || origin[align] == null) {
+		console.log("wrong args");
+		return;
+	}
+
+	activeObjectSet(function(obj) {
+		obj.set(axis, align);
+		obj.set(origin['key'], origin[align]);
+	});
+}
 // Export functions
 canvas.addNewText = function(){
   sampleText.clone((obj) => {
@@ -681,6 +711,7 @@ canvas.set_background_image = set_background_image;
 canvas.addImage = addImage;
 canvas.cloneObjects = function(){ Copy(); Paste() };
 canvas.restore_template = restore_template;
+canvas.group_align = group_align;
 
 // END OF FUNCTIONS
 
