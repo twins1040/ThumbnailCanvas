@@ -1,6 +1,5 @@
 <template>
   <div class="twin-slider">
-    <input type="hidden" v-model="model" />
     <div class="slider-grab" :style="'left:'+ grabPosition + '%'"></div>
     <div class="slider-rail"></div>
   </div>
@@ -26,20 +25,17 @@ export default {
         dragMove: isTouchDevice ? "touchmove" : "mousemove",
         dragEnd: isTouchDevice ? "touchend" : "mouseup"
       },
-      grabPosition: 0
     };
   },
   computed: {
-    model: {
-      get(){
-        if( this.value !== null ){
-          this.setValue( this.value );
-          return this.value;
-        };
-      },
-      set( value ){
-        this.$emit( "input", value );
-      }
+    grabPosition(){
+      var _v = ( this.value - this.min ) / ( this.max - this.min );
+      _v = _v < 0
+        ? 0
+        : _v > 1
+          ? 1
+          : _v;
+      return _v * 100;
     }
   },
   methods: {
@@ -70,21 +66,7 @@ export default {
         : tickValue > 1
           ? 1
           : tickValue;
-      this.drawGrabPosition( tickValue );
       this.updateValue( tickValue );
-    },
-    setValue( value ){
-      var _v = ( value - this.min ) / ( this.max - this.min );
-      _v = _v < 0
-        ? 0
-        : _v > 1
-          ? 1
-          : _v;
-      this.drawGrabPosition( _v );
-      this.updateValue( _v );
-    },
-    drawGrabPosition( value ){
-      this.grabPosition = value * 100;
     },
     updateValue( value ){
       this.$emit( "input", this.min + ( this.max - this.min ) * value );
