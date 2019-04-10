@@ -62,6 +62,7 @@ var _clipboard = {};
 
 // if local storage has canvas data, load
 var canvas = new fabric.Canvas( "preview" );
+window.canvas = canvas;
 if( this.vuexCanvas !== {} ){
   canvas.loadFromJSON( this.vuexCanvas, () => canvas.renderAll.call(canvas) );
 }
@@ -125,12 +126,13 @@ var setSelectedNodes = (event) => {
           });
         }
 
+        console.log(o.getUpper('scaleX'));
         ed = {
           type          : 'text',
           text          : o.getUpper('text'),
           fontFamily    : o.getUpper('fontFamily'),
           fill          : o.getUpper('fill'),
-          scale         : o.scaleX, // assume scaleX and scaleY is same
+          scale         : o.getUpper('scaleX'), // assume scaleX and scaleY is same
           charSpacing   : o.getUpper('charSpacing'),
           strokes       : _strokes,
         };
@@ -191,8 +193,8 @@ this.$watch( "editingData", dataList => {
       o.setAllText('text', data.text);
       loadAndUse(data.fontFamily, o);
       o.setUpper('fill', data.fill);
-      o.set('scaleX', data.scale);
-      o.set('scaleY', data.scale);
+      o.setAllText('scaleX', data.scale);
+      o.setAllText('scaleY', data.scale);
       o.setAllText('charSpacing', data.charSpacing);
       o.setUpper('stroke', data.strokes[0].color);
       o.setUpper('strokeWidth', data.strokes[0].width);
@@ -289,8 +291,7 @@ Object.assign(fabric.Group.prototype, {
     this.customSetCoords();
   },
   customSetCoords: function() {
-    // below code can make scale bug
-    // this.addWithUpdate();
+    this.addWithUpdate();
     // to fix Fabric's bug
     // fabric's setCoords() is not for group of group
     if (this.group) {
@@ -302,6 +303,7 @@ Object.assign(fabric.Group.prototype, {
 
 fabric.Group.prototype.on("scaled", function(opt){
   opt.target._lastSelected = false;
+  opt.target.addWithUpdate();
 });
 fabric.Group.prototype.on("moved", function(opt){
   opt.target._lastSelected = false;
@@ -445,8 +447,8 @@ function addExtraStroke(actobj, _clonedObj) {
 		let group;
 
 		// Pass scale to Group
-		clonedObjUpper.set({scaleX: 1, scaleY: 1});
-		clonedObj.set({scaleX: 1, scaleY: 1});
+		// clonedObjUpper.set({scaleX: 1, scaleY: 1});
+		// clonedObj.set({scaleX: 1, scaleY: 1});
 
 		group = new fabric.Group([clonedObj, clonedObjUpper]);
 
@@ -459,8 +461,8 @@ function addExtraStroke(actobj, _clonedObj) {
 		}
 
 		// Apply passed scale
-		group.set({scaleX: scale, scaleY: scale});
-		group.set("isDoubleText", true);
+		// group.set({scaleX: scale, scaleY: scale});
+		// group.set("isDoubleText", true);
 
 		canvas.remove(actobj).renderAll();
 		canvas.add(group);
