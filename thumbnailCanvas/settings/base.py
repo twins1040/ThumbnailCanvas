@@ -134,12 +134,6 @@ STATICFILES_DIRS = [
 # my custom memory size 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
-# CORS allow
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8000',
-    'localhost:8080',
-)
-
 # Rest Setting
 REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (

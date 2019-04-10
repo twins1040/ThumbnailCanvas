@@ -8,7 +8,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
+    '10.193.6.51',
 ]
+
+# CORS allow
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8000',
+    'localhost:8080',
+    '10.193.6.51:8080',
+)
 
 DATABASES = {
     'default': {
