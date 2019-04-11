@@ -16,6 +16,7 @@ html, body, header, main, footer, aside, table, tr, td, section, div, h1, h2, h3
   word-spacing: inherit;
   color: inherit;
   -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 table, tr, td{
   border-collapse: collapse;
