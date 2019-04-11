@@ -1,0 +1,55 @@
+diff --git refactoring/config/dev.env.js refactoring/config/dev.env.js
+index 45f21f6..d8b42cc 100644
+--- refactoring/config/dev.env.js
++++ refactoring/config/dev.env.js
+@@ -4,5 +4,5 @@ const prodEnv = require('./prod.env')
+ 
+ module.exports = merge(prodEnv, {
+   NODE_ENV: '"development"',
+-  API_HOST: '"http://10.193.2.172:8000"',
++  API_HOST: '"http://localhost:8000"',
+ })
+diff --git refactoring/config/index.js refactoring/config/index.js
+index 6b75461..557a68a 100644
+--- refactoring/config/index.js
++++ refactoring/config/index.js
+@@ -13,7 +13,7 @@ module.exports = {
+     proxyTable: {},
+ 
+     // Various Dev Server settings
+-    host: '10.193.2.172', // can be overwritten by process.env.HOST
++    host: 'localhost', // can be overwritten by process.env.HOST
+     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+     autoOpenBrowser: false,
+     errorOverlay: true,
+diff --git refactoring/index.html refactoring/index.html
+index 7ba809f..1891f03 100644
+--- refactoring/index.html
++++ refactoring/index.html
+@@ -7,7 +7,6 @@
+     <link rel="stylesheet" href="<%= process.env.API_HOST %>/static/font/text_font/stylesheet.css?version=20180115">
+     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/hanna.css?version=20180115">
+     <title>thumbnail-canvas</title>
+-    <script src="http://10.193.2.172:8081/target/target-script-min.js"></script>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git thumbnailCanvas/settings/development.py thumbnailCanvas/settings/development.py
+index 7cc70c7..50a4e4c 100644
+--- thumbnailCanvas/settings/development.py
++++ thumbnailCanvas/settings/development.py
+@@ -7,14 +7,11 @@ SECRET_KEY = 'f81(k3s572%o-_%x(t%nfjqt&=4m81*fz%y7#rib8=lqkfz34$'
+ DEBUG = True
+ 
+ ALLOWED_HOSTS = [
+-    '10.193.2.172',
+     'localhost',
+ ]
+ 
+ # CORS allow
+ CORS_ORIGIN_WHITELIST = (
+-    '10.193.2.172:8080',
+-    '10.193.2.172:8000',
+     'localhost:8000',
+     'localhost:8080',
+ )
