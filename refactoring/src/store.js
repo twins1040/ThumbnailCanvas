@@ -196,7 +196,7 @@ const store = new Vuex.Store({
 store.subscribe((mutation, state) => {
   // Store the state object as a JSON string
   var temp = {};
-  var blacklist = ['user', 'apiToken', 'hotTemplates'];
+  var blacklist = ['hotTemplates'];
   if( state.canvas.toJSON === undefined ) return;
   Object.entries( state ).forEach( ([key, value]) => {
     if( blacklist.includes( key ) ) return;

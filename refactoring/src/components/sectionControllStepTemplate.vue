@@ -43,6 +43,7 @@ export default {
       canvas: 'GET_CANVAS',
       tab: 'GET_TEMPLATE_TAB',
       user: 'GET_USER',
+      isLogin: 'GET_IS_LOGIN',
     }),
     selectedTemplateId(){
       return this.$store.state.selectedTemplateId;
@@ -90,6 +91,7 @@ export default {
       if( confirm( "정말 삭제하실건가요?" ) ){
         return this.axios.delete( "/templates/"+i+"/" ).then(() => {
           this.$store.dispatch( "loadHotTemplates" );
+          if( this.isLogin ) this.$store.dispatch( "loadUserTemplates" );
         });
       }
     },
