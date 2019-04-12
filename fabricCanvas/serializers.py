@@ -5,13 +5,14 @@ from fabricCanvas.models import Template
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner_id = serializers.ReadOnlyField(source='owner.id')
+    owner_name = serializers.ReadOnlyField(source='owner.username')
     thumbnail = serializers.ImageField(use_url=True)
     data = serializers.CharField(write_only=True)
 
     class Meta:
         model = Template
-        fields = ('url', 'id', 'owner', 'thumbnail', 'data')
+        fields = ('url', 'id', 'owner_id', 'owner_name', 'thumbnail', 'data')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     templates = TemplateSerializer(

@@ -19,7 +19,15 @@ const store = new Vuex.Store({
       // isSuper: false,
     },
     apiToken: "",
-    hotTemplates:[],
+    hotTemplates:[
+      // {
+      //   localhost:8000/api/templates/1/",
+      //   "id": 1,
+      //   "owner_name": "tom",
+      //   "owner_id": "1",
+      //   localhost:8000/media/templates/thumbnail_zaspRpy.png"
+      // },
+    ],
     isBackground: false,
   },
   mutations: {
