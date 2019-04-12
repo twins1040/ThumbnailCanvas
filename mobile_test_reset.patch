@@ -6,7 +6,7 @@ index 45f21f6..d8b42cc 100644
  
  module.exports = merge(prodEnv, {
    NODE_ENV: '"development"',
--  API_HOST: '"http://10.193.2.172:8000"',
+-  API_HOST: '"http://Whost:8000"',
 +  API_HOST: '"http://localhost:8000"',
  })
 diff --git refactoring/config/index.js refactoring/config/index.js
@@ -17,7 +17,7 @@ index 6b75461..557a68a 100644
      proxyTable: {},
  
      // Various Dev Server settings
--    host: '10.193.2.172', // can be overwritten by process.env.HOST
+-    host: 'Whost', // can be overwritten by process.env.HOST
 +    host: 'localhost', // can be overwritten by process.env.HOST
      port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
      autoOpenBrowser: false,
@@ -30,7 +30,7 @@ index 7ba809f..1891f03 100644
      <link rel="stylesheet" href="<%= process.env.API_HOST %>/static/font/text_font/stylesheet.css?version=20180115">
      <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/hanna.css?version=20180115">
      <title>thumbnail-canvas</title>
--    <script src="http://10.193.2.172:8081/target/target-script-min.js"></script>
+-    <script src="http://Whost:8081/target/target-script-min.js"></script>
    </head>
    <body>
      <div id="app"></div>
@@ -42,14 +42,14 @@ index 7cc70c7..50a4e4c 100644
  DEBUG = True
  
  ALLOWED_HOSTS = [
--    '10.193.2.172',
+-    'Whost',
      'localhost',
  ]
  
  # CORS allow
  CORS_ORIGIN_WHITELIST = (
--    '10.193.2.172:8080',
--    '10.193.2.172:8000',
+-    'Whost:8080',
+-    'Whost:8000',
      'localhost:8000',
      'localhost:8080',
  )
